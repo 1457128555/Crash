@@ -1,0 +1,26 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug CrashRuntime",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/Client/Runtime/Windows/Debug/CrashRuntime.exe",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "preLaunchTask": "CMake Build",  
+            "stopAtEntry": false
+            "visualizerFile": "${workspaceFolder}/DEP/GLM/util/glm.natvis"
+        },
+        {
+            "name": "Debug CrashEditor",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/Client/Editor/Debug/CrashEditor.exe",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "preLaunchTask": "CMake Build",  
+            "stopAtEntry": false
+        },
+    ]
+}

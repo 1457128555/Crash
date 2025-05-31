@@ -1,0 +1,137 @@
+//  HelloCube02_PS
+
+#include "CommonUniforms_PS.txt"
+
+struct Material 
+{
+    vec4  ambient;
+    vec4  diffuse;
+    vec4  specular;     //  w: shininess
+
+}; 
+uniform Material uMaterial;
+
+uniform sampler2D uDiffuseTex;
+uniform sampler2D uSpecularTex;
+
+struct PointLight 
+{
+    vec4 position;
+    vec4 attenuation; // x: constant, y: linear, z: quadratic
+
+    vec4 ambient;
+    vec4 diffuse;
+    vec4 specular;
+};
+uniform PointLight uPointLight;
+
+struct DirLight 
+{
+    vec4 direction;
+
+    vec4 ambient;
+    vec4 diffuse;
+    vec4 specular;
+};
+uniform DirLight uDirLight;
+
+struct SpotLight 
+{
+    vec4 position;      
+    vec4 direction;     
+    vec4 attenuation;   // x: constant, y: linear, z: quadratic
+    vec4 cutOff;        // x: inner angle, y: outer angle
+
+    vec4 ambient;
+    vec4 diffuse;
+    vec4 specular;
+};
+uniform SpotLight uSpotLight;
+
+in vec4 oWorldPos;
+in vec4 oWorldNor;
+in vec4 oTexCoord; 
+
+out vec4 FragColor;
+
+void main()
+{
+    //vec3 diffuseColor = uMaterial.diffuse.rgb;
+    //vec3 specularColor = uMaterial.specular.rgb;
+    float specularStrength = uMaterial.specular.w;
+
+    vec3 diffuseColor = texture(uDiffuseTex, oTexCoord.xy).rgb;
+    vec3 specularColor = texture(uSpecularTex, oTexCoord.xy).rgb;
+
+    vec3 result = vec3(0.0);  
+
+    // Point Light Calculation
+    {
+        // diffuse 
+        vec3 norm = normalize(oWorldNor.xyz);
+        vec3 lightDir = normalize(uPointLight.position.xyz - oWorldPos.xyz);
+        float diff = max(dot(norm, lightDir), 0.0);
+        vec3 diffuse = diff * uPointLight.diffuse.rgb * diffuseColor;
+
+        // specular
+        vec3 viewDir = normalize(uCameraWorldPos.xyz - oWorldPos.xyz);
+        vec3 reflectDir = reflect(-lightDir, norm);  
+        float spec = pow(max(dot(viewDir, reflectDir), 0.0), specularStrength);
+        vec3 specular = spec * uPointLight.specular.rgb * specularColor;  
+
+        // attenuation
+        float distance = length(uPointLight.position.xyz - oWorldPos.xyz);
+        float attenuation = 1.0 / (uPointLight.attenuation.x + 
+                                   uPointLight.attenuation.y * distance + 
+                                   uPointLight.attenuation.z * distance * distance);
+
+        result += (diffuse + specular) * attenuation;
+    }
+
+    // Directional Light Calculation
+    {
+        // diffuse 
+        vec3 norm = normalize(oWorldNor.xyz);
+        vec3 lightDir = normalize(-uDirLight.direction.xyz);
+        float diff = max(dot(norm, lightDir), 0.0);
+        vec3 diffuse = diff * uDirLight.diffuse.rgb * diffuseColor;
+
+        // specular
+        vec3 viewDir = normalize(uCameraWorldPos.xyz - oWorldPos.xyz);
+        vec3 reflectDir = reflect(-lightDir, norm);  
+        float spec = pow(max(dot(viewDir, reflectDir), 0.0), specularStrength);
+        vec3 specular = spec * uDirLight.specular.rgb * specularColor;  
+
+        result += diffuse + specular; 
+    }
+
+    //  Spot Light Calculation
+    {
+        // diffuse 
+        vec3 norm = normalize(oWorldNor.xyz);
+        vec3 lightDir = normalize(uSpotLight.position.xyz - oWorldPos.xyz);
+        float diff = max(dot(norm, lightDir), 0.0);
+        vec3 diffuse = diff * uSpotLight.diffuse.rgb * diffuseColor;
+
+        // specular
+        vec3 viewDir = normalize(uCameraWorldPos.xyz - oWorldPos.xyz);
+        vec3 reflectDir = reflect(-lightDir, norm);  
+        float spec = pow(max(dot(viewDir, reflectDir), 0.0), specularStrength);
+        vec3 specular = spec * uSpotLight.specular.rgb * specularColor;  
+
+        // attenuation
+        float distance = length(uSpotLight.position.xyz - oWorldPos.xyz);
+        float attenuation = 1.0 / (uSpotLight.attenuation.x + 
+                                   uSpotLight.attenuation.y * distance + 
+                                   uSpotLight.attenuation.z * distance * distance);
+
+        // spotlight effect
+        float theta = dot(lightDir, normalize(-uSpotLight.direction.xyz));
+        float epsilon = uSpotLight.cutOff.x - uSpotLight.cutOff.y;
+        float intensity = clamp((theta - uSpotLight.cutOff.y) / epsilon, 0.0, 1.0);
+
+        result += (diffuse + specular) * intensity * attenuation;
+    }
+
+    FragColor = vec4(result, 1.0);
+}

@@ -1,0 +1,294 @@
+ #include "CrashPCH.h"
+ #include "HelloCube02.h"
+
+#include "CrashEngine.h"
+#include "CrashRenderSystem.h"
+#include "CrashTexMgr.h"
+#include "CrashFileSystem.h"
+#include "CrashCamera.h"
+
+#include "CrashMaterial.h"
+#include "CrashLight.h"
+
+using namespace Crash;
+
+namespace
+{
+    // 6个面，每面4个顶点，共24个顶点，带法线
+float cubeVertices[] = {
+    // 前面 (z+)
+    -0.5f, -0.5f,  0.5f,    0.0f,  0.0f,  1.0f,  0.0f, 0.0f,
+     0.5f, -0.5f,  0.5f,    0.0f,  0.0f,  1.0f,  1.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,    0.0f,  0.0f,  1.0f,  1.0f, 1.0f,
+    -0.5f,  0.5f,  0.5f,    0.0f,  0.0f,  1.0f,  0.0f, 1.0f,
+    // 后面 (z-) 
+    -0.5f, -0.5f, -0.5f,    0.0f,  0.0f, -1.0f,  1.0f, 0.0f,
+     0.5f, -0.5f, -0.5f,    0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
+     0.5f,  0.5f, -0.5f,    0.0f,  0.0f, -1.0f,  0.0f, 1.0f,
+    -0.5f,  0.5f, -0.5f,    0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
+    // 左面 (x-) 
+    -0.5f, -0.5f, -0.5f,   -1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
+    -0.5f, -0.5f,  0.5f,   -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+    -0.5f,  0.5f,  0.5f,   -1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
+    -0.5f,  0.5f, -0.5f,   -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+    // 右面 (x+)  
+     0.5f, -0.5f, -0.5f,    1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+     0.5f, -0.5f,  0.5f,    1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,    1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+     0.5f,  0.5f, -0.5f,    1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
+    // 上面 (y+)  
+    -0.5f,  0.5f,  0.5f,    0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,    0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
+     0.5f,  0.5f, -0.5f,    0.0f,  1.0f,  0.0f,  1.0f, 1.0f,
+    -0.5f,  0.5f, -0.5f,    0.0f,  1.0f,  0.0f,  0.0f, 1.0f,
+    // 下面 (y-) 
+    -0.5f, -0.5f,  0.5f,    0.0f, -1.0f,  0.0f,  1.0f, 1.0f,
+     0.5f, -0.5f,  0.5f,    0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
+     0.5f, -0.5f, -0.5f,    0.0f, -1.0f,  0.0f,  0.0f, 0.0f,
+    -0.5f, -0.5f, -0.5f,    0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
+};
+
+    // 每面2个三角形，共12个面
+    unsigned int cubeIndices[] = {
+        0,   1,  2,  2,  3,  0,       // 前
+        4,   5,  6,  6,  7,  4,       // 后
+        8,   9, 10, 10, 11,  8,       // 左
+        12, 13, 14, 14, 15, 12,       // 右
+        16, 17, 18, 18, 19, 16,       // 上
+        20, 21, 22, 22, 23, 20        // 下
+    };
+
+    std::vector<glm::vec3> cubePositions = {
+        glm::vec3( 0.0f,  0.0f,  0.0f),
+        glm::vec3( 2.0f,  5.0f, -15.0f),
+        glm::vec3(-1.5f, -2.2f, -2.5f),
+        glm::vec3(-3.8f, -2.0f, -12.3f),
+        glm::vec3( 2.4f, -0.4f, -3.5f),
+        glm::vec3(-1.7f,  3.0f, -7.5f),
+        glm::vec3( 1.3f, -2.0f, -2.5f),
+        glm::vec3( 1.5f,  2.0f, -2.5f),
+        glm::vec3( 1.5f,  0.2f, -1.5f),
+        glm::vec3(-1.3f,  1.0f, -1.5f)
+    };
+
+    ShaderProgram*      gLightProgram       = nullptr;
+    ShaderProgram*      gShaderProgram      = nullptr;
+    VertexArrayObject*  gVertexArrayObject  = nullptr;
+    VertexBuffer*       gVertexBuffer       = nullptr;
+    IndexBuffer*        gIndexBuffer        = nullptr;
+    Camera              gCamera;
+
+    Texture*            gContainerTex_D     = nullptr;
+    Texture*            gContainerTex_S     = nullptr;
+
+    Material            gMaterial;
+    PointLight          gPointLight;
+    DirLight            gDirLight;
+    SpotLight           gSpotLight;
+}
+
+HelloCube02::HelloCube02() : Scene("HelloCube02")
+{
+    
+}
+
+void HelloCube02::update(float deltaTime)
+{
+    float time = (float)Engine::Instance()->getExecuteTime();
+    float radius = 3.0f;      // 旋转半径
+    float speed = 0.3f;       // 旋转速度（弧度/秒）
+
+    // 让Y轴也随时间变化，实现空间轨迹
+    float lightX = sin(time * speed) * radius;
+    float lightZ = cos(time * speed) * radius;
+    float lightY = sin(time * speed * 0.7f) * radius * 0.5f; // Y轴也变化，轨迹为3D圆环
+
+    gPointLight.setPosition({lightX, lightY, lightZ});
+
+    gSpotLight.setPosition(gCamera.getPosition());
+    gSpotLight.setDirection(gCamera.getFront());
+}
+
+void HelloCube02::renderScene()
+ {
+    RenderSystem::Instance()->clear(RenderProtocol::ClearFlag::All);
+
+    //  Render Point Light
+    {
+        RenderSystem::Instance()->bindVertexArray(gVertexArrayObject);
+        RenderSystem::Instance()->bindShaderProgram(gLightProgram);
+
+        glm::mat4 model = glm::translate(glm::mat4(1.f), glm::vec3(gPointLight.getPosition()));
+        model = glm::scale(model, glm::vec3(0.1f)); // 缩小点光源的大小
+        RenderSystem::Instance()->setUniformMatrix4fv(gLightProgram, "uModel", model);
+
+        glm::mat4 view = gCamera.getViewMat();
+        RenderSystem::Instance()->setUniformMatrix4fv(gLightProgram, "uView", view);
+    
+        glm::mat4 projection = gCamera.getProjectionMat(Engine::Instance()->getAspect());
+        RenderSystem::Instance()->setUniformMatrix4fv(gLightProgram, "uProjection", projection);
+
+        RenderSystem::Instance()->setUniform4f(gLightProgram, "uCameraWorldPos", glm::vec4(gCamera.getPosition(), 1.0f));
+
+        gPointLight.apply(gLightProgram);
+
+        int indexCount = sizeof(cubeIndices) / sizeof(unsigned int);
+        RenderSystem::Instance()->drawElements(RenderProtocol::DrawMode::Triangles, 
+            indexCount, RenderProtocol::DrawElementType::UnsignedInt, 0);
+
+        RenderSystem::Instance()->unbindShaderProgram();
+        RenderSystem::Instance()->unbindVertexArray();
+    }
+
+    //  Render Dir Light
+    {
+        RenderSystem::Instance()->bindVertexArray(gVertexArrayObject);
+        RenderSystem::Instance()->bindShaderProgram(gLightProgram);
+
+        glm::mat4 model = glm::translate(glm::mat4(1.f), -50.f * glm::vec3(gDirLight.getDirection()));
+        model = glm::scale(model, glm::vec3(4.f)); // 缩小点光源的大小
+        RenderSystem::Instance()->setUniformMatrix4fv(gLightProgram, "uModel", model);
+
+        glm::mat4 view = gCamera.getViewMat();
+        RenderSystem::Instance()->setUniformMatrix4fv(gLightProgram, "uView", view);
+    
+        glm::mat4 projection = gCamera.getProjectionMat(Engine::Instance()->getAspect());
+        RenderSystem::Instance()->setUniformMatrix4fv(gLightProgram, "uProjection", projection);
+
+        RenderSystem::Instance()->setUniform4f(gLightProgram, "uCameraWorldPos", glm::vec4(gCamera.getPosition(), 1.0f));
+
+        gDirLight.apply(gLightProgram);
+
+        int indexCount = sizeof(cubeIndices) / sizeof(unsigned int);
+        RenderSystem::Instance()->drawElements(RenderProtocol::DrawMode::Triangles, 
+            indexCount, RenderProtocol::DrawElementType::UnsignedInt, 0);
+
+        RenderSystem::Instance()->unbindShaderProgram();
+        RenderSystem::Instance()->unbindVertexArray();
+    }
+
+    //  Render Cube
+    {
+        RenderSystem::Instance()->bindVertexArray(gVertexArrayObject);
+        RenderSystem::Instance()->bindShaderProgram(gShaderProgram);
+
+        glm::mat4 view = gCamera.getViewMat();
+        RenderSystem::Instance()->setUniformMatrix4fv(gShaderProgram, "uView", view);
+    
+        glm::mat4 projection = gCamera.getProjectionMat(Engine::Instance()->getAspect());
+        RenderSystem::Instance()->setUniformMatrix4fv(gShaderProgram, "uProjection", projection);
+
+        RenderSystem::Instance()->setUniform4f(gShaderProgram, "uCameraWorldPos", glm::vec4(gCamera.getPosition(), 1.0f));
+
+        gMaterial.apply(gShaderProgram);
+        gPointLight.apply(gShaderProgram);
+        gDirLight.apply(gShaderProgram);
+        gSpotLight.apply(gShaderProgram);
+
+        int cubeIndex = 0;
+        for(const auto& p : cubePositions)
+        {
+            glm::mat4 model = glm::translate(glm::mat4(1.f), p);
+            model = glm::rotate(model, ++cubeIndex * glm::radians(20.0f), glm::vec3(0.5f, 1.0f, 0.0f));
+            RenderSystem::Instance()->setUniformMatrix4fv(gShaderProgram, "uModel", model);
+
+            int indexCount = sizeof(cubeIndices) / sizeof(unsigned int);
+            RenderSystem::Instance()->drawElements(RenderProtocol::DrawMode::Triangles, 
+                indexCount, RenderProtocol::DrawElementType::UnsignedInt, 0);
+        }
+
+        RenderSystem::Instance()->unbindShaderProgram();
+        RenderSystem::Instance()->unbindVertexArray();
+    }
+}
+
+void HelloCube02::initialize()       
+{
+    {
+        const std::string vsCode = Crash::FileSystem::ReadShader("PointLight_VS.txt");
+        const std::string psCode = Crash::FileSystem::ReadShader("PointLight_PS.txt");
+        gLightProgram = RenderSystem::Instance()->createShaderProgram("PointLight", vsCode, psCode);
+    }
+
+    {
+        const std::string vsCode = Crash::FileSystem::ReadShader("HelloCube02_VS.txt");
+        const std::string psCode = Crash::FileSystem::ReadShader("HelloCube02_PS.txt");
+        gShaderProgram = RenderSystem::Instance()->createShaderProgram("HelloCube02", vsCode, psCode);
+    }
+
+    gVertexBuffer = RenderSystem::Instance()->createBuffer();
+    RenderSystem::Instance()->setBufferData(gVertexBuffer, cubeVertices, sizeof(cubeVertices));
+
+    gIndexBuffer = RenderSystem::Instance()->createIndexBuffer();
+    RenderSystem::Instance()->setIndexBufferData(gIndexBuffer, cubeIndices, sizeof(cubeIndices));
+
+    gVertexArrayObject = RenderSystem::Instance()->createVertexArray();
+    
+    RenderSystem::Instance()->addBufferToVertexArray(gVertexArrayObject, gVertexBuffer, 0, 3, sizeof(float) * 8, (const void*)0);
+    RenderSystem::Instance()->addBufferToVertexArray(gVertexArrayObject, gVertexBuffer, 1, 3, sizeof(float) * 8, (const void*)(sizeof(float) * 3));
+    RenderSystem::Instance()->addBufferToVertexArray(gVertexArrayObject, gVertexBuffer, 2, 2, sizeof(float) * 8, (const void*)(sizeof(float) * 6));
+    RenderSystem::Instance()->addBufferToVertexArray(gVertexArrayObject, gIndexBuffer);
+   
+    RenderSystem::Instance()->unbindVertexArray();
+
+    Engine::Instance()->setControl(&gCamera);
+
+   //   Init Cube Material
+    {
+        gMaterial.setAmbient({1.0f, 0.5f, 0.31f});
+        gMaterial.setDiffuse({1.0f, 0.5f, 0.31f});
+        gMaterial.setSpecular({0.5f, 0.5f, 0.5f});
+        gMaterial.setShininess(64.0f);
+
+        gContainerTex_D = TexMgr::Instance()->createTexture("container2.png", RenderProtocol::TexType::Texture2D);
+        gContainerTex_S = TexMgr::Instance()->createTexture("container2_specular.png", RenderProtocol::TexType::Texture2D);
+
+        gMaterial.setDiffuseTex(gContainerTex_D);
+        gMaterial.setSpecularTex(gContainerTex_S);
+    }
+
+    //  Init Point Light
+    {
+        gPointLight.setPosition({1.2f, 1.0f, 2.0f});
+        gPointLight.setAmbient({0.2f, 0.2f, 0.2f});
+        gPointLight.setDiffuse({0.5f, 0.5f, 0.5f});
+        gPointLight.setSpecular({1.0f, 1.0f, 1.0f});
+    }
+
+    //  Init Dir Light
+    {
+        gDirLight.setDirection({-0.2f, -1.0f, -0.3f});
+        gDirLight.setAmbient({0.2f, 0.2f, 0.2f});
+        gDirLight.setDiffuse({0.5f, 0.5f, 0.5f});
+        gDirLight.setSpecular({1.0f, 1.0f, 1.0f});
+    }
+
+    //  Init Spot Light
+    {
+        gSpotLight.setPosition(gCamera.getPosition());
+        gSpotLight.setDirection(gCamera.getFront());
+        gSpotLight.setAmbient({0.2f, 0.2f, 0.2f});
+        gSpotLight.setDiffuse({0.5f, 0.5f, 0.5f});
+        gSpotLight.setSpecular({1.0f, 1.0f, 1.0f});
+    }
+}
+
+void HelloCube02::shutdown()               
+{
+    Engine::Instance()->setControl(nullptr);
+
+    RenderSystem::Instance()->destroyTexture(gContainerTex_D);
+    gContainerTex_D = nullptr;
+    RenderSystem::Instance()->destroyTexture(gContainerTex_S);
+    gContainerTex_S = nullptr;
+
+    RenderSystem::Instance()->destroyBuffer(gVertexBuffer);
+    gVertexBuffer = nullptr;
+    RenderSystem::Instance()->destroyIndexBuffer(gIndexBuffer);
+    gIndexBuffer = nullptr;
+    RenderSystem::Instance()->destroyVertexArray(gVertexArrayObject);
+    gVertexArrayObject = nullptr;
+
+   RenderSystem::Instance()->destroyShaderProgram(gShaderProgram);
+   gShaderProgram = nullptr;
+}
