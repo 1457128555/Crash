@@ -23,7 +23,9 @@ struct PointLight
     vec4 diffuse;
     vec4 specular;
 };
-uniform PointLight uPointLight;
+
+#define NR_POINT_LIGHTS 4
+uniform PointLight uPointLight[NR_POINT_LIGHTS];
 
 struct DirLight 
 {
@@ -66,24 +68,27 @@ void main()
     vec3 result = vec3(0.0);  
 
     // Point Light Calculation
+    for(int i = 0; i < NR_POINT_LIGHTS; ++i)
     {
+        PointLight curPointLight = uPointLight[i];
+
         // diffuse 
         vec3 norm = normalize(oWorldNor.xyz);
-        vec3 lightDir = normalize(uPointLight.position.xyz - oWorldPos.xyz);
+        vec3 lightDir = normalize(curPointLight.position.xyz - oWorldPos.xyz);
         float diff = max(dot(norm, lightDir), 0.0);
-        vec3 diffuse = diff * uPointLight.diffuse.rgb * diffuseColor;
+        vec3 diffuse = diff * curPointLight.diffuse.rgb * diffuseColor;
 
         // specular
         vec3 viewDir = normalize(uCameraWorldPos.xyz - oWorldPos.xyz);
         vec3 reflectDir = reflect(-lightDir, norm);  
         float spec = pow(max(dot(viewDir, reflectDir), 0.0), specularStrength);
-        vec3 specular = spec * uPointLight.specular.rgb * specularColor;  
+        vec3 specular = spec * curPointLight.specular.rgb * specularColor;  
 
         // attenuation
-        float distance = length(uPointLight.position.xyz - oWorldPos.xyz);
-        float attenuation = 1.0 / (uPointLight.attenuation.x + 
-                                   uPointLight.attenuation.y * distance + 
-                                   uPointLight.attenuation.z * distance * distance);
+        float distance = length(curPointLight.position.xyz - oWorldPos.xyz);
+        float attenuation = 1.0 / (curPointLight.attenuation.x + 
+                                   curPointLight.attenuation.y * distance + 
+                                   curPointLight.attenuation.z * distance * distance);
 
         result += (diffuse + specular) * attenuation;
     }

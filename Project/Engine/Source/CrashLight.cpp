@@ -5,44 +5,52 @@
 
 namespace Crash
 {
-    void Light::apply(const ShaderProgram* program) const
+    std::string Light::getUniformName(const int lightIndex) const
     {
-        RenderSystem::Instance()->setUniform4f(program, getType() + ".ambient",  mAmbient);
-        RenderSystem::Instance()->setUniform4f(program, getType() + ".diffuse",  mDiffuse);
-        RenderSystem::Instance()->setUniform4f(program, getType() + ".specular", mSpecular);
+        if(lightIndex == -1)
+            return getType();
+        else
+            return getType() + "[" + std::to_string(lightIndex) + "]";
     }
 
-    void PointLight::apply(const ShaderProgram* program) const
+    void Light::apply(const ShaderProgram* program, int lightIndex) const
+    {
+        RenderSystem::Instance()->setUniform4f(program, getUniformName(lightIndex) + ".ambient",  mAmbient);
+        RenderSystem::Instance()->setUniform4f(program, getUniformName(lightIndex) + ".diffuse",  mDiffuse);
+        RenderSystem::Instance()->setUniform4f(program, getUniformName(lightIndex) + ".specular", mSpecular);
+    }
+
+    void PointLight::apply(const ShaderProgram* program, int lightIndex) const
     {
         assert(program != nullptr && "ShaderProgram is null!");
         if (!program) return;
 
-        Light::apply(program);
+        Light::apply(program, lightIndex);
 
-        RenderSystem::Instance()->setUniform4f(program, "uPointLight.position",      mPosition);
-        RenderSystem::Instance()->setUniform4f(program, "uPointLight.attenuation",   mAttenuation);
+        RenderSystem::Instance()->setUniform4f(program, getUniformName(lightIndex) + ".position",    mPosition);
+        RenderSystem::Instance()->setUniform4f(program, getUniformName(lightIndex) + ".attenuation", mAttenuation);
     }
 
-    void DirLight::apply(const ShaderProgram* program) const
+    void DirLight::apply(const ShaderProgram* program, int lightIndex) const
     {
         assert(program != nullptr && "ShaderProgram is null!");
         if (!program) return;
 
-        Light::apply(program);
+        Light::apply(program, lightIndex);
 
-        RenderSystem::Instance()->setUniform4f(program, "uDirLight.direction", mDirection);
+        RenderSystem::Instance()->setUniform4f(program, getUniformName(lightIndex) + ".direction", mDirection);
     }
 
-    void SpotLight::apply(const ShaderProgram* program) const
+    void SpotLight::apply(const ShaderProgram* program, int lightIndex) const
     {
         assert(program != nullptr && "ShaderProgram is null!");
         if (!program) return;
 
-        Light::apply(program);
+        Light::apply(program, lightIndex);
 
-        RenderSystem::Instance()->setUniform4f(program, "uSpotLight.position",   mPosition);
-        RenderSystem::Instance()->setUniform4f(program, "uSpotLight.direction",  mDirection);
-        RenderSystem::Instance()->setUniform4f(program, "uSpotLight.attenuation", mAttenuation);
-        RenderSystem::Instance()->setUniform4f(program, "uSpotLight.cutOff",      mCutOff);
+        RenderSystem::Instance()->setUniform4f(program, getUniformName(lightIndex) + ".position",   mPosition);
+        RenderSystem::Instance()->setUniform4f(program, getUniformName(lightIndex) + ".direction",  mDirection);
+        RenderSystem::Instance()->setUniform4f(program, getUniformName(lightIndex) + ".attenuation", mAttenuation);
+        RenderSystem::Instance()->setUniform4f(program, getUniformName(lightIndex) + ".cutOff",      mCutOff);
     }
 }

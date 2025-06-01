@@ -63,6 +63,13 @@ float cubeVertices[] = {
         glm::vec3(-1.3f,  1.0f, -1.5f)
     };
 
+    glm::vec3 pointLightPositions[] = {
+        glm::vec3( 0.7f,  0.2f,  2.0f),
+        glm::vec3( 2.3f, -3.3f, -4.0f),
+        glm::vec3(-4.0f,  2.0f, -12.0f),
+        glm::vec3( 0.0f,  0.0f, -3.0f)
+    };
+
     ShaderProgram*      gLightProgram       = nullptr;
     ShaderProgram*      gShaderProgram      = nullptr;
     VertexArrayObject*  gVertexArrayObject  = nullptr;
@@ -74,9 +81,9 @@ float cubeVertices[] = {
     Texture*            gContainerTex_S     = nullptr;
 
     Material            gMaterial;
-    PointLight          gPointLight;
     DirLight            gDirLight;
     SpotLight           gSpotLight;
+    std::array<PointLight, 4> gPointLight;
 }
 
 HelloCube02::HelloCube02() : Scene("HelloCube02")
@@ -89,12 +96,6 @@ void HelloCube02::update(float deltaTime)
     float time = (float)Engine::Instance()->getExecuteTime();
     float radius = 3.0f;      
     float speed = 0.3f;       
-
-    float lightX = sin(time * speed) * radius;
-    float lightZ = cos(time * speed) * radius;
-    float lightY = sin(time * speed * 0.7f) * radius * 0.5f; 
-
-    gPointLight.setPosition({lightX, lightY, lightZ});
 
     gSpotLight.setPosition(gCamera.getPosition());
     gSpotLight.setDirection(gCamera.getFront());
@@ -109,23 +110,26 @@ void HelloCube02::renderScene()
         RenderSystem::Instance()->bindVertexArray(gVertexArrayObject);
         RenderSystem::Instance()->bindShaderProgram(gLightProgram);
 
-        glm::mat4 model = glm::translate(glm::mat4(1.f), glm::vec3(gPointLight.getPosition()));
-        model = glm::scale(model, glm::vec3(0.1f)); 
-        RenderSystem::Instance()->setUniformMatrix4fv(gLightProgram, "uModel", model);
-
         glm::mat4 view = gCamera.getViewMat();
         RenderSystem::Instance()->setUniformMatrix4fv(gLightProgram, "uView", view);
-    
+        
         glm::mat4 projection = gCamera.getProjectionMat(Engine::Instance()->getAspect());
         RenderSystem::Instance()->setUniformMatrix4fv(gLightProgram, "uProjection", projection);
-
+        
         RenderSystem::Instance()->setUniform4f(gLightProgram, "uCameraWorldPos", glm::vec4(gCamera.getPosition(), 1.0f));
+        
+        for(auto &&pointLight : gPointLight)
+        {
+            glm::mat4 model = glm::translate(glm::mat4(1.f), glm::vec3(pointLight.getPosition()));
+            model = glm::scale(model, glm::vec3(0.1f)); 
+            RenderSystem::Instance()->setUniformMatrix4fv(gLightProgram, "uModel", model);
 
-        gPointLight.apply(gLightProgram);
+            pointLight.apply(gLightProgram);
 
-        int indexCount = sizeof(cubeIndices) / sizeof(unsigned int);
-        RenderSystem::Instance()->drawElements(RenderProtocol::DrawMode::Triangles, 
-            indexCount, RenderProtocol::DrawElementType::UnsignedInt, 0);
+            int indexCount = sizeof(cubeIndices) / sizeof(unsigned int);
+            RenderSystem::Instance()->drawElements(RenderProtocol::DrawMode::Triangles, 
+                indexCount, RenderProtocol::DrawElementType::UnsignedInt, 0);
+        }
 
         RenderSystem::Instance()->unbindShaderProgram();
         RenderSystem::Instance()->unbindVertexArray();
@@ -172,7 +176,9 @@ void HelloCube02::renderScene()
         RenderSystem::Instance()->setUniform4f(gShaderProgram, "uCameraWorldPos", glm::vec4(gCamera.getPosition(), 1.0f));
 
         gMaterial.apply(gShaderProgram);
-        gPointLight.apply(gShaderProgram);
+        for(int i = 0; i < 4; ++i)
+            gPointLight[i].apply(gShaderProgram, i);
+        
         gDirLight.apply(gShaderProgram);
         gSpotLight.apply(gShaderProgram);
 
@@ -239,11 +245,12 @@ void HelloCube02::initialize()
     }
 
     //  Init Point Light
+    for(int i = 0; i < gPointLight.size(); ++i)
     {
-        gPointLight.setPosition({1.2f, 1.0f, 2.0f});
-        gPointLight.setAmbient({0.2f, 0.2f, 0.2f});
-        gPointLight.setDiffuse({0.5f, 0.5f, 0.5f});
-        gPointLight.setSpecular({1.0f, 1.0f, 1.0f});
+        gPointLight[i].setPosition(pointLightPositions[i]);
+        gPointLight[i].setAmbient({0.2f, 0.2f, 0.2f});
+        gPointLight[i].setDiffuse({0.5f, 0.5f, 0.5f});
+        gPointLight[i].setSpecular({1.0f, 1.0f, 1.0f});
     }
 
     //  Init Dir Light
