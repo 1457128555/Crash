@@ -213,7 +213,6 @@ namespace Crash
 
         CheckGLError("GLAD initialization");
 
-        // 查询并输出 OpenGL 相关信息
         const char* glVersion   = reinterpret_cast<const char*>(glGetString(GL_VERSION));
         const char* glslVersion = reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION));
         const char* glVendor    = reinterpret_cast<const char*>(glGetString(GL_VENDOR));

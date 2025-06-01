@@ -29,21 +29,17 @@ namespace Crash
             dx *= mSensitivity;
             dy *= mSensitivity;
 
-            // 更新欧拉角
             mYaw   += float(dx);
-            mPitch -= float(dy); // 注意y轴通常反向
+            mPitch -= float(dy); 
 
-            // 限制俯仰角，防止翻转
             if (mPitch > 89.0f)  mPitch = 89.0f;
             if (mPitch < -89.0f) mPitch = -89.0f;
 
-            // 计算新的前向量
             mFront.x = cos(glm::radians(mYaw)) * cos(glm::radians(mPitch));
             mFront.y = sin(glm::radians(mPitch));
             mFront.z = sin(glm::radians(mYaw)) * cos(glm::radians(mPitch));
             mFront = glm::normalize(mFront);
 
-            // 重新计算右向量和上向量
             glm::vec3 worldUp = glm::vec3(0.0f, 1.0f, 0.0f);
             mRight = glm::normalize(glm::cross(mFront, worldUp));
             mUp    = glm::normalize(glm::cross(mRight, mFront));

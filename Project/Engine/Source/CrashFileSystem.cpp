@@ -21,7 +21,7 @@ namespace Crash
                 default:    break; 
             }
             assert(false && "Invalid number of channels for texture format");
-            return RenderProtocol::TexFormat::RGBA; // 默认安全值
+            return RenderProtocol::TexFormat::RGBA; 
         }
 
         bool dynamicRead(const std::string& path, std::string& data)
@@ -70,14 +70,13 @@ namespace Crash
 
         while (std::getline(file, line))
         {
-            // 检查是否是注释
             {
                 std::string trimmed = line;
-                // 去除前导空格
+
                 trimmed.erase(0, trimmed.find_first_not_of(" \t"));
                 if (trimmed.rfind("//", 0) == 0)
                 {
-                    result += line + "\n"; // 普通行直接拼接
+                    result += line + "\n"; 
                     continue;
                 }
             }
@@ -91,7 +90,7 @@ namespace Crash
                     std::string includeSrc = ReadShader(includeFile);
                     if (!includeSrc.empty())
                     {
-                        result += includeSrc; // 插入 include 文件内容
+                        result += includeSrc; 
                     }
                     else
                     {
@@ -101,7 +100,7 @@ namespace Crash
             }
             else
             {
-                result += line + "\n"; // 普通行直接拼接
+                result += line + "\n"; 
             }
         }
 

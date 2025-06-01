@@ -109,8 +109,8 @@ int main()
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
-    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;   // 启用 Docking
-    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // 启用多视口（多窗口）    
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;   //  Docking
+    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; //  Viewports    
     ImGui::StyleColorsDark();
 
     ImGui_ImplGlfw_InitForOpenGL(sWindow, true);
@@ -143,7 +143,6 @@ int main()
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-        // 5. 处理多视口/平台窗口
         if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
         {
             GLFWwindow* backup_current_context = glfwGetCurrentContext();

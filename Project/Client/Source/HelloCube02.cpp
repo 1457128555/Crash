@@ -14,48 +14,40 @@ using namespace Crash;
 
 namespace
 {
-    // 6个面，每面4个顶点，共24个顶点，带法线
 float cubeVertices[] = {
-    // 前面 (z+)
     -0.5f, -0.5f,  0.5f,    0.0f,  0.0f,  1.0f,  0.0f, 0.0f,
      0.5f, -0.5f,  0.5f,    0.0f,  0.0f,  1.0f,  1.0f, 0.0f,
      0.5f,  0.5f,  0.5f,    0.0f,  0.0f,  1.0f,  1.0f, 1.0f,
     -0.5f,  0.5f,  0.5f,    0.0f,  0.0f,  1.0f,  0.0f, 1.0f,
-    // 后面 (z-) 
     -0.5f, -0.5f, -0.5f,    0.0f,  0.0f, -1.0f,  1.0f, 0.0f,
      0.5f, -0.5f, -0.5f,    0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
      0.5f,  0.5f, -0.5f,    0.0f,  0.0f, -1.0f,  0.0f, 1.0f,
     -0.5f,  0.5f, -0.5f,    0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
-    // 左面 (x-) 
     -0.5f, -0.5f, -0.5f,   -1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
     -0.5f, -0.5f,  0.5f,   -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
     -0.5f,  0.5f,  0.5f,   -1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
     -0.5f,  0.5f, -0.5f,   -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-    // 右面 (x+)  
      0.5f, -0.5f, -0.5f,    1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
      0.5f, -0.5f,  0.5f,    1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
      0.5f,  0.5f,  0.5f,    1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
      0.5f,  0.5f, -0.5f,    1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
-    // 上面 (y+)  
     -0.5f,  0.5f,  0.5f,    0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
      0.5f,  0.5f,  0.5f,    0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
      0.5f,  0.5f, -0.5f,    0.0f,  1.0f,  0.0f,  1.0f, 1.0f,
     -0.5f,  0.5f, -0.5f,    0.0f,  1.0f,  0.0f,  0.0f, 1.0f,
-    // 下面 (y-) 
     -0.5f, -0.5f,  0.5f,    0.0f, -1.0f,  0.0f,  1.0f, 1.0f,
      0.5f, -0.5f,  0.5f,    0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
      0.5f, -0.5f, -0.5f,    0.0f, -1.0f,  0.0f,  0.0f, 0.0f,
     -0.5f, -0.5f, -0.5f,    0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
 };
 
-    // 每面2个三角形，共12个面
     unsigned int cubeIndices[] = {
-        0,   1,  2,  2,  3,  0,       // 前
-        4,   5,  6,  6,  7,  4,       // 后
-        8,   9, 10, 10, 11,  8,       // 左
-        12, 13, 14, 14, 15, 12,       // 右
-        16, 17, 18, 18, 19, 16,       // 上
-        20, 21, 22, 22, 23, 20        // 下
+        0,   1,  2,  2,  3,  0,       
+        4,   5,  6,  6,  7,  4,       
+        8,   9, 10, 10, 11,  8,       
+        12, 13, 14, 14, 15, 12,       
+        16, 17, 18, 18, 19, 16,       
+        20, 21, 22, 22, 23, 20        
     };
 
     std::vector<glm::vec3> cubePositions = {
@@ -95,13 +87,12 @@ HelloCube02::HelloCube02() : Scene("HelloCube02")
 void HelloCube02::update(float deltaTime)
 {
     float time = (float)Engine::Instance()->getExecuteTime();
-    float radius = 3.0f;      // 旋转半径
-    float speed = 0.3f;       // 旋转速度（弧度/秒）
+    float radius = 3.0f;      
+    float speed = 0.3f;       
 
-    // 让Y轴也随时间变化，实现空间轨迹
     float lightX = sin(time * speed) * radius;
     float lightZ = cos(time * speed) * radius;
-    float lightY = sin(time * speed * 0.7f) * radius * 0.5f; // Y轴也变化，轨迹为3D圆环
+    float lightY = sin(time * speed * 0.7f) * radius * 0.5f; 
 
     gPointLight.setPosition({lightX, lightY, lightZ});
 
@@ -119,7 +110,7 @@ void HelloCube02::renderScene()
         RenderSystem::Instance()->bindShaderProgram(gLightProgram);
 
         glm::mat4 model = glm::translate(glm::mat4(1.f), glm::vec3(gPointLight.getPosition()));
-        model = glm::scale(model, glm::vec3(0.1f)); // 缩小点光源的大小
+        model = glm::scale(model, glm::vec3(0.1f)); 
         RenderSystem::Instance()->setUniformMatrix4fv(gLightProgram, "uModel", model);
 
         glm::mat4 view = gCamera.getViewMat();
@@ -146,7 +137,7 @@ void HelloCube02::renderScene()
         RenderSystem::Instance()->bindShaderProgram(gLightProgram);
 
         glm::mat4 model = glm::translate(glm::mat4(1.f), -50.f * glm::vec3(gDirLight.getDirection()));
-        model = glm::scale(model, glm::vec3(4.f)); // 缩小点光源的大小
+        model = glm::scale(model, glm::vec3(4.f)); 
         RenderSystem::Instance()->setUniformMatrix4fv(gLightProgram, "uModel", model);
 
         glm::mat4 view = gCamera.getViewMat();

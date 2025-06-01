@@ -36,7 +36,7 @@ namespace Crash
 
     private:    
         glm::vec4 mPosition      = { 0.f, 0.f, 0.f, 1.f }; 
-        glm::vec4 mAttenuation   = { 1.f, 0.09f, 0.032f, 0.f}; //衰减系数，1.0f为无衰减，0.09f为线性衰减，0.032f为二次衰减
+        glm::vec4 mAttenuation   = { 1.f, 0.09f, 0.032f, 0.f}; 
     };
 
     class CRASH_ENGINE_API DirLight : public Light
@@ -65,7 +65,7 @@ namespace Crash
     private:
         glm::vec4 mPosition         = { 0.f, 0.f, 0.f, 1.f };      
         glm::vec4 mDirection        = { 0.f, -1.f, 0.f, 0.f };   
-        glm::vec4 mAttenuation      = { 1.f, 0.09f, 0.032f, 0.f}; //衰减系数，1.0f为无衰减，0.09f为线性衰减，0.032f为二次衰减
+        glm::vec4 mAttenuation      = { 1.f, 0.09f, 0.032f, 0.f}; 
         glm::vec4 mCutOff           = { glm::cos(glm::radians(12.5f)), glm::cos(glm::radians(17.5f)), 0.f, 0.f }; 
     };
 
