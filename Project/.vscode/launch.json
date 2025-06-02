@@ -9,7 +9,7 @@
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
             "preLaunchTask": "CMake Build",  
-            "stopAtEntry": false
+            "stopAtEntry": false,
             "visualizerFile": "${workspaceFolder}/DEP/GLM/util/glm.natvis"
         },
         {
