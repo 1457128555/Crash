@@ -3,8 +3,6 @@ plugins {
     alias(libs.plugins.kotlin.android)
 }
 
-buildDir = file("C:/Users/14571.FAN/Desktop/Test/Crash/Project/build")
-
 android {
     namespace = "com.example.runtime"
     compileSdk = 35

@@ -15,4 +15,6 @@ target_link_libraries(CrashEngine PUBLIC
     CrashRender
 )
 
+target_link_libraries(CrashEngine PRIVATE assimp)
+
 #target_compile_definitions(CrashEngine PRIVATE CRASH_ENGINE_EXPORTS)
