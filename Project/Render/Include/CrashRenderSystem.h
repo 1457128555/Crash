@@ -81,11 +81,14 @@ namespace Crash
 
 
 
+        void setReverseZ(bool reverseZ) { mReverseZ = reverseZ; }
+        bool getReverseZ() const { return mReverseZ; }
 
     private:
         void*   mProcAddress    = nullptr;
         bool    mAsyncRender    = false;
         bool    mInit           = false;
+        bool    mReverseZ       = false;
 
         std::mutex mQueueMutex;
         std::vector<std::pair<unsigned int, void*>> mCommandQueue[3];

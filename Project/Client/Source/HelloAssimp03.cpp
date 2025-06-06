@@ -6,7 +6,7 @@
 #include "CrashCamera.h"
 #include "CrashModel.h"
 #include "CrashFileSystem.h"
-#include "crashlight.h"
+#include "CrashLight.h"
 
 using namespace Crash;
 

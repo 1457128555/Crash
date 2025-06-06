@@ -14,7 +14,7 @@ namespace Crash
 #ifdef _WIN32
                 , mSource("#version 330 core\n" + source)
 #else
-                , mSource("#version 300 es\nprecision mediump float;\n" + source)
+                , mSource("#version 300 es\nprecision highp float;\n" + source)
 #endif
                 , mID(RenderCommand::CreateShader(type, mSource))
             {

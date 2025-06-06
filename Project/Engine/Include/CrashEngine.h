@@ -51,6 +51,8 @@ namespace Crash
         bool getClose() const { return mClose; }
 
         float getAspect() const { return float(mConfig.windowWidth) / float(mConfig.windowHeight); };
+
+        bool isReverseZ() const { return mReverseZ; }
     private:
         const EngineConfig mConfig;
         
@@ -62,5 +64,6 @@ namespace Crash
 
         std::thread mRenderThread;
 
+        bool    mReverseZ = false;      // 反转深度 - 消除z-fighting问题
     };
 }

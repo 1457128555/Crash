@@ -27,6 +27,7 @@ namespace Crash
         LogManager::Instance()->log(msg);
 
         new RenderSystem(config.procAddress, config.asyncRender);
+        RenderSystem::Instance()->setReverseZ(mReverseZ);
 
         if(mConfig.asyncRender)
         {

@@ -23,6 +23,7 @@ namespace Crash
 
         static void SetClearDepth(float depth);
 
+        static void SetDetphFunc(RenderProtocol::CompareFunc func);
 
         static void Clear(RenderProtocol::ClearFlag flag = RenderProtocol::ClearFlag::All);
 

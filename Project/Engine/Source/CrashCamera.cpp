@@ -3,6 +3,7 @@
 
 #include "CrashInputMgr.h"
 
+#include "CrashEngine.h"
 namespace Crash
 {
     glm::mat4 Camera::getViewMat() const
@@ -13,7 +14,18 @@ namespace Crash
     glm::mat4 Camera::getProjectionMat(float aspect) const
     {
         if(mType == ProjectionType::Perspective)
-            return glm::perspective(glm::radians(mFov), aspect, mNearPlane, mFarPlane);
+        {
+            if(Engine::Instance()->isReverseZ())
+            {
+                // 反转Z轴
+                return glm::perspective(glm::radians(mFov), aspect, mFarPlane, mNearPlane);
+            }
+            else
+            {
+                // 正常Z轴
+                return glm::perspective(glm::radians(mFov), aspect, mNearPlane, mFarPlane);
+            }
+        }
         
         assert(false);
         return glm::mat4(1.f);
@@ -58,7 +70,7 @@ namespace Crash
             if(InputMgr::Instance()->isKeyDown(InputMgr::KeyCode::KEY_A))
                 dir -= mRight;
         
-            glm::normalize(dir);
+            //  glm::normalize(dir);
             mPos += dir * mMoveSpeed * deltaT;
         }
     }

@@ -141,5 +141,17 @@ namespace Crash
             assert(false && "Invalid texture format");
             return 4; // Default to RGBA
         }
+
+        enum class CompareFunc : unsigned int
+        {
+            Never          = 0x1,
+            Always         = 0x2,
+            Less           = 0x3,
+            LessEqual      = 0x4,
+            Equal          = 0x5,
+            GreaterEqual   = 0x6,
+            Greater        = 0x7,
+            NotEqual       = 0x8,
+        };
     }; 
 }

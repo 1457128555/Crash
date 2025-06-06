@@ -1,6 +1,7 @@
 #include "CrashPCH.h"
 #include "CrashRenderCommand.h"
 
+#include "CrashRenderSystem.h"
 #include <glad/glad.h>
 
 namespace Crash
@@ -15,6 +16,22 @@ namespace Crash
             {
                 assert(err != GL_NO_ERROR && "OpenGL error occurred!");
                 LogManager::Instance()->log("OpenGL Error: " + std::to_string(err) + " - " + msg);
+            }
+        }
+
+        GLenum GetCompareFunc(RenderProtocol::CompareFunc func)
+        {
+            switch (func)
+            {
+                case RenderProtocol::CompareFunc::Never:         return GL_NEVER;
+                case RenderProtocol::CompareFunc::Always:        return GL_ALWAYS;
+                case RenderProtocol::CompareFunc::Less:          return GL_LESS;
+                case RenderProtocol::CompareFunc::LessEqual:     return GL_LEQUAL;
+                case RenderProtocol::CompareFunc::Equal:         return GL_EQUAL;
+                case RenderProtocol::CompareFunc::GreaterEqual:  return GL_GEQUAL;
+                case RenderProtocol::CompareFunc::Greater:       return GL_GREATER;
+                case RenderProtocol::CompareFunc::NotEqual:      return GL_NOTEQUAL;
+                default: assert(false && "Invalid compare function"); return 0;
             }
         }
 
@@ -225,9 +242,20 @@ namespace Crash
 
         //SetViewport({0, 0, 1280, 720});
         SetClearColor({0.2f, 0.3f, 0.3f, 1.0f});
-        SetDepthEnable(true);
         SetCullFaceEnable(true);
-        SetClearDepth(1.f);
+ 
+        SetDepthEnable(true);
+        if(RenderSystem::Instance()->getReverseZ())
+        {
+            SetDetphFunc(RenderProtocol::CompareFunc::Greater);
+            SetClearDepth(0.f);
+        }
+        else
+        {
+
+            SetDetphFunc(RenderProtocol::CompareFunc::Less);
+            SetClearDepth(1.f);
+        }
         
         return true;
     }
@@ -295,6 +323,12 @@ namespace Crash
         glClearDepthf(depth);
 #endif
         CheckGLError("SetClearDepth");
+    }
+
+    void RenderCommand::SetDetphFunc(RenderProtocol::CompareFunc func)
+    {
+        glDepthFunc(GetCompareFunc(func));
+        CheckGLError("SetDetphFunc");
     }
 
     unsigned int RenderCommand::CreateShader(RenderProtocol::ShaderType type, const std::string& source)
