@@ -22,5 +22,26 @@
             "preLaunchTask": "CMake Build",  
             "stopAtEntry": false
         },
+         {
+            "name": "Release CrashRuntime",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/Client/Runtime/Windows/Release/CrashRuntime.exe",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "preLaunchTask": "CMake Build",  
+            "stopAtEntry": false,
+            "visualizerFile": "${workspaceFolder}/DEP/GLM/util/glm.natvis"
+        },
+        {
+            "name": "Release CrashEditor",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/Client/Editor/Release/CrashEditor.exe",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "preLaunchTask": "CMake Build",  
+            "stopAtEntry": false
+        },
     ]
 }

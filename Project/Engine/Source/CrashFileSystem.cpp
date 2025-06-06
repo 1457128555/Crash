@@ -23,37 +23,19 @@ namespace Crash
             assert(false && "Invalid number of channels for texture format");
             return RenderProtocol::TexFormat::RGBA; 
         }
-
-        bool dynamicRead(const std::string& path, std::string& data)
-        {
-#ifdef __ANDROID__
-            if (FileSystem::sAndroidRead)
-                return FileSystem::sAndroidRead(path, data);
-#else
-            std::ifstream file(path, std::ios::binary);
-            if (file.is_open())
-            {
-                data = std::string((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-                file.close();
-                return true;
-            }
-#endif  
-            return false;
-        }
     }
 
     std::string FileSystem::ReadFile(const std::string& filePath)
     {
-#ifdef __ANDROID__
-        std::string fullPath = filePath;
-#else
         std::string fullPath = Engine::Instance()->getAssetPath() + filePath;
-#endif
 
         std::string data;
-        if (!dynamicRead(fullPath, data))
+        std::ifstream file(fullPath, std::ios::binary);
+        if (!file.is_open())
             LogManager::Instance()->log("Failed to open file: " + fullPath);
 
+        data = std::string((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+        file.close();
         return data;
     }
 

@@ -15,9 +15,10 @@ namespace Crash
         TexMgr()  = default;
         ~TexMgr() = default;
 
-        Texture* createTexture(const std::string& name, RenderProtocol::TexType type);
+        std::shared_ptr<Texture> createTexture(const std::string& name, RenderProtocol::TexType type);
         void destroyTexture(Texture* texture);
-    private:
 
+    private:
+        std::unordered_map<std::string, std::weak_ptr<Texture>> mTexCache;
     };
 } // namespace Crash

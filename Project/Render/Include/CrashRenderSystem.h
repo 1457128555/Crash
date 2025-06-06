@@ -28,6 +28,7 @@ namespace Crash
 
         void frameBegin();
         void frameEnd();
+        void setClearColor(const glm::vec4& color);
         void setViewport(const glm::ivec4& viewport);
         void clear(RenderProtocol::ClearFlag flag = RenderProtocol::ClearFlag::All);
 

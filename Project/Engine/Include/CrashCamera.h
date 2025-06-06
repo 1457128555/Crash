@@ -28,7 +28,7 @@ namespace Crash
         float mMoveSpeed = 2.f;
         float mSensitivity = 0.1f;
 
-        float mNearPlane = 0.1f;
+        float mNearPlane = 1.f;
         float mFarPlane  = 100.f;
 
         float mYaw = -90.0f;   // 初始朝向 -Z

@@ -14,6 +14,7 @@ namespace Crash
             FrameBegin = 0,
             FrameEnd,
             Clear,
+            SetClearColor,
             SetViewport, 
 
             CreateShaderProgram,
@@ -177,6 +178,14 @@ namespace Crash
             mCommandQueue[0].push_back({ (unsigned int)_CommandType::Clear, (void*)(new RenderProtocol::ClearFlag(flag)) });
         else
             RenderCommand::Clear(flag);
+    }
+
+    void RenderSystem::setClearColor(const glm::vec4& color)
+    {
+        if(mAsyncRender)
+            mCommandQueue[0].push_back({ (unsigned int)_CommandType::SetClearColor, new glm::vec4(color) });
+        else
+            RenderCommand::SetClearColor(color);
     }
 
     void RenderSystem::setViewport(const glm::ivec4& viewport)
@@ -780,6 +789,13 @@ namespace Crash
                 {
                     RenderCommand::Clear(*(RenderProtocol::ClearFlag*)cmdData);
                     delete (RenderProtocol::ClearFlag*)cmdData;
+                }
+                break;
+                case _CommandType::SetClearColor:
+                {
+                    glm::vec4* color = (glm::vec4*)cmdData;
+                    RenderCommand::SetClearColor(*color);
+                    delete color;
                 }
                 break;
                 case _CommandType::SetViewport:

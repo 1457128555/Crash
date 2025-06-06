@@ -18,8 +18,11 @@ namespace Crash
         static void SetClearColor(const glm::vec4& color);
 
         static void SetDepthEnable(bool enable);
+        
+        static void SetCullFaceEnable(bool enable);
 
         static void SetClearDepth(float depth);
+
 
         static void Clear(RenderProtocol::ClearFlag flag = RenderProtocol::ClearFlag::All);
 

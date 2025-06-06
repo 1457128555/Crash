@@ -19,14 +19,24 @@ namespace Crash
         {
             RenderSystem::Instance()->setUniform1i(program, "uDiffuseTex", 0);
             RenderSystem::Instance()->activateTextureUnit(0);
-            RenderSystem::Instance()->bindTexture(mDiffuseTex);
+            RenderSystem::Instance()->bindTexture(mDiffuseTex.get());
         }
 
         if(mSpecularTex)
         {
             RenderSystem::Instance()->setUniform1i(program, "uSpecularTex", 1);
             RenderSystem::Instance()->activateTextureUnit(1);
-            RenderSystem::Instance()->bindTexture(mSpecularTex);
+            RenderSystem::Instance()->bindTexture(mSpecularTex.get());
         }
+    }
+
+    void Material::reset()
+    {
+        mAmbient    = {0.f, 0.f, 0.f, 1.f};
+        mDiffuse    = {0.f, 0.f, 0.f, 1.f};
+        mSpecular   = {0.f, 0.f, 0.f, 1.f}; // W:shininess
+
+        mDiffuseTex.reset();
+        mSpecularTex.reset();
     }
 }

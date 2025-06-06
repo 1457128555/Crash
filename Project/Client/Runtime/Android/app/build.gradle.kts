@@ -59,9 +59,3 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }
-
-tasks.whenTaskAdded {
-    if (name == "assembleDebug" || name == "assembleRelease") {
-        dependsOn("clean")
-    }
-}

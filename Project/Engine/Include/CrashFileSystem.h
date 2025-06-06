@@ -14,7 +14,7 @@ namespace Crash
 
        static unsigned char* ReadImage(const std::string& filePath, int& width, int& height, RenderProtocol::TexFormat& fmt);
        static void FreeImage(unsigned char* data);
-    
-       static inline bool(*sAndroidRead)(const std::string& path, std::string& data) = nullptr;
+
+       static inline std::string sExternalDir = "";
     };
 }

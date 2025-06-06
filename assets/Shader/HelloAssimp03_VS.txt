@@ -1,0 +1,22 @@
+//  HelloAssimp03_VS
+
+#include "CommonUniforms_VS.txt"
+
+layout (location = 0) in vec3 vPos;
+layout (location = 1) in vec3 vNormal; 
+layout (location = 2) in vec2 vTexCoord; 
+
+out vec4 oWorldPos;
+out vec4 oWorldNor;
+out vec4 oTexCoord; 
+
+void main()
+{
+    gl_Position = uProjection * uView * uModel * vec4(vPos, 1.0);
+
+    oWorldPos = uModel * vec4(vPos, 1.0);
+    oWorldNor.xyz = mat3(transpose(inverse(uModel))) * vNormal;  
+    oWorldNor.w = 0.f;
+
+    oTexCoord = vec4(vTexCoord, 0.f, 1.f);
+}

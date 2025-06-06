@@ -8,6 +8,9 @@ namespace Crash
     class Texture
     {
         friend class RenderSystem;
+    public:
+        const std::string&          getName()               const { return mName; }
+
     protected:
         Texture(const std::string& name, RenderProtocol::TexType type);
         virtual ~Texture();
@@ -17,7 +20,6 @@ namespace Crash
         void                        unbind()                const;
         unsigned int                getID()                 const { return mID; }
         RenderProtocol::TexType     getType()               const { return mType; }
-        const std::string&          getName()               const { return mName; }
         int                         getWidth()              const { return mWidth; }
         int                         getHeight()             const { return mHeight; }
         RenderProtocol::TexFormat   getFormat()             const { return mFormat; }
@@ -40,18 +42,3 @@ namespace Crash
         bool                        mGenerateMipmap = true;
     };
 }
-
-
-
-
-//     class CRASH_ENGINE_API Texture2D : public Texture
-//     {
-//     public:
-//         explicit Texture2D(const std::string& texName);
-        
-//     private:
-//         const std::string mTexName = "Texture2D";
-//         int               mWidth     = 0;
-//         int               mHeight    = 0;
-//     };
-// }

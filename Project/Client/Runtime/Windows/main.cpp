@@ -7,7 +7,7 @@
 
 #include "CrashRenderProtocol.hpp"
 
-#include "HelloCube02.h"
+#include "HelloAssimp03.h"
 
 using namespace Crash;
 
@@ -97,7 +97,7 @@ int main()
     config.swapBuffer           = []() { glfwSwapBuffers(sWindow); };
 
     new Crash::Engine(config);
-    sScene = new HelloCube02();
+    sScene = new HelloAssimp03();
     Crash::Engine::Instance()->setScene(sScene);
 
     auto start = std::chrono::steady_clock::now();

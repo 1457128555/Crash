@@ -226,6 +226,7 @@ namespace Crash
         //SetViewport({0, 0, 1280, 720});
         SetClearColor({0.2f, 0.3f, 0.3f, 1.0f});
         SetDepthEnable(true);
+        SetCullFaceEnable(true);
         SetClearDepth(1.f);
         
         return true;
@@ -275,6 +276,15 @@ namespace Crash
         else
             glDisable(GL_DEPTH_TEST);    
         CheckGLError("SetDepthEnable");
+    }
+
+    void RenderCommand::SetCullFaceEnable(bool enable)
+    {
+        if(enable)
+            glEnable(GL_CULL_FACE);
+        else
+            glDisable(GL_CULL_FACE);    
+        CheckGLError("SetCullFaceEnable");
     }
 
     void RenderCommand::SetClearDepth(float depth)

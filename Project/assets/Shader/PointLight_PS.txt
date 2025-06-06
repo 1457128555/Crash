@@ -1,0 +1,18 @@
+//  HelloCube02_PS
+
+struct PointLight 
+{
+    vec4 position;
+
+    vec4 ambient;
+    vec4 diffuse;
+    vec4 specular;
+};
+uniform PointLight uPointLight;
+
+out vec4 FragColor;
+
+void main()
+{
+    FragColor = vec4(uPointLight.diffuse.rgb, 1.0);
+}

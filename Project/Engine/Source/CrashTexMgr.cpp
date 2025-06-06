@@ -6,8 +6,12 @@
 
 namespace Crash
 {
-    Texture* TexMgr::createTexture(const std::string& name, RenderProtocol::TexType type)
+    std::shared_ptr<Texture> TexMgr::createTexture(const std::string& name, RenderProtocol::TexType type)
     {
+        auto findIt = mTexCache.find(name);
+        if (findIt != mTexCache.end())
+            return findIt->second.lock();
+
         Texture* texture = RenderSystem::Instance()->createTexture(name, type);
 
         int width = 0;
@@ -21,12 +25,17 @@ namespace Crash
                 fmt, RenderProtocol::TexDataType::UnsignedByte, data, true);
             FileSystem::FreeImage(data);
         }
-
-        return texture;
+        
+        std::shared_ptr<Texture> texPtr(texture, [](Texture* tex) {
+            RenderSystem::Instance()->destroyTexture(tex);
+        });
+        mTexCache[name] = texPtr;
+        return texPtr;
     }
 
     void TexMgr::destroyTexture(Texture* texture)
     {
         RenderSystem::Instance()->destroyTexture(texture);
+        mTexCache.erase(texture->getName());
     }
 } // namespace Crash

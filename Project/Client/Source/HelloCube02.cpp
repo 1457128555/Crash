@@ -77,8 +77,8 @@ float cubeVertices[] = {
     IndexBuffer*        gIndexBuffer        = nullptr;
     Camera              gCamera;
 
-    Texture*            gContainerTex_D     = nullptr;
-    Texture*            gContainerTex_S     = nullptr;
+    std::shared_ptr<Texture> gContainerTex_D;
+    std::shared_ptr<Texture> gContainerTex_S;
 
     Material            gMaterial;
     DirLight            gDirLight;
@@ -213,20 +213,22 @@ void HelloCube02::initialize()
         gShaderProgram = RenderSystem::Instance()->createShaderProgram("HelloCube02", vsCode, psCode);
     }
 
-    gVertexBuffer = RenderSystem::Instance()->createBuffer();
-    RenderSystem::Instance()->setBufferData(gVertexBuffer, cubeVertices, sizeof(cubeVertices));
+    {
+        gVertexBuffer = RenderSystem::Instance()->createBuffer();
+        RenderSystem::Instance()->setBufferData(gVertexBuffer, cubeVertices, sizeof(cubeVertices));
 
-    gIndexBuffer = RenderSystem::Instance()->createIndexBuffer();
-    RenderSystem::Instance()->setIndexBufferData(gIndexBuffer, cubeIndices, sizeof(cubeIndices));
+        gIndexBuffer = RenderSystem::Instance()->createIndexBuffer();
+        RenderSystem::Instance()->setIndexBufferData(gIndexBuffer, cubeIndices, sizeof(cubeIndices));
 
-    gVertexArrayObject = RenderSystem::Instance()->createVertexArray();
+        gVertexArrayObject = RenderSystem::Instance()->createVertexArray();
+        
+        RenderSystem::Instance()->addBufferToVertexArray(gVertexArrayObject, gVertexBuffer, 0, 3, sizeof(float) * 8, (const void*)0);
+        RenderSystem::Instance()->addBufferToVertexArray(gVertexArrayObject, gVertexBuffer, 1, 3, sizeof(float) * 8, (const void*)(sizeof(float) * 3));
+        RenderSystem::Instance()->addBufferToVertexArray(gVertexArrayObject, gVertexBuffer, 2, 2, sizeof(float) * 8, (const void*)(sizeof(float) * 6));
+        RenderSystem::Instance()->addBufferToVertexArray(gVertexArrayObject, gIndexBuffer);
     
-    RenderSystem::Instance()->addBufferToVertexArray(gVertexArrayObject, gVertexBuffer, 0, 3, sizeof(float) * 8, (const void*)0);
-    RenderSystem::Instance()->addBufferToVertexArray(gVertexArrayObject, gVertexBuffer, 1, 3, sizeof(float) * 8, (const void*)(sizeof(float) * 3));
-    RenderSystem::Instance()->addBufferToVertexArray(gVertexArrayObject, gVertexBuffer, 2, 2, sizeof(float) * 8, (const void*)(sizeof(float) * 6));
-    RenderSystem::Instance()->addBufferToVertexArray(gVertexArrayObject, gIndexBuffer);
-   
-    RenderSystem::Instance()->unbindVertexArray();
+        RenderSystem::Instance()->unbindVertexArray();
+    }
 
     Engine::Instance()->setControl(&gCamera);
 
@@ -275,10 +277,10 @@ void HelloCube02::shutdown()
 {
     Engine::Instance()->setControl(nullptr);
 
-    RenderSystem::Instance()->destroyTexture(gContainerTex_D);
-    gContainerTex_D = nullptr;
-    RenderSystem::Instance()->destroyTexture(gContainerTex_S);
-    gContainerTex_S = nullptr;
+    gContainerTex_D.reset();
+    gContainerTex_S.reset();
+
+    gMaterial.reset();
 
     RenderSystem::Instance()->destroyBuffer(gVertexBuffer);
     gVertexBuffer = nullptr;

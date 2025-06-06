@@ -13,7 +13,7 @@
 #include "CrashInputMgr.h"
 #include "CrashFileSystem.h"
 #include "CrashLogManager.h"
-#include "HelloCube02.h"
+#include "HelloAssimp03.h"
 
 using namespace Crash;
 
@@ -123,19 +123,28 @@ void handleInput()
     android_app_clear_motion_events(inputBuffer);
 }
 
-bool _androidRead(const std::string& path, std::string& data)
-{
-    AAssetManager* mgr = g_app->activity->assetManager;
-    AAsset* asset = AAssetManager_open(mgr, path.c_str(), AASSET_MODE_BUFFER);
-    if (asset)
-    {
-        size_t size = AAsset_getLength(asset);
-        data.resize(size);
-        AAsset_read(asset, &data[0], size);
-        AAsset_close(asset);
-        return true;
-    }
-    return false;
+std::string g_filesDir;
+std::string g_externalDir;
+std::string g_packageName;
+
+JNIEXPORT void JNICALL
+Java_com_example_runtime_MainActivity_nativeSetAppPaths(JNIEnv* env, jclass,
+                                                       jstring filesDir,
+                                                       jstring externalDir,
+                                                       jstring packageName) {
+    const char* c_filesDir = env->GetStringUTFChars(filesDir, nullptr);
+    const char* c_externalDir = env->GetStringUTFChars(externalDir, nullptr);
+    const char* c_packageName = env->GetStringUTFChars(packageName, nullptr);
+
+    g_filesDir = c_filesDir ? c_filesDir : "";
+    g_externalDir = c_externalDir ? c_externalDir : "";
+    g_packageName = c_packageName ? c_packageName : "";
+
+    env->ReleaseStringUTFChars(filesDir, c_filesDir);
+    env->ReleaseStringUTFChars(externalDir, c_externalDir);
+    env->ReleaseStringUTFChars(packageName, c_packageName);
+
+    FileSystem::sExternalDir = g_externalDir;
 }
 
 void handle_cmd(android_app *pApp, int32_t cmd) {
@@ -143,7 +152,6 @@ void handle_cmd(android_app *pApp, int32_t cmd) {
         case APP_CMD_INIT_WINDOW:
         {
             g_app = pApp;
-            Crash::FileSystem::sAndroidRead = _androidRead;
             Crash::EngineConfig config = {};
             config.windowWidth  = ANativeWindow_getWidth(pApp->window);
             config.windowHeight = ANativeWindow_getHeight(pApp->window);
@@ -174,6 +182,11 @@ void handle_cmd(android_app *pApp, int32_t cmd) {
                 EGLint numConfigs;
                 eglChooseConfig(g_display, attribs, &config, 1, &numConfigs);
 
+                // 查询实际深度缓冲位数
+                EGLint depthSize = 0;
+                eglGetConfigAttrib(g_display, config, EGL_DEPTH_SIZE, &depthSize);
+                __android_log_print(ANDROID_LOG_DEBUG, "CrashRuntime", "Actual EGL_DEPTH_SIZE: %d", depthSize);
+
                 // 3. 创建 EGLSurface
                 g_surface = eglCreateWindowSurface(g_display, config, g_app->window, nullptr);
 
@@ -193,8 +206,9 @@ void handle_cmd(android_app *pApp, int32_t cmd) {
                 eglTerminate(g_display);                            g_display = EGL_NO_DISPLAY;
             };
 
-            new Crash::Engine(config);
-            g_Scene = new HelloCube02();
+            config.assetPath = g_externalDir + "/assets/";
+            new Crash::Engine(config);     
+            g_Scene = new HelloAssimp03();
             Crash::Engine::Instance()->setScene(g_Scene);
 
         }break;
@@ -205,7 +219,6 @@ void handle_cmd(android_app *pApp, int32_t cmd) {
             g_Scene = nullptr;
             delete Crash::Engine::Instance();
             g_app = nullptr;
-            Crash::FileSystem::sAndroidRead = nullptr;
         }break;
         default:
             break;

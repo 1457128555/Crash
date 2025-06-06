@@ -70,6 +70,20 @@
         "random": "cpp",
         "unordered_set": "cpp",
         "cstdarg": "cpp",
-        "regex": "cpp"
+        "regex": "cpp",
+        "any": "cpp",
+        "bitset": "cpp",
+        "cinttypes": "cpp",
+        "condition_variable": "cpp",
+        "deque": "cpp",
+        "map": "cpp",
+        "numeric": "cpp",
+        "queue": "cpp",
+        "ranges": "cpp",
+        "set": "cpp",
+        "span": "cpp",
+        "stack": "cpp",
+        "variant": "cpp",
+        "xtree": "cpp"
     }
 }

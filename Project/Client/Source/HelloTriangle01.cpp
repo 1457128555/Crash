@@ -27,8 +27,8 @@ namespace
     VertexArrayObject*  gVertexArrayObject  = nullptr;
     VertexBuffer*       gVertexBuffer       = nullptr;
     IndexBuffer*        gIndexBuffer        = nullptr;
-    Texture*            gWallTex            = nullptr;
-    Texture*            gFaceTex            = nullptr;
+    std::shared_ptr<Texture> gWallTex;
+    std::shared_ptr<Texture> gFaceTex;
 }
 
 HelloTriangle01::HelloTriangle01() : Scene("HelloTriangle01")
@@ -44,11 +44,11 @@ void HelloTriangle01::renderScene()
     RenderSystem::Instance()->bindShaderProgram(gShaderProgram);
 
     RenderSystem::Instance()->activateTextureUnit(0);
-    RenderSystem::Instance()->bindTexture(gWallTex);
+    RenderSystem::Instance()->bindTexture(gWallTex.get());
     RenderSystem::Instance()->setUniform1i(gShaderProgram, "texture1", 0);
 
     RenderSystem::Instance()->activateTextureUnit(1);
-    RenderSystem::Instance()->bindTexture(gFaceTex);
+    RenderSystem::Instance()->bindTexture(gFaceTex.get());
     RenderSystem::Instance()->setUniform1i(gShaderProgram, "texture2", 1);
 
     float timeValue = (float)Engine::Instance()->getExecuteTime();
@@ -64,8 +64,8 @@ void HelloTriangle01::renderScene()
 
     RenderSystem::Instance()->unbindShaderProgram();
     RenderSystem::Instance()->unbindVertexArray();
-    RenderSystem::Instance()->unbindTexture(gWallTex);
-    RenderSystem::Instance()->unbindTexture(gFaceTex);
+    RenderSystem::Instance()->unbindTexture(gWallTex.get());
+    RenderSystem::Instance()->unbindTexture(gFaceTex.get());
 }
 
 void HelloTriangle01::initialize()       
@@ -94,10 +94,8 @@ void HelloTriangle01::initialize()
 
 void HelloTriangle01::shutdown()               
 {
-    TexMgr::Instance()->destroyTexture(gWallTex);
-    gWallTex = nullptr;
-    TexMgr::Instance()->destroyTexture(gFaceTex);
-    gFaceTex = nullptr;
+    gWallTex.reset();
+    gFaceTex.reset();
 
     RenderSystem::Instance()->destroyBuffer(gVertexBuffer);
     gVertexBuffer = nullptr;

@@ -1,5 +1,6 @@
 package com.example.runtime
 
+import android.os.Bundle
 import android.view.View
 import com.google.androidgamesdk.GameActivity
 
@@ -8,6 +9,15 @@ class MainActivity : GameActivity() {
         init {
             System.loadLibrary("runtime")
         }
+        @JvmStatic external fun nativeSetAppPaths(filesDir: String, externalDir: String, packageName: String)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val filesDir = filesDir.absolutePath
+        val externalDir = getExternalFilesDir(null)?.absolutePath ?: ""
+        val packageName = packageName
+        nativeSetAppPaths(filesDir, externalDir, packageName)
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
