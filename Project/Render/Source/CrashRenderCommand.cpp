@@ -35,6 +35,22 @@ namespace Crash
             }
         }
 
+        GLenum GetOperateFunc(RenderProtocol::OperateFunc func)
+        {
+            switch (func)
+            {
+                case RenderProtocol::OperateFunc::Keep:           return GL_KEEP;
+                case RenderProtocol::OperateFunc::Zero:           return GL_ZERO;
+                case RenderProtocol::OperateFunc::Replace:        return GL_REPLACE;
+                case RenderProtocol::OperateFunc::Invert:         return GL_INVERT;
+                case RenderProtocol::OperateFunc::Increment:      return GL_INCR;
+                case RenderProtocol::OperateFunc::Decrement:      return GL_DECR;
+                case RenderProtocol::OperateFunc::IncrementWrap:  return GL_INCR_WRAP;
+                case RenderProtocol::OperateFunc::DecrementWrap:  return GL_DECR_WRAP;
+                default: assert(false && "Invalid operate function"); return 0;
+            }
+        }
+
         GLenum GetTexFormat(RenderProtocol::TexFormat format)
         {
             switch (format)

@@ -153,5 +153,17 @@ namespace Crash
             Greater        = 0x7,
             NotEqual       = 0x8,
         };
+
+        enum class OperateFunc : unsigned int
+        {
+            Keep           = 0x1,
+            Zero           = 0x2,
+            Replace        = 0x3,
+            Invert         = 0x4,
+            Increment      = 0x5,
+            Decrement      = 0x6,
+            IncrementWrap  = 0x7,
+            DecrementWrap  = 0x8,
+        };
     }; 
 }
