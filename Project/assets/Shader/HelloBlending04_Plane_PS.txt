@@ -1,0 +1,17 @@
+//  HelloBlending04_Plane_PS
+
+uniform sampler2D uDiffuseTex;
+
+in vec4 oTexCoord; 
+
+out vec4 FragColor;
+
+void main()
+{
+    vec4 diffuseColor = texture(uDiffuseTex, oTexCoord.xy);
+
+    if(diffuseColor.a < 0.1)
+        discard;
+
+    FragColor = diffuseColor;
+}

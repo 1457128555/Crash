@@ -16,6 +16,16 @@ namespace Crash
             Clear,
             SetClearColor,
             SetViewport, 
+            SetCullFaceEnable,
+
+            SetDepthEnable,
+            SetClearDepth,
+            SetDetphFunc,
+
+            SetStencilEnable,
+            SetStencilFunc,
+            SetStencilOp,
+            SetStencilMask,
 
             CreateShaderProgram,
             DestroyShaderProgram,
@@ -180,12 +190,82 @@ namespace Crash
             RenderCommand::Clear(flag);
     }
 
+    void RenderSystem::setDepthEnable(bool enable)
+    {
+        if(mAsyncRender)
+            mCommandQueue[0].push_back({ (unsigned int)_CommandType::SetDepthEnable, (void*)(new bool(enable)) });
+        else
+            RenderCommand::SetDepthEnable(enable);
+    }
+
+    void RenderSystem::setDepthFunc(RenderProtocol::CompareFunc func)
+    {
+        if(mAsyncRender)
+            mCommandQueue[0].push_back({ (unsigned int)_CommandType::SetDetphFunc, (void*)(new RenderProtocol::CompareFunc(func)) });
+        else
+            RenderCommand::SetDetphFunc(func);
+    }
+
+    void RenderSystem::setClearDepth(float depth)
+    {
+        if(mAsyncRender)
+            mCommandQueue[0].push_back({ (unsigned int)_CommandType::SetClearDepth, (void*)(new float(depth)) });
+        else
+            RenderCommand::SetClearDepth(depth);
+    }
+
+    void RenderSystem::setStencilEnable(bool enable)
+    {
+        if(mAsyncRender)
+            mCommandQueue[0].push_back({ (unsigned int)_CommandType::SetStencilEnable, (void*)(new bool(enable)) });
+        else
+            RenderCommand::SetStencilEnable(enable);
+    }
+
+    void RenderSystem::setStencilFunc(RenderProtocol::CompareFunc func, int ref, unsigned int mask)
+    {
+        if(mAsyncRender)
+        {
+            auto* info = new std::tuple<RenderProtocol::CompareFunc, int, unsigned int>(func, ref, mask);
+            mCommandQueue[0].push_back({ (unsigned int)_CommandType::SetStencilFunc, info });
+        }
+        else
+            RenderCommand::SetStencilFunc(func, ref, mask);
+    }
+
+    void RenderSystem::setStencilOp(RenderProtocol::OperateFunc sfail, RenderProtocol::OperateFunc dpfail, RenderProtocol::OperateFunc dppass)
+    {
+        if(mAsyncRender)
+        {
+            auto* info = new std::tuple<RenderProtocol::OperateFunc, RenderProtocol::OperateFunc, RenderProtocol::OperateFunc>(sfail, dpfail, dppass);
+            mCommandQueue[0].push_back({ (unsigned int)_CommandType::SetStencilOp, info });
+        }
+        else
+            RenderCommand::SetStencilOp(sfail, dpfail, dppass);
+    }
+
+    void RenderSystem::setStencilMask(unsigned int mask)
+    {
+        if(mAsyncRender)
+            mCommandQueue[0].push_back({ (unsigned int)_CommandType::SetStencilMask, (void*)(new unsigned int(mask)) });
+        else
+            RenderCommand::SetStencilMask(mask);
+    }
+
     void RenderSystem::setClearColor(const glm::vec4& color)
     {
         if(mAsyncRender)
             mCommandQueue[0].push_back({ (unsigned int)_CommandType::SetClearColor, new glm::vec4(color) });
         else
             RenderCommand::SetClearColor(color);
+    }
+
+    void RenderSystem::setCullFaceEnable(bool enable)
+    {
+        if(mAsyncRender)
+            mCommandQueue[0].push_back({ (unsigned int)_CommandType::SetCullFaceEnable, (void*)(new bool(enable)) });
+        else
+            RenderCommand::SetCullFaceEnable(enable);
     }
 
     void RenderSystem::setViewport(const glm::ivec4& viewport)
@@ -803,6 +883,62 @@ namespace Crash
                     glm::ivec4* viewport = (glm::ivec4*)cmdData;
                     RenderCommand::SetViewport(*viewport);
                     delete viewport;
+                }
+                break;
+                case _CommandType::SetDepthEnable:
+                {
+                    bool* enable = (bool*)cmdData;
+                    RenderCommand::SetDepthEnable(*enable);
+                    delete enable;
+                }
+                break;
+                case _CommandType::SetDetphFunc:
+                {
+                    RenderProtocol::CompareFunc* func = (RenderProtocol::CompareFunc*)cmdData;
+                    RenderCommand::SetDetphFunc(*func);
+                    delete func;
+                }
+                break;
+                case _CommandType::SetClearDepth:
+                {
+                    float* depth = (float*)cmdData;
+                    RenderCommand::SetClearDepth(*depth);
+                    delete depth;
+                }
+                break;
+                case _CommandType::SetStencilEnable:
+                {
+                    bool* enable = (bool*)cmdData;
+                    RenderCommand::SetStencilEnable(*enable);
+                    delete enable;
+                }
+                break;
+                case _CommandType::SetStencilFunc:
+                {
+                    auto* info = (std::tuple<RenderProtocol::CompareFunc, int, unsigned int>*)cmdData;
+                    RenderCommand::SetStencilFunc(std::get<0>(*info), std::get<1>(*info), std::get<2>(*info));
+                    delete info;
+                }
+                break;
+                case _CommandType::SetStencilOp:
+                {
+                    auto* info = (std::tuple<RenderProtocol::OperateFunc, RenderProtocol::OperateFunc, RenderProtocol::OperateFunc>*)cmdData;
+                    RenderCommand::SetStencilOp(std::get<0>(*info), std::get<1>(*info), std::get<2>(*info));
+                    delete info;
+                }
+                break;
+                case _CommandType::SetStencilMask:
+                {
+                    unsigned int* mask = (unsigned int*)cmdData;
+                    RenderCommand::SetStencilMask(*mask);
+                    delete mask;
+                }
+                break;
+                case _CommandType::SetCullFaceEnable:
+                {
+                    bool* enable = (bool*)cmdData;
+                    RenderCommand::SetCullFaceEnable(*enable);
+                    delete enable;
                 }
                 break;
                 default:

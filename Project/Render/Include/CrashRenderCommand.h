@@ -18,12 +18,24 @@ namespace Crash
         static void SetClearColor(const glm::vec4& color);
 
         static void SetDepthEnable(bool enable);
+
+        static void SetBlendEnable(bool enable);
+
+        static void SetBlendFunc(RenderProtocol::BlendFunc src, RenderProtocol::BlendFunc dst);
         
         static void SetCullFaceEnable(bool enable);
 
         static void SetClearDepth(float depth);
 
         static void SetDetphFunc(RenderProtocol::CompareFunc func);
+
+        static void SetStencilEnable(bool enable);
+
+        static void SetStencilFunc(RenderProtocol::CompareFunc func, int ref, unsigned int mask);
+
+        static void SetStencilOp(RenderProtocol::OperateFunc sfail, RenderProtocol::OperateFunc dpfail, RenderProtocol::OperateFunc dppass);
+
+        static void SetStencilMask(unsigned int mask);
 
         static void Clear(RenderProtocol::ClearFlag flag = RenderProtocol::ClearFlag::All);
 

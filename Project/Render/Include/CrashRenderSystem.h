@@ -28,9 +28,19 @@ namespace Crash
 
         void frameBegin();
         void frameEnd();
+        void setCullFaceEnable(bool enable);
         void setClearColor(const glm::vec4& color);
         void setViewport(const glm::ivec4& viewport);
         void clear(RenderProtocol::ClearFlag flag = RenderProtocol::ClearFlag::All);
+
+        void setDepthEnable(bool enable);
+        void setDepthFunc(RenderProtocol::CompareFunc func);
+        void setClearDepth(float depth);
+
+        void setStencilEnable(bool enable);
+        void setStencilFunc(RenderProtocol::CompareFunc func, int ref, unsigned int mask);
+        void setStencilOp(RenderProtocol::OperateFunc sfail, RenderProtocol::OperateFunc dpfail, RenderProtocol::OperateFunc dppass);
+        void setStencilMask(unsigned int mask);
 
         ShaderProgram* createShaderProgram(const std::string& name, const std::string& vs, const std::string& fs);
         void destroyShaderProgram(ShaderProgram* program);

@@ -229,6 +229,29 @@ namespace Crash
             }
             return 0;
         }
+
+        GLenum GetBlendFunc(RenderProtocol::BlendFunc func)
+        {
+            switch (func)
+            {
+                case RenderProtocol::BlendFunc::Zero:                    return GL_ZERO;
+                case RenderProtocol::BlendFunc::One:                     return GL_ONE;
+                case RenderProtocol::BlendFunc::SrcColor:                return GL_SRC_COLOR;
+                case RenderProtocol::BlendFunc::OneMinusSrcColor:        return GL_ONE_MINUS_SRC_COLOR;
+                case RenderProtocol::BlendFunc::DstColor:                return GL_DST_COLOR;
+                case RenderProtocol::BlendFunc::OneMinusDstColor:        return GL_ONE_MINUS_DST_COLOR;
+                case RenderProtocol::BlendFunc::SrcAlpha:                return GL_SRC_ALPHA;
+                case RenderProtocol::BlendFunc::OneMinusSrcAlpha:        return GL_ONE_MINUS_SRC_ALPHA;
+                case RenderProtocol::BlendFunc::DstAlpha:                return GL_DST_ALPHA;
+                case RenderProtocol::BlendFunc::OneMinusDstAlpha:        return GL_ONE_MINUS_DST_ALPHA;
+                case RenderProtocol::BlendFunc::ConstantColor:           return GL_CONSTANT_COLOR;
+                case RenderProtocol::BlendFunc::OneMinusConstantColor:   return GL_ONE_MINUS_CONSTANT_COLOR;
+                case RenderProtocol::BlendFunc::ConstantAlpha:           return GL_CONSTANT_ALPHA;
+                case RenderProtocol::BlendFunc::OneMinusConstantAlpha:   return GL_ONE_MINUS_CONSTANT_ALPHA;
+                default: assert(false && "Invalid blend function"); return 0;
+            }
+            return 0;
+        }
     }
 
     bool RenderCommand::Initlize(void* procAddress)
@@ -260,6 +283,9 @@ namespace Crash
         SetClearColor({0.2f, 0.3f, 0.3f, 1.0f});
         SetCullFaceEnable(true);
  
+        SetBlendEnable(true);
+        SetBlendFunc(RenderProtocol::BlendFunc::SrcAlpha, RenderProtocol::BlendFunc::OneMinusSrcAlpha);
+
         SetDepthEnable(true);
         if(RenderSystem::Instance()->getReverseZ())
         {
@@ -322,6 +348,21 @@ namespace Crash
         CheckGLError("SetDepthEnable");
     }
 
+    void RenderCommand::SetBlendEnable(bool enable)
+    {
+        if(enable)
+            glEnable(GL_BLEND);
+        else
+            glDisable(GL_BLEND);
+        CheckGLError("SetBlendEnable");
+    }
+
+    void RenderCommand::SetBlendFunc(RenderProtocol::BlendFunc src, RenderProtocol::BlendFunc dst)
+    {
+        glBlendFunc(GetBlendFunc(src), GetBlendFunc(dst));
+        CheckGLError("SetBlendFunc");
+    }
+
     void RenderCommand::SetCullFaceEnable(bool enable)
     {
         if(enable)
@@ -345,6 +386,33 @@ namespace Crash
     {
         glDepthFunc(GetCompareFunc(func));
         CheckGLError("SetDetphFunc");
+    }
+
+    void RenderCommand::SetStencilEnable(bool enable)
+    {
+        if(enable)
+            glEnable(GL_STENCIL_TEST);
+        else
+            glDisable(GL_STENCIL_TEST);
+        CheckGLError("SetStencilEnable");
+    }
+
+    void RenderCommand::SetStencilFunc(RenderProtocol::CompareFunc func, int ref, unsigned int mask)
+    {
+        glStencilFunc(GetCompareFunc(func), ref, mask);
+        CheckGLError("SetStencilFunc");
+    }
+
+    void RenderCommand::SetStencilOp(RenderProtocol::OperateFunc sfail, RenderProtocol::OperateFunc dpfail, RenderProtocol::OperateFunc dppass)
+    {
+        glStencilOp(GetOperateFunc(sfail), GetOperateFunc(dpfail), GetOperateFunc(dppass));
+        CheckGLError("SetStencilOp");
+    }
+
+    void RenderCommand::SetStencilMask(unsigned int mask)
+    {
+        glStencilMask(mask);
+        CheckGLError("SetStencilMask");
     }
 
     unsigned int RenderCommand::CreateShader(RenderProtocol::ShaderType type, const std::string& source)

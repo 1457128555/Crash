@@ -12,6 +12,7 @@ using namespace Crash;
 
 Model*              gModel              = nullptr;
 ShaderProgram*      gModelShader        = nullptr;
+ShaderProgram*      gModelOuterShader   = nullptr;
 ShaderProgram*      gLightProgram       = nullptr;
 Camera              gCamera;
 
@@ -26,39 +27,44 @@ IndexBuffer*        gIndexBuffer        = nullptr;
 namespace
 {
     float cubeVertices[] = {
-    -0.5f, -0.5f,  0.5f,    0.0f,  0.0f,  1.0f,  0.0f, 0.0f,
-     0.5f, -0.5f,  0.5f,    0.0f,  0.0f,  1.0f,  1.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,    0.0f,  0.0f,  1.0f,  1.0f, 1.0f,
-    -0.5f,  0.5f,  0.5f,    0.0f,  0.0f,  1.0f,  0.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,    0.0f,  0.0f, -1.0f,  1.0f, 0.0f,
-     0.5f, -0.5f, -0.5f,    0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
-     0.5f,  0.5f, -0.5f,    0.0f,  0.0f, -1.0f,  0.0f, 1.0f,
-    -0.5f,  0.5f, -0.5f,    0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,   -1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
-    -0.5f, -0.5f,  0.5f,   -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-    -0.5f,  0.5f,  0.5f,   -1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
-    -0.5f,  0.5f, -0.5f,   -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,    1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-     0.5f, -0.5f,  0.5f,    1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,    1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-     0.5f,  0.5f, -0.5f,    1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
-    -0.5f,  0.5f,  0.5f,    0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,    0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
-     0.5f,  0.5f, -0.5f,    0.0f,  1.0f,  0.0f,  1.0f, 1.0f,
-    -0.5f,  0.5f, -0.5f,    0.0f,  1.0f,  0.0f,  0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f,    0.0f, -1.0f,  0.0f,  1.0f, 1.0f,
-     0.5f, -0.5f,  0.5f,    0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,    0.0f, -1.0f,  0.0f,  0.0f, 0.0f,
-    -0.5f, -0.5f, -0.5f,    0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f, 0.0f, 
+     0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f, 0.0f, 
+     0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f, 1.0f, 
+    -0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f, 1.0f, 
+
+    -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 0.0f, 
+     0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f, 
+     0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 1.0f, 
+    -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f, 
+
+    -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 0.0f, 
+    -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 
+    -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 1.0f, 
+    -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f, 
+
+     0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 0.0f, 
+     0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 
+     0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f, 
+     0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f, 
+
+    -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 0.0f, 
+     0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f, 
+     0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f, 
+    -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f, 
+
+    -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f, 
+     0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f, 
+     0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 1.0f, 
+    -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f  
     };
 
     unsigned int cubeIndices[] = {
-        0,   1,  2,  2,  3,  0,       
-        4,   5,  6,  6,  7,  4,       
-        8,   9, 10, 10, 11,  8,       
-        12, 13, 14, 14, 15, 12,       
-        16, 17, 18, 18, 19, 16,       
-        20, 21, 22, 22, 23, 20        
+    0, 1, 2, 2, 3, 0,
+    4, 7, 6, 6, 5, 4,
+    8, 9, 10,10, 11, 8,
+    12, 13, 14,14, 15, 12,
+    16, 17, 18,18, 19, 16,
+    20, 21, 22,22, 23, 20
     };
 }
 
@@ -134,6 +140,13 @@ void HelloAssimp03::renderScene()
         RenderSystem::Instance()->unbindVertexArray();
     }
 
+    //  Set Pass State
+    {
+        RenderSystem::Instance()->setStencilEnable(true);
+        RenderSystem::Instance()->setStencilFunc(RenderProtocol::CompareFunc::Always, 1, 0xFF);
+        RenderSystem::Instance()->setStencilOp(RenderProtocol::OperateFunc::Replace, RenderProtocol::OperateFunc::Replace, RenderProtocol::OperateFunc::Replace);
+    }
+
     //  Render Model
     {
         RenderSystem::Instance()->bindShaderProgram(gModelShader);
@@ -159,6 +172,38 @@ void HelloAssimp03::renderScene()
 
         RenderSystem::Instance()->unbindShaderProgram();
     }
+
+    //  Set Pass State
+    {
+        RenderSystem::Instance()->setDepthEnable(false);
+        RenderSystem::Instance()->setStencilFunc(RenderProtocol::CompareFunc::NotEqual, 1, 0xFF);
+        RenderSystem::Instance()->setStencilOp(RenderProtocol::OperateFunc::Keep, RenderProtocol::OperateFunc::Keep, RenderProtocol::OperateFunc::Keep);
+    }
+
+    
+    //  Render Outer Model
+    {
+        RenderSystem::Instance()->bindShaderProgram(gModelOuterShader);
+
+        glm::mat4 model = glm::mat4(1.f);
+        model = glm::scale(model, glm::vec3(1.01f));
+        RenderSystem::Instance()->setUniformMatrix4fv(gModelOuterShader, "uModel", model);
+
+        glm::mat4 view = gCamera.getViewMat();
+        RenderSystem::Instance()->setUniformMatrix4fv(gModelOuterShader, "uView", view);
+    
+        glm::mat4 projection = gCamera.getProjectionMat(Engine::Instance()->getAspect());
+        RenderSystem::Instance()->setUniformMatrix4fv(gModelOuterShader, "uProjection", projection);
+
+        gModel->draw(gModelOuterShader);
+
+        RenderSystem::Instance()->unbindShaderProgram();
+    }
+
+    //  Reset Pass State
+    {
+        RenderSystem::Instance()->setDepthEnable(true);
+    }
 }
 
 void HelloAssimp03::initialize()       
@@ -172,6 +217,9 @@ void HelloAssimp03::initialize()
         const std::string vsCode = Crash::FileSystem::ReadShader("HelloAssimp03_VS.txt");
         const std::string psCode = Crash::FileSystem::ReadShader("HelloAssimp03_PS.txt");
         gModelShader = RenderSystem::Instance()->createShaderProgram("HelloAssimp03", vsCode, psCode);
+
+        const std::string psOuterCode = Crash::FileSystem::ReadShader("HelloAssimpOuter03_PS.txt");
+        gModelOuterShader = RenderSystem::Instance()->createShaderProgram("HelloAssimpOuter03", vsCode, psOuterCode);
     }
 
     {
@@ -242,6 +290,9 @@ void HelloAssimp03::shutdown()
 
     RenderSystem::Instance()->destroyShaderProgram(gModelShader);
     gModelShader = nullptr;
+
+    RenderSystem::Instance()->destroyShaderProgram(gModelOuterShader);
+    gModelOuterShader = nullptr;
 
     RenderSystem::Instance()->destroyShaderProgram(gLightProgram);
     gLightProgram = nullptr;

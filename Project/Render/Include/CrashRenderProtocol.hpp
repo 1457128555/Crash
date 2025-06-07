@@ -165,5 +165,23 @@ namespace Crash
             IncrementWrap  = 0x7,
             DecrementWrap  = 0x8,
         };
+
+        enum class BlendFunc : unsigned int
+        {
+            Zero                    = 0x1,
+            One                     = 0x2,
+            SrcColor                = 0x3,
+            OneMinusSrcColor        = 0x4,
+            DstColor                = 0x5,
+            OneMinusDstColor        = 0x6,
+            SrcAlpha                = 0x7,
+            OneMinusSrcAlpha        = 0x8,
+            DstAlpha                = 0x9,
+            OneMinusDstAlpha        = 0xA,
+            ConstantColor           = 0xB,
+            OneMinusConstantColor   = 0xC,
+            ConstantAlpha           = 0xD,
+            OneMinusConstantAlpha   = 0xE,
+        };
     }; 
 }
