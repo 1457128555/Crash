@@ -19,6 +19,21 @@ namespace Crash
             }
         }
 
+        GLenum GetAttachmentType(RenderProtocol::AttachmentType type)
+        {
+            switch (type)
+            {
+                case RenderProtocol::AttachmentType::ColorAttachment0:        return GL_COLOR_ATTACHMENT0;
+                case RenderProtocol::AttachmentType::ColorAttachment1:        return GL_COLOR_ATTACHMENT1;
+                case RenderProtocol::AttachmentType::ColorAttachment2:        return GL_COLOR_ATTACHMENT2;
+                case RenderProtocol::AttachmentType::ColorAttachment3:        return GL_COLOR_ATTACHMENT3;
+                case RenderProtocol::AttachmentType::DepthAttachment:         return GL_DEPTH_ATTACHMENT;
+                case RenderProtocol::AttachmentType::StencilAttachment:       return GL_STENCIL_ATTACHMENT;
+                case RenderProtocol::AttachmentType::DepthStencilAttachment:  return GL_DEPTH_STENCIL_ATTACHMENT;
+                default: assert(false && "Invalid attachment type"); return 0;
+            }
+        }
+
         GLenum GetCompareFunc(RenderProtocol::CompareFunc func)
         {
             switch (func)
@@ -61,6 +76,8 @@ namespace Crash
                 case RenderProtocol::TexFormat::Alpha: return GL_ALPHA;
                 case RenderProtocol::TexFormat::RGB:   return GL_RGB;
                 case RenderProtocol::TexFormat::RGBA:  return GL_RGBA;
+                case RenderProtocol::TexFormat::Depth24Stencil8:    return GL_DEPTH24_STENCIL8; // Special format for depth-stencil textures
+                case RenderProtocol::TexFormat::DepthStencil:       return GL_DEPTH_STENCIL; // Generic depth-stencil format
                 default: assert(false && "Invalid texture format"); return 0;
             }
             return 0;
@@ -74,6 +91,7 @@ namespace Crash
                 case RenderProtocol::TexDataType::UnsignedShort:  return GL_UNSIGNED_SHORT;
                 case RenderProtocol::TexDataType::UnsignedInt:    return GL_UNSIGNED_INT;
                 case RenderProtocol::TexDataType::Float:          return GL_FLOAT;
+                case RenderProtocol::TexDataType::UnsignedInt24_8: return GL_UNSIGNED_INT_24_8; // Special type for depth24-stencil8 textures
                 default: assert(false && "Invalid texture data type"); return 0;
             }
             return 0;
@@ -516,6 +534,88 @@ namespace Crash
         CheckGLError("SetUniformMatrix4fv");
     }
 
+    unsigned int RenderCommand::CreateRenderBufferObject()
+    {
+        unsigned int id = 0;
+        glGenRenderbuffers(1, &id);
+        CheckGLError("CreateRenderBufferObject");
+        return id;
+    }
+
+    void RenderCommand::DestroyRenderBufferObject(unsigned int id)
+    {
+        assert(id && "Render Buffer Object is null!");
+        glDeleteRenderbuffers(1, &id);
+        CheckGLError("DestroyRenderBufferObject");
+    }
+
+    void RenderCommand::BindRenderBufferObject(unsigned int id)
+    {
+        assert(id && "Render Buffer Object is null!");
+        glBindRenderbuffer(GL_RENDERBUFFER, id);
+        CheckGLError("BindRenderBufferObject");
+    }
+
+    void RenderCommand::UnbindRenderBufferObject()
+    {
+        glBindRenderbuffer(GL_RENDERBUFFER, 0);
+        CheckGLError("UnbindRenderBufferObject");
+    }
+
+    void RenderCommand::SetRenderBufferStorage(RenderProtocol::TexFormat format, int width, int height)
+    {
+        glRenderbufferStorage(GL_RENDERBUFFER, GetTexFormat(format), width, height);
+        CheckGLError("SetRenderBufferStorage");
+    }
+
+    void RenderCommand::SerFrameBufferRenderBuffer(unsigned int id, RenderProtocol::AttachmentType type, unsigned int rboID)
+    {
+        assert(id && "Frame Buffer is null!");
+        assert(rboID && "Render Buffer Object is null!");
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GetAttachmentType(type), GL_RENDERBUFFER, rboID);
+        CheckGLError("SerFrameBufferRenderBuffer");
+    }
+
+    unsigned int RenderCommand::CreateFrameBuffer()
+    {
+        unsigned int id = 0;
+        glGenFramebuffers(1, &id);
+        CheckGLError("CreateFrameBuffer");
+        return id;
+    }
+
+    void RenderCommand::destroyFrameBuffer(unsigned int id)
+    {
+        assert(id && "Frame Buffer is null!");
+        glDeleteFramebuffers(1, &id);
+        CheckGLError("destroyFrameBuffer");
+    }
+
+    void RenderCommand::BindFrameBuffer(unsigned int id)
+    {
+        assert(id && "Frame Buffer is null!");
+        glBindFramebuffer(GL_FRAMEBUFFER, id);
+        CheckGLError("BindFrameBuffer");
+    }
+
+    void RenderCommand::UnbindFrameBuffer()
+    {
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        CheckGLError("UnbindFrameBuffer");
+    }
+
+    bool RenderCommand::CheckFrameBufferComplete()
+    {
+        GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+        if (status != GL_FRAMEBUFFER_COMPLETE)
+        {
+            LogManager::Instance()->log("ERROR::FRAMEBUFFER:: Framebuffer is not complete: " + std::to_string(status));
+            return false;
+        }
+        CheckGLError("CheckFrameBufferComplete");
+        return true;
+    }
+
     unsigned int RenderCommand::CreateBuffer()
     {
         unsigned int id = 0;
@@ -665,5 +765,12 @@ namespace Crash
     {
         glTexParameteri(GetTexType(type), GetTexFilter(filter), GetTexFilterType(filterType));
         CheckGLError("SetTextureFilterMode");
+    }
+
+    void RenderCommand::SetFramebufferTexture2D(unsigned int id, RenderProtocol::AttachmentType type, unsigned int textureID)
+    {
+        assert(id && "Frame Buffer is null!");
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GetAttachmentType(type), GL_TEXTURE_2D, textureID, 0);
+        CheckGLError("SetFramebufferTexture2D");
     }
 } // namespace Crash

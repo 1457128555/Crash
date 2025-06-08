@@ -7,11 +7,15 @@
 #include "CrashFileSystem.h"
 #include "CrashTexMgr.h"
 
+
 using namespace Crash;
 
 namespace
 {
     ShaderProgram*      gPlaneShader    = nullptr;
+    ShaderProgram*      gQuadShader    = nullptr;
+
+    FrameBuffer*        gFrameBuffer    = nullptr;
     std::shared_ptr<Texture> gPlaneTex;
     std::shared_ptr<Texture> gVegTex;
     std::shared_ptr<Texture> gWinTex;
@@ -20,6 +24,9 @@ namespace
 
     VertexArrayObject*  gPlaneVAO       = nullptr;
     VertexBuffer*       gPlaneVBO       = nullptr;
+
+    VertexArrayObject*  gQuadVAO       = nullptr;
+    VertexBuffer*       gQuadVBO       = nullptr;
 
     float planeVertices[] = {
         // positions            // texture Coords 
@@ -31,6 +38,17 @@ namespace
          1.0f, 0.0f, -1.0f,    1.0f, 1.0f,
         -1.0f, 0.0f, -1.0f,    0.0f, 1.0f,
     };
+
+    float quadVertices[] = {  
+        // positions   // texCoords
+        -1.0f,  1.0f,  0.0f, 1.0f,
+        -1.0f, -1.0f,  0.0f, 0.0f,
+         1.0f, -1.0f,  1.0f, 0.0f,
+
+        -1.0f,  1.0f,  0.0f, 1.0f,
+         1.0f, -1.0f,  1.0f, 0.0f,
+         1.0f,  1.0f,  1.0f, 1.0f
+    };	
 
     std::vector<glm::vec3> vegetation = {
         {-1.5f,  0.0f, -0.48f},   
@@ -62,7 +80,9 @@ void HelloBlending04::update(float deltaTime)
 
 void HelloBlending04::renderScene()
  {
+    RenderSystem::Instance()->bindFrameBuffer(gFrameBuffer);
     RenderSystem::Instance()->clear(RenderProtocol::ClearFlag::All);
+    RenderSystem::Instance()->setDepthEnable(true);
 
     //  Render Plane
     {
@@ -125,6 +145,26 @@ void HelloBlending04::renderScene()
             RenderSystem::Instance()->drawArray(RenderProtocol::DrawMode::Triangles, 0, 6);
         }
     }
+
+    RenderSystem::Instance()->unbindFrameBuffer();
+    RenderSystem::Instance()->clear(RenderProtocol::ClearFlag::All);
+
+    RenderSystem::Instance()->setDepthEnable(false);
+
+    //  Render FrameBuffer to Screen
+    {
+        RenderSystem::Instance()->bindShaderProgram(gQuadShader);
+        RenderSystem::Instance()->setUniform1i(gQuadShader, "uDiffuseTex", 0);
+        RenderSystem::Instance()->activateTextureUnit(0);
+        RenderSystem::Instance()->bindTexture(RenderSystem::Instance()->getFrameBufferColorAttachment(gFrameBuffer).get());
+
+        RenderSystem::Instance()->bindVertexArray(gQuadVAO);
+        RenderSystem::Instance()->drawArray(RenderProtocol::DrawMode::Triangles, 0, 6);
+
+        RenderSystem::Instance()->unbindVertexArray();
+        RenderSystem::Instance()->unbindShaderProgram();
+    }
+
 }
 
 void HelloBlending04::initialize()       
@@ -158,6 +198,27 @@ void HelloBlending04::initialize()
         
         RenderSystem::Instance()->unbindVertexArray();
     }
+
+    gFrameBuffer = RenderSystem::Instance()->createFrameBuffer("framebuffer", 
+        Engine::Instance()->getWidth(), Engine::Instance()->getHeight(), true);
+
+    {
+        const std::string vsCode = Crash::FileSystem::ReadShader("HelloBlending04_Quad_VS.txt");
+        const std::string psCode = Crash::FileSystem::ReadShader("HelloBlending04_Quad_PS.txt");
+        gQuadShader = RenderSystem::Instance()->createShaderProgram("HelloBlending04_Quad", vsCode, psCode);
+  
+    }
+
+    {
+        gQuadVAO = RenderSystem::Instance()->createVertexArray();
+        gQuadVBO = RenderSystem::Instance()->createBuffer();
+        RenderSystem::Instance()->setBufferData(gQuadVBO, quadVertices, sizeof(quadVertices));
+
+        RenderSystem::Instance()->addBufferToVertexArray(gQuadVAO, gQuadVBO, 0, 2, sizeof(float) * 4, (const void*)0);
+        RenderSystem::Instance()->addBufferToVertexArray(gQuadVAO, gQuadVBO, 1, 2, sizeof(float) * 4, (const void*)(sizeof(float) * 2));
+        
+        RenderSystem::Instance()->unbindVertexArray();
+    }
 }
 
 void HelloBlending04::shutdown()               
@@ -172,6 +233,9 @@ void HelloBlending04::shutdown()
     RenderSystem::Instance()->destroyBuffer(gPlaneVBO);
     RenderSystem::Instance()->destroyShaderProgram(gPlaneShader);
 
+    RenderSystem::Instance()->destroyFrameBuffer(gFrameBuffer);
 
-    
+    RenderSystem::Instance()->destroyVertexArray(gQuadVAO);
+    RenderSystem::Instance()->destroyBuffer(gQuadVBO);
+    RenderSystem::Instance()->destroyShaderProgram(gQuadShader);
 }

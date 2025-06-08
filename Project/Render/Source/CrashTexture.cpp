@@ -19,7 +19,6 @@ namespace Crash
         RenderCommand::SetTextureWarpMode(mType, RenderProtocol::TexWrap::T, RenderProtocol::TexSurround::Repeat);
         RenderCommand::SetTextureFilterMode(mType, RenderProtocol::TexFilter::MinFilter, RenderProtocol::TexFilterType::Linear);
         RenderCommand::SetTextureFilterMode(mType, RenderProtocol::TexFilter::MagFilter, RenderProtocol::TexFilterType::Linear);
-        unbind();
     }
 
     Texture::~Texture()
@@ -49,20 +48,17 @@ namespace Crash
         RenderCommand::SetTextureData(mType, level, mFormat, mWidth, mHeight, format, dataType, data);
         if (mGenerateMipmap)
             RenderCommand::GenerateMipmap(mType);
-        unbind();
     }
 
     void Texture::setTextureWarpMode(RenderProtocol::TexWrap wrap, RenderProtocol::TexSurround surround)
     {
         bind();
         RenderCommand::SetTextureWarpMode(mType, wrap, surround);
-        unbind();
     }
 
     void Texture::setTextureFilterMode(RenderProtocol::TexFilter filter, RenderProtocol::TexFilterType filterType)
     {
         bind();
         RenderCommand::SetTextureFilterMode(mType, filter, filterType);
-        unbind();
     }
 }

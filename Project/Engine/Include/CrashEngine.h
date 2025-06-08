@@ -53,6 +53,9 @@ namespace Crash
         float getAspect() const { return float(mConfig.windowWidth) / float(mConfig.windowHeight); };
 
         bool isReverseZ() const { return mReverseZ; }
+
+        int getWidth()  const { return mConfig.windowWidth; }
+        int getHeight() const { return mConfig.windowHeight; }
     private:
         const EngineConfig mConfig;
         

@@ -15,6 +15,7 @@ add_subdirectory(${RootPath}/Common     ${CMAKE_BINARY_DIR}/Common)
 add_subdirectory(${RootPath}/Render     ${CMAKE_BINARY_DIR}/Render)
 add_subdirectory(${RootPath}/Engine     ${CMAKE_BINARY_DIR}/Engine)
 
+
 file(GLOB_RECURSE CRASH_CLIENT_HEADER_FILES ${RootPath}/Client/Include/*.h  ${RootPath}/Client/Include/*.hpp)
 file(GLOB_RECURSE CRASH_CLIENT_SOURCE_FILES ${RootPath}/Client/Source/*.cpp ${RootPath}/Client/Source/*.c)
 

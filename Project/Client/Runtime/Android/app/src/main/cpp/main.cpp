@@ -13,7 +13,7 @@
 #include "CrashInputMgr.h"
 #include "CrashFileSystem.h"
 #include "CrashLogManager.h"
-#include "HelloAssimp03.h"
+#include "HelloBlending04.h"
 
 using namespace Crash;
 
@@ -208,7 +208,7 @@ void handle_cmd(android_app *pApp, int32_t cmd) {
 
             config.assetPath = g_externalDir + "/assets/";
             new Crash::Engine(config);     
-            g_Scene = new HelloAssimp03();
+            g_Scene = new HelloBlending04();
             Crash::Engine::Instance()->setScene(g_Scene);
 
         }break;

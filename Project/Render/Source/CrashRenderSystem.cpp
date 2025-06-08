@@ -4,6 +4,7 @@
 #include "CrashShaderProgram.h"
 #include "CrashRenderBuffer.h"
 #include "CrashTexture.h"
+#include "CrashFrameBuffer.h"
 
 namespace Crash
 {
@@ -58,6 +59,11 @@ namespace Crash
             SetTextureWarpMode,
             SetTextureFilterMode,
             ActivateTextureUnit,
+
+            CreateFrameBuffer,
+            DestroyFrameBuffer,
+            BindFrameBuffer,
+            UnbindFrameBuffer,
 
             DrawArray,
             DrawElements,
@@ -356,6 +362,50 @@ namespace Crash
         {
            program->setUniformMatrix4fv(name, value);
         }
+    }
+
+    FrameBuffer* RenderSystem::createFrameBuffer(const std::string& name, unsigned int width, unsigned int height, bool useRBO)
+    {
+        FrameBuffer* framebuffer = new FrameBuffer(name, width, height, useRBO);
+        if(mAsyncRender)
+            mCommandQueue[0].push_back({ (unsigned int)_CommandType::CreateFrameBuffer, framebuffer });
+        else
+            framebuffer->createHandle();
+        return framebuffer;
+    }
+
+    void RenderSystem::destroyFrameBuffer(FrameBuffer* framebuffer)
+    {
+        if(mAsyncRender)
+            mCommandQueue[0].push_back({ (unsigned int)_CommandType::DestroyFrameBuffer, framebuffer });
+        else
+            delete framebuffer;
+    }
+
+    void RenderSystem::bindFrameBuffer(FrameBuffer* framebuffer)
+    {
+        if(mAsyncRender)
+            mCommandQueue[0].push_back({ (unsigned int)_CommandType::BindFrameBuffer, framebuffer });
+        else
+            framebuffer->bind();
+    }
+
+    void RenderSystem::unbindFrameBuffer()
+    {
+        if(mAsyncRender)
+            mCommandQueue[0].push_back({ (unsigned int)_CommandType::UnbindFrameBuffer, nullptr });
+        else
+            RenderCommand::UnbindFrameBuffer();
+    }
+
+    const std::shared_ptr<Texture>& RenderSystem::getFrameBufferColorAttachment(FrameBuffer* framebuffer)const
+    {
+        return framebuffer->getColorAttachment();
+    }
+
+    const std::shared_ptr<Texture>& RenderSystem::getFrameBufferDepthStencilAttachment(FrameBuffer* framebuffer)const
+    {
+        return framebuffer->getDepthStencilAttachment();
     }
 
     VertexArrayObject* RenderSystem::createVertexArray()
@@ -731,6 +781,29 @@ namespace Crash
                     RenderCommand::DrawElements(info->mode, info->count, info->type, info->indices);
                     std::free((void*)info->indices);
                     delete info;
+                }
+                break;
+                case _CommandType::CreateFrameBuffer:
+                {
+                    FrameBuffer* framebuffer = (FrameBuffer*)cmdData;
+                    framebuffer->createHandle();
+                }
+                break;
+                case _CommandType::DestroyFrameBuffer:
+                {
+                    FrameBuffer* framebuffer = (FrameBuffer*)cmdData;
+                    delete framebuffer;
+                }
+                break;
+                case _CommandType::BindFrameBuffer:
+                {
+                    FrameBuffer* framebuffer = (FrameBuffer*)cmdData;
+                    framebuffer->bind();
+                }
+                break;
+                case _CommandType::UnbindFrameBuffer:
+                {
+                    RenderCommand::UnbindFrameBuffer();
                 }
                 break;
                 case _CommandType::CreateVertexArray:

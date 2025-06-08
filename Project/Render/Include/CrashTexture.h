@@ -7,18 +7,15 @@ namespace Crash
 {
     class Texture
     {
-        friend class RenderSystem;
-    public:
-        const std::string&          getName()               const { return mName; }
-
-    protected:
+     public:
         Texture(const std::string& name, RenderProtocol::TexType type);
         virtual ~Texture();
-
+        
         void                        createHandle();     
         void                        bind()                  const;
         void                        unbind()                const;
         unsigned int                getID()                 const { return mID; }
+        const std::string&          getName()               const { return mName; }
         RenderProtocol::TexType     getType()               const { return mType; }
         int                         getWidth()              const { return mWidth; }
         int                         getHeight()             const { return mHeight; }

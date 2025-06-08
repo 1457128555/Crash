@@ -13,6 +13,7 @@ namespace Crash
     class VertexBuffer;
     class IndexBuffer;
     class Texture;
+    class FrameBuffer;
 
     class CRASH_RENDER_API RenderSystem : public Singleton<RenderSystem>
     {
@@ -49,6 +50,14 @@ namespace Crash
         void setUniform1i(const ShaderProgram* program, const std::string& name, int value);
         void setUniform4f(const ShaderProgram* program, const std::string& name, const glm::vec4& value);
         void setUniformMatrix4fv(const ShaderProgram* program, const std::string& name, const glm::mat4& value);
+
+        FrameBuffer* createFrameBuffer(const std::string& name, unsigned int width, unsigned int height, bool useRBO = true);
+        void destroyFrameBuffer(FrameBuffer* framebuffer);
+        void bindFrameBuffer(FrameBuffer* framebuffer);
+        void unbindFrameBuffer();
+
+        const std::shared_ptr<Texture>& getFrameBufferColorAttachment(FrameBuffer* framebuffer)         const;
+        const std::shared_ptr<Texture>& getFrameBufferDepthStencilAttachment(FrameBuffer* framebuffer)  const;
 
         VertexArrayObject* createVertexArray();
         void destroyVertexArray(VertexArrayObject* vao);

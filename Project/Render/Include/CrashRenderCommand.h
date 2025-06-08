@@ -53,6 +53,23 @@ namespace Crash
         static void SetUniform4f(unsigned int locaID, const glm::vec4& value);
         static void SetUniformMatrix4fv(unsigned int locaID, const glm::mat4& value);
 
+        static unsigned int CreateRenderBufferObject();
+        static void DestroyRenderBufferObject(unsigned int id);
+        static void BindRenderBufferObject(unsigned int id);
+        static void UnbindRenderBufferObject();
+
+        static void SetRenderBufferStorage(RenderProtocol::TexFormat format, int width, int height);
+        static void SerFrameBufferRenderBuffer(unsigned int id, RenderProtocol::AttachmentType type, unsigned int rboID);
+
+        static unsigned int CreateFrameBuffer();
+        static void destroyFrameBuffer(unsigned int id);
+
+        static void BindFrameBuffer(unsigned int id);
+        static void UnbindFrameBuffer();
+        static bool CheckFrameBufferComplete();
+
+        static void SetFramebufferTexture2D(unsigned int id,  RenderProtocol::AttachmentType type ,unsigned int textureID);
+
         static unsigned int CreateBuffer();
         static void destroyBuffer(unsigned int id);
 

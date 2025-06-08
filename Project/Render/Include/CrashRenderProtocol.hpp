@@ -29,6 +29,17 @@ namespace Crash
             IndexBuffer    = 0x2,
         };
 
+        enum class AttachmentType : unsigned int
+        {
+            ColorAttachment0        = 0x1,
+            ColorAttachment1        = 0x2,
+            ColorAttachment2        = 0x3,
+            ColorAttachment3        = 0x4,
+            DepthAttachment         = 0x5,
+            StencilAttachment       = 0x6,
+            DepthStencilAttachment  = 0x7,
+        };
+
         enum class BufferUsage : unsigned int
         {
             StaticDraw     = 0x1,
@@ -83,15 +94,19 @@ namespace Crash
             Alpha        = 0x4,       
             RG           = 0x5,       
             RGB          = 0x6,       
-            RGBA         = 0x7,       
+            RGBA         = 0x7,     
+            
+            Depth24Stencil8 = 0x8, // Special format for depth-stencil textures
+            DepthStencil    = 0x9, // Generic depth-stencil format
         };
 
         enum class TexDataType : unsigned int
         {
-            UnsignedByte   = 0x1,       
-            UnsignedShort  = 0x2,       
-            UnsignedInt    = 0x3,       
-            Float          = 0x4,       
+            UnsignedByte    = 0x1,       
+            UnsignedShort   = 0x2,       
+            UnsignedInt     = 0x3,       
+            Float           = 0x4,       
+            UnsignedInt24_8 = 0x5, // Special type for depth24-stencil8 textures
         };
 
         enum class TexSurround : unsigned int
@@ -136,6 +151,8 @@ namespace Crash
                 case TexFormat::RG:    return 2;
                 case TexFormat::RGB:   return 3;
                 case TexFormat::RGBA:  return 4;
+                case TexFormat::Depth24Stencil8:    return 4;   // Depth24Stencil8 is typically 4 bytes
+                case TexFormat::DepthStencil:       return 4;     // Generic depth-stencil format is also typically 4 bytes
                 default:               break; // Invalid format
             }
             assert(false && "Invalid texture format");
