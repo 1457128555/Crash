@@ -22,6 +22,9 @@ namespace Crash
         RenderProtocol::TexFormat   getFormat()             const { return mFormat; }
         bool                        getGenerateMipmap()     const { return mGenerateMipmap; }
 
+        void setCubeMapTextureData(int level, RenderProtocol::TexFormat internalFormat, int width, int height, 
+            RenderProtocol::TexFormat format, RenderProtocol::TexDataType dataType, std::array<const void*, 6> data, bool generateMipmap);
+
         void setTextureData(int level, RenderProtocol::TexFormat internalFormat, int width, int height, 
             RenderProtocol::TexFormat format, RenderProtocol::TexDataType dataType, const void* data, bool generateMipmap);
 

@@ -56,6 +56,7 @@ namespace Crash
             BindTexture,
             UnBindTexture,
             SetTextureData,
+            SetCubeMapTextureData,
             SetTextureWarpMode,
             SetTextureFilterMode,
             ActivateTextureUnit,
@@ -116,6 +117,7 @@ namespace Crash
             const void*                     indices;
         };
 
+        template<typename T>
         struct SetTexDataInfo
         {
             Texture*                        texture;
@@ -125,7 +127,7 @@ namespace Crash
             int                             height;
             RenderProtocol::TexFormat       format;
             RenderProtocol::TexDataType     dataType;
-            void*                           data;
+            T                               data;
             bool                            generateMipmap;
         };
 
@@ -584,12 +586,44 @@ namespace Crash
             texture->unbind();
     }
 
+    void RenderSystem::setCubeMapTextureData(Texture* texture, RenderProtocol::TexFormat internalFormat, int width, int height, 
+            RenderProtocol::TexFormat format, RenderProtocol::TexDataType dataType, std::array<const void*, 6> data, bool generateMipmap)
+    {
+        if(mAsyncRender)
+        {
+            SetTexDataInfo<std::array<void*, 6>*>* info = new SetTexDataInfo<std::array<void*, 6>*>();
+            info->texture         = texture;
+            info->level           = 0; // Cube map textures typically use level 0
+            info->internalFormat  = internalFormat;
+            info->width           = width;
+            info->height          = height;
+            info->format          = format;
+
+            const int byteSize    = width * height * RenderProtocol::GetTexFormatByteSize(format);
+            info->data            = new std::array<void*, 6>(); // Allocate space for all 6 faces
+            for(int i = 0; i < 6; ++i)
+            {
+                info->data->at(i) = malloc(byteSize);
+                memcpy(info->data->at(i), data.at(i), byteSize);
+            }
+
+            info->dataType        = dataType;
+            info->generateMipmap = generateMipmap;
+
+            mCommandQueue[0].push_back({ (unsigned int)_CommandType::SetCubeMapTextureData, info });
+        }
+        else
+        {
+            texture->setCubeMapTextureData(0, internalFormat, width, height, format, dataType, data, generateMipmap);
+        }
+    }
+
     void RenderSystem::setTextureData(Texture* texture, int level, RenderProtocol::TexFormat internalFormat, int width, int height, 
         RenderProtocol::TexFormat format, RenderProtocol::TexDataType dataType, const void* data, bool generateMipmap)
     {
         if(mAsyncRender)
         {
-            SetTexDataInfo* info = new SetTexDataInfo();
+            SetTexDataInfo<void*>* info = new SetTexDataInfo<void*>();
             info->texture         = texture;
             info->level           = level;
             info->internalFormat  = internalFormat;
@@ -740,10 +774,27 @@ namespace Crash
                 break;
                 case _CommandType::SetTextureData:
                 {
-                    SetTexDataInfo* info = (SetTexDataInfo*)cmdData;
+                    SetTexDataInfo<void*>* info = (SetTexDataInfo<void*>*)cmdData;
                     info->texture->setTextureData(info->level, info->internalFormat, info->width, info->height, 
                         info->format, info->dataType, info->data, info->generateMipmap);
                     std::free(info->data);
+                    delete info;
+                }
+                break;
+                case _CommandType::SetCubeMapTextureData:
+                {
+                    SetTexDataInfo<std::array<void*, 6>*>* info = (SetTexDataInfo<std::array<void*, 6>*>*)cmdData;
+
+                    std::array<const void*, 6> tempData =
+                        { info->data->at(0), info->data->at(1), info->data->at(2), 
+                          info->data->at(3), info->data->at(4), info->data->at(5) };
+
+                    info->texture->setCubeMapTextureData(info->level, info->internalFormat, info->width, info->height, 
+                        info->format, info->dataType, tempData, info->generateMipmap);
+
+                    for(auto& faceData : *info->data)
+                        std::free(faceData);
+                    delete info->data;
                     delete info;
                 }
                 break;

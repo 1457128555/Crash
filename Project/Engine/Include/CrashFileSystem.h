@@ -12,7 +12,8 @@ namespace Crash
        static std::string ReadFile(const std::string& filePath);
        static std::string ReadShader(const std::string& filePath);
 
-       static unsigned char* ReadImage(const std::string& filePath, int& width, int& height, RenderProtocol::TexFormat& fmt);
+       static unsigned char* ReadImage(const std::string& filePath, int& width, int& height, 
+            RenderProtocol::TexFormat& fmt, bool flipY = true);
        static void FreeImage(unsigned char* data);
 
        static inline std::string sExternalDir = "";

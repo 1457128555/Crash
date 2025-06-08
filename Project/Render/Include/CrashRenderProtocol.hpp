@@ -84,6 +84,14 @@ namespace Crash
             Texture2D      = 0x2,
             Texture3D      = 0x3,
             TextureCubeMap = 0x4,
+
+            TextureCubeMapX     = 0x5,      // Positive X face of a cube map
+            TextureCubeMapNX    = 0x6,      // Negative X face of a cube map
+            TextureCubeMapY     = 0x7,      // Positive Y face of a cube map
+            TextureCubeMapNY    = 0x8,      // Negative Y face of a cube map
+            TextureCubeMapZ     = 0x9,      // Positive Z face of a cube map
+            TextureCubeMapNZ    = 0xA,      // Negative Z face of a cube map
+            
         };
 
         enum class TexFormat : unsigned int

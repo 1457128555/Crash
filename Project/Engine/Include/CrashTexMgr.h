@@ -15,6 +15,7 @@ namespace Crash
         TexMgr()  = default;
         ~TexMgr() = default;
 
+        std::shared_ptr<Texture> createCubeMapTexture(const std::string& name, const std::array<std::string, 6>& faces);
         std::shared_ptr<Texture> createTexture(const std::string& name, RenderProtocol::TexType type);
         void destroyTexture(Texture* texture);
 

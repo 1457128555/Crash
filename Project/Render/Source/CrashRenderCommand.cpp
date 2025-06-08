@@ -105,6 +105,15 @@ namespace Crash
                 case RenderProtocol::TexType::Texture2D:      return GL_TEXTURE_2D;
                 case RenderProtocol::TexType::Texture3D:      return GL_TEXTURE_3D;
                 case RenderProtocol::TexType::TextureCubeMap: return GL_TEXTURE_CUBE_MAP;
+                
+                // Cube map faces
+                case RenderProtocol::TexType::TextureCubeMapX:  return GL_TEXTURE_CUBE_MAP_POSITIVE_X;
+                case RenderProtocol::TexType::TextureCubeMapNX: return GL_TEXTURE_CUBE_MAP_NEGATIVE_X;
+                case RenderProtocol::TexType::TextureCubeMapY:  return GL_TEXTURE_CUBE_MAP_POSITIVE_Y;
+                case RenderProtocol::TexType::TextureCubeMapNY: return GL_TEXTURE_CUBE_MAP_NEGATIVE_Y;
+                case RenderProtocol::TexType::TextureCubeMapZ:  return GL_TEXTURE_CUBE_MAP_POSITIVE_Z;
+                case RenderProtocol::TexType::TextureCubeMapNZ: return GL_TEXTURE_CUBE_MAP_NEGATIVE_Z;
+
                 default: assert(false && "Invalid texture type"); return 0;
             }
             return 0;

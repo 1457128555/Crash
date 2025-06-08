@@ -89,7 +89,8 @@ namespace Crash
         return result;
     }
     
-    unsigned char* FileSystem::ReadImage(const std::string& filePath, int& width, int& height, RenderProtocol::TexFormat& fmt)
+    unsigned char* FileSystem::ReadImage(const std::string& filePath, int& width, int& height, 
+        RenderProtocol::TexFormat& fmt, bool flipY)
     {
 
         const std::string textureHead = R"(Texture/)";
@@ -97,7 +98,7 @@ namespace Crash
         const std::string imageData = ReadFile(texPath);
         
         int channels = 0;
-        stbi_set_flip_vertically_on_load(true);
+        stbi_set_flip_vertically_on_load(flipY);
         unsigned char* data = stbi_load_from_memory((const stbi_uc*)imageData.data(), (int)imageData.size(), &width, &height, &channels, 0);
 
         if(data)

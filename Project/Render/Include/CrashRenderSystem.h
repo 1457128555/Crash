@@ -80,6 +80,9 @@ namespace Crash
         void bindTexture(Texture* texture);
         void unbindTexture(Texture* texture);
 
+        void setCubeMapTextureData(Texture* texture, RenderProtocol::TexFormat internalFormat, int width, int height, 
+            RenderProtocol::TexFormat format, RenderProtocol::TexDataType dataType, std::array<const void*, 6> data, bool generateMipmap);
+
        void setTextureData(Texture* texture, int level, RenderProtocol::TexFormat internalFormat, int width, int height, 
             RenderProtocol::TexFormat format, RenderProtocol::TexDataType dataType, const void* data, bool generateMipmap);
 

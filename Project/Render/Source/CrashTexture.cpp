@@ -17,6 +17,7 @@ namespace Crash
         bind();
         RenderCommand::SetTextureWarpMode(mType, RenderProtocol::TexWrap::S, RenderProtocol::TexSurround::Repeat);
         RenderCommand::SetTextureWarpMode(mType, RenderProtocol::TexWrap::T, RenderProtocol::TexSurround::Repeat);
+        RenderCommand::SetTextureWarpMode(mType, RenderProtocol::TexWrap::R, RenderProtocol::TexSurround::Repeat);
         RenderCommand::SetTextureFilterMode(mType, RenderProtocol::TexFilter::MinFilter, RenderProtocol::TexFilterType::Linear);
         RenderCommand::SetTextureFilterMode(mType, RenderProtocol::TexFilter::MagFilter, RenderProtocol::TexFilterType::Linear);
     }
@@ -34,6 +35,26 @@ namespace Crash
     void Texture::unbind() const
     {
         RenderCommand::UnbindTexture(mType);
+    }
+
+    void Texture::setCubeMapTextureData(int level, RenderProtocol::TexFormat internalFormat, int width, int height, 
+            RenderProtocol::TexFormat format, RenderProtocol::TexDataType dataType, std::array<const void*, 6> data, bool generateMipmap)
+    {
+        mWidth = width;
+        mHeight = height;
+        mFormat = internalFormat;
+        mGenerateMipmap = generateMipmap;
+
+        bind();
+        for (int i = 0; i < 6; ++i)
+        {
+            unsigned int curFace = static_cast<unsigned int>(RenderProtocol::TexType::TextureCubeMapX);
+            curFace += i;
+            RenderCommand::SetTextureData(RenderProtocol::TexType(curFace), level, mFormat, mWidth, mHeight, format, dataType, data.at(i));
+        }
+
+        if (mGenerateMipmap)
+            RenderCommand::GenerateMipmap(mType);
     }
 
     void Texture::setTextureData(int level, RenderProtocol::TexFormat internalFormat,

@@ -200,7 +200,7 @@ void HelloBlending04::initialize()
     }
 
     gFrameBuffer = RenderSystem::Instance()->createFrameBuffer("framebuffer", 
-        Engine::Instance()->getWidth(), Engine::Instance()->getHeight(), true);
+        Engine::Instance()->getWidth(), Engine::Instance()->getHeight());
 
     {
         const std::string vsCode = Crash::FileSystem::ReadShader("HelloBlending04_Quad_VS.txt");

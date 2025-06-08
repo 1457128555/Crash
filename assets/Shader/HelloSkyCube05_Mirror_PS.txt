@@ -1,0 +1,30 @@
+//  HelloSkyCube05_Mirror_PS
+
+#include "CommonUniforms_PS.txt"
+
+uniform samplerCube uCubeMap; 
+
+in vec4 oWorldPos;
+in vec4 oWorldNor; 
+
+out vec4 FragColor;
+
+vec3 GetReflectDir()
+{
+    vec3 I = normalize(oWorldPos.xyz - uCameraWorldPos.xyz);
+    vec3 R = reflect(I, normalize(oWorldNor.xyz));
+    return R;
+}
+
+vec3 GetRefractDir()
+{
+    float ratio = 1.00 / 1.52;  //  Glass refraction index
+    vec3 I = normalize(oWorldPos.xyz - uCameraWorldPos.xyz);
+    vec3 R = refract(I, normalize(oWorldNor.xyz), ratio);
+    return R;
+}
+
+void main()
+{
+    FragColor = texture(uCubeMap, GetRefractDir());
+}
