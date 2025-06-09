@@ -6,56 +6,12 @@
 #include "CrashCamera.h"
 #include "CrashFileSystem.h"
 #include "CrashTexMgr.h"
-
+#include "CrashBasicGeometry.h"
 
 using namespace Crash;
 
 namespace
 {
-    float cubeVertex[] = {
-        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-         0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
-         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
-         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
-        -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
-        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
-
-        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-         0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-         0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-         0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-
-        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-
-        0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-        0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-        0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-        0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-        0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-        0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-
-        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-         0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-         0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-         0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-
-        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-         0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-         0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-         0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
-    };
-
     ShaderProgram*      gSkyCubeShader    = nullptr;
     ShaderProgram*      gMirrorCubeShader = nullptr;
 
@@ -94,9 +50,16 @@ void HelloSkyCube05::initialize()
     }
 
     {
+        auto dataType = BasicGeometry::ComFlag({
+        BasicGeometry::DataType::Vertex, 
+        BasicGeometry::DataType::Normal});
+        
+        std::vector<float> vertices;
+        BasicGeometry::Cube(dataType, vertices);
+
         gSkyCubeVAO = RenderSystem::Instance()->createVertexArray();
         gSkyCubeVBO = RenderSystem::Instance()->createBuffer();
-        RenderSystem::Instance()->setBufferData(gSkyCubeVBO, cubeVertex, sizeof(cubeVertex));
+        RenderSystem::Instance()->setBufferData(gSkyCubeVBO, vertices.data(), sizeof(vertices[0]) * vertices.size());
         RenderSystem::Instance()->addBufferToVertexArray(gSkyCubeVAO, gSkyCubeVBO, 0, 3, sizeof(float) * 6, (const void*)0);
         RenderSystem::Instance()->addBufferToVertexArray(gSkyCubeVAO, gSkyCubeVBO, 1, 3, sizeof(float) * 6, (const void*)(sizeof(float) * 3));
         RenderSystem::Instance()->unbindVertexArray();

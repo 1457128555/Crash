@@ -6,47 +6,12 @@
 #include "CrashTexMgr.h"
 #include "CrashFileSystem.h"
 #include "CrashMaterial.h"
+#include "CrashBasicGeometry.h"
 
 using namespace Crash;
 
 namespace
 {
-float cubeVertices[] = {
-    -0.5f, -0.5f,  0.5f,    0.0f,  0.0f,  1.0f,  0.0f, 0.0f,
-     0.5f, -0.5f,  0.5f,    0.0f,  0.0f,  1.0f,  1.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,    0.0f,  0.0f,  1.0f,  1.0f, 1.0f,
-    -0.5f,  0.5f,  0.5f,    0.0f,  0.0f,  1.0f,  0.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,    0.0f,  0.0f, -1.0f,  1.0f, 0.0f,
-     0.5f, -0.5f, -0.5f,    0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
-     0.5f,  0.5f, -0.5f,    0.0f,  0.0f, -1.0f,  0.0f, 1.0f,
-    -0.5f,  0.5f, -0.5f,    0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,   -1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
-    -0.5f, -0.5f,  0.5f,   -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-    -0.5f,  0.5f,  0.5f,   -1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
-    -0.5f,  0.5f, -0.5f,   -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,    1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-     0.5f, -0.5f,  0.5f,    1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,    1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-     0.5f,  0.5f, -0.5f,    1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
-    -0.5f,  0.5f,  0.5f,    0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,    0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
-     0.5f,  0.5f, -0.5f,    0.0f,  1.0f,  0.0f,  1.0f, 1.0f,
-    -0.5f,  0.5f, -0.5f,    0.0f,  1.0f,  0.0f,  0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f,    0.0f, -1.0f,  0.0f,  1.0f, 1.0f,
-     0.5f, -0.5f,  0.5f,    0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,    0.0f, -1.0f,  0.0f,  0.0f, 0.0f,
-    -0.5f, -0.5f, -0.5f,    0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
-};
-
-    unsigned int cubeIndices[] = {
-        0,   1,  2,  2,  3,  0,       
-        4,   5,  6,  6,  7,  4,       
-        8,   9, 10, 10, 11,  8,       
-        12, 13, 14, 14, 15, 12,       
-        16, 17, 18, 18, 19, 16,       
-        20, 21, 22, 22, 23, 20        
-    };
-
     std::vector<glm::vec3> cubePositions = {
         glm::vec3( 0.0f,  0.0f,  0.0f),
         glm::vec3( 2.0f,  5.0f, -15.0f),
@@ -110,9 +75,8 @@ void HelloCube02::renderScene()
 
             pointLight.apply(gLightProgram);
 
-            int indexCount = sizeof(cubeIndices) / sizeof(unsigned int);
             RenderSystem::Instance()->drawElements(RenderProtocol::DrawMode::Triangles, 
-                indexCount, RenderProtocol::DrawElementType::UnsignedInt, 0);
+                36, RenderProtocol::DrawElementType::UnsignedInt, 0);
         }
 
         RenderSystem::Instance()->unbindShaderProgram();
@@ -138,9 +102,8 @@ void HelloCube02::renderScene()
 
         mDirLight.apply(gLightProgram);
 
-        int indexCount = sizeof(cubeIndices) / sizeof(unsigned int);
         RenderSystem::Instance()->drawElements(RenderProtocol::DrawMode::Triangles, 
-            indexCount, RenderProtocol::DrawElementType::UnsignedInt, 0);
+            36, RenderProtocol::DrawElementType::UnsignedInt, 0);
 
         RenderSystem::Instance()->unbindShaderProgram();
         RenderSystem::Instance()->unbindVertexArray();
@@ -173,9 +136,8 @@ void HelloCube02::renderScene()
             model = glm::rotate(model, ++cubeIndex * glm::radians(20.0f), glm::vec3(0.5f, 1.0f, 0.0f));
             RenderSystem::Instance()->setUniformMatrix4fv(gShaderProgram, "uModel", model);
 
-            int indexCount = sizeof(cubeIndices) / sizeof(unsigned int);
             RenderSystem::Instance()->drawElements(RenderProtocol::DrawMode::Triangles, 
-                indexCount, RenderProtocol::DrawElementType::UnsignedInt, 0);
+                36, RenderProtocol::DrawElementType::UnsignedInt, 0);
         }
 
         RenderSystem::Instance()->unbindShaderProgram();
@@ -201,11 +163,20 @@ void HelloCube02::initialize()
     }
 
     {
+        auto dataType = BasicGeometry::ComFlag({
+        BasicGeometry::DataType::Vertex, 
+        BasicGeometry::DataType::Normal,
+        BasicGeometry::DataType::TexCoord});
+        
+        std::vector<float> vertices;
+        std::vector<unsigned int> indices;
+        BasicGeometry::Cube(dataType, vertices, indices);
+
         gVertexBuffer = RenderSystem::Instance()->createBuffer();
-        RenderSystem::Instance()->setBufferData(gVertexBuffer, cubeVertices, sizeof(cubeVertices));
+        RenderSystem::Instance()->setBufferData(gVertexBuffer, vertices.data(), sizeof(vertices[0]) * vertices.size());
 
         gIndexBuffer = RenderSystem::Instance()->createIndexBuffer();
-        RenderSystem::Instance()->setIndexBufferData(gIndexBuffer, cubeIndices, sizeof(cubeIndices));
+        RenderSystem::Instance()->setIndexBufferData(gIndexBuffer, indices.data(), sizeof(indices[0]) * indices.size());
 
         gVertexArrayObject = RenderSystem::Instance()->createVertexArray();
         

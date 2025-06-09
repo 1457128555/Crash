@@ -8,21 +8,12 @@
 #include "CrashEngine.h"
 #include "CrashTexMgr.h"
 
+#include "CrashBasicGeometry.h"
+
 using namespace Crash;
 
 namespace
 {
-    float vertices[] = {
-        //  Position         // Texture Coords
-        -0.5f, -0.5f, 0.0f,     0.0f, 0.0f,
-         0.5f, -0.5f, 0.0f,     1.0f, 0.0f,
-         0.0f,  0.5f, 0.0f,     0.5f, 1.0f 
-    };
-
-    unsigned int indices[] = {
-        0, 1, 2
-    };
-
     ShaderProgram*      gShaderProgram      = nullptr;
     VertexArrayObject*  gVertexArrayObject  = nullptr;
     VertexBuffer*       gVertexBuffer       = nullptr;
@@ -80,10 +71,19 @@ void HelloTriangle01::initialize()
     gShaderProgram = RenderSystem::Instance()->createShaderProgram("HelloTriangle01", vsCode, psCode);
 
     gVertexBuffer = RenderSystem::Instance()->createBuffer();
-    RenderSystem::Instance()->setBufferData(gVertexBuffer, vertices, sizeof(vertices));
+
+    auto dataType = BasicGeometry::ComFlag({
+        BasicGeometry::DataType::Vertex, 
+        BasicGeometry::DataType::TexCoord});
+        
+    std::vector<float> vertices;
+    std::vector<unsigned int> indices;
+    BasicGeometry::Triangle(dataType, vertices, indices);
+
+    RenderSystem::Instance()->setBufferData(gVertexBuffer, vertices.data(), sizeof(vertices[0]) * vertices.size());
 
     gIndexBuffer = RenderSystem::Instance()->createIndexBuffer();
-    RenderSystem::Instance()->setIndexBufferData(gIndexBuffer, indices, sizeof(indices));
+    RenderSystem::Instance()->setIndexBufferData(gIndexBuffer, indices.data(), sizeof(indices[0]) * indices.size());
 
     gVertexArrayObject = RenderSystem::Instance()->createVertexArray();
     RenderSystem::Instance()->addBufferToVertexArray(gVertexArrayObject, gVertexBuffer, 0, 3, sizeof(float) * 5, (const void*)0);

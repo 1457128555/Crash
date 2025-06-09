@@ -5,6 +5,7 @@
 #include "CrashRenderSystem.h"
 #include "CrashFileSystem.h"
 #include "CrashTexMgr.h"
+#include "CrashBasicGeometry.h"
 
 
 using namespace Crash;
@@ -24,28 +25,6 @@ namespace
 
     VertexArrayObject*  gQuadVAO       = nullptr;
     VertexBuffer*       gQuadVBO       = nullptr;
-
-    float planeVertices[] = {
-        // positions            // texture Coords 
-        -1.0f, 0.0f, -1.0f,    0.0f, 1.0f,
-        -1.0f, 0.0f,  1.0f,    0.0f, 0.0f,
-         1.0f, 0.0f,  1.0f,    1.0f, 0.0f,
-
-         1.0f, 0.0f,  1.0f,    1.0f, 0.0f,
-         1.0f, 0.0f, -1.0f,    1.0f, 1.0f,
-        -1.0f, 0.0f, -1.0f,    0.0f, 1.0f,
-    };
-
-    float quadVertices[] = {  
-        // positions   // texCoords
-        -1.0f,  1.0f,  0.0f, 1.0f,
-        -1.0f, -1.0f,  0.0f, 0.0f,
-         1.0f, -1.0f,  1.0f, 0.0f,
-
-        -1.0f,  1.0f,  0.0f, 1.0f,
-         1.0f, -1.0f,  1.0f, 0.0f,
-         1.0f,  1.0f,  1.0f, 1.0f
-    };	
 
     std::vector<glm::vec3> vegetation = {
         {-1.5f,  0.0f, -0.48f},   
@@ -70,7 +49,7 @@ HelloBlending04::HelloBlending04() : Scene("HelloBlending04")
 void HelloBlending04::update(float deltaTime)
 {
     Scene::update(deltaTime);
-    
+
     std::sort(window.begin(), window.end(), [&](const glm::vec3& a, const glm::vec3& b) {
         glm::vec3 camPos = mCamera.getPosition();
         return glm::length(camPos - a) > glm::length(camPos - b); // Sort by z-coordinate
@@ -93,6 +72,7 @@ void HelloBlending04::renderScene()
         RenderSystem::Instance()->bindTexture(gPlaneTex.get());
 
         glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.f, -1.f, 0.f)); 
+        model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f)); 
         model = glm::scale(model, glm::vec3(50.0f)); 
 
         RenderSystem::Instance()->setUniformMatrix4fv(gPlaneShader, "uModel", model);
@@ -117,7 +97,6 @@ void HelloBlending04::renderScene()
         for(auto &&veg : vegetation)
         {
             glm::mat4 model = glm::translate(glm::mat4(1.0f), veg);
-            model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
             RenderSystem::Instance()->setUniformMatrix4fv(gPlaneShader, "uModel", model);
 
             RenderSystem::Instance()->drawArray(RenderProtocol::DrawMode::Triangles, 0, 6);
@@ -139,7 +118,6 @@ void HelloBlending04::renderScene()
         for(auto &&win : window)
         {
             glm::mat4 model = glm::translate(glm::mat4(1.0f), win);
-            model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
             RenderSystem::Instance()->setUniformMatrix4fv(gPlaneShader, "uModel", model);
             RenderSystem::Instance()->drawArray(RenderProtocol::DrawMode::Triangles, 0, 6);
         }
@@ -188,9 +166,16 @@ void HelloBlending04::initialize()
     }
 
     {
+        auto dataType = BasicGeometry::ComFlag({
+        BasicGeometry::DataType::Vertex, 
+        BasicGeometry::DataType::TexCoord});
+        
+        std::vector<float> vertices;
+        BasicGeometry::Quad(dataType, vertices);
+
         gPlaneVAO = RenderSystem::Instance()->createVertexArray();
         gPlaneVBO = RenderSystem::Instance()->createBuffer();
-        RenderSystem::Instance()->setBufferData(gPlaneVBO, planeVertices, sizeof(planeVertices));
+        RenderSystem::Instance()->setBufferData(gPlaneVBO, vertices.data(), sizeof(vertices[0]) * vertices.size());
 
         RenderSystem::Instance()->addBufferToVertexArray(gPlaneVAO, gPlaneVBO, 0, 3, sizeof(float) * 5, (const void*)0);
         RenderSystem::Instance()->addBufferToVertexArray(gPlaneVAO, gPlaneVBO, 1, 2, sizeof(float) * 5, (const void*)(sizeof(float) * 3));
@@ -209,12 +194,19 @@ void HelloBlending04::initialize()
     }
 
     {
+        auto dataType = BasicGeometry::ComFlag({
+        BasicGeometry::DataType::Vertex, 
+        BasicGeometry::DataType::TexCoord});
+        
+        std::vector<float> vertices;
+        BasicGeometry::Quad(dataType, vertices);
+
         gQuadVAO = RenderSystem::Instance()->createVertexArray();
         gQuadVBO = RenderSystem::Instance()->createBuffer();
-        RenderSystem::Instance()->setBufferData(gQuadVBO, quadVertices, sizeof(quadVertices));
+        RenderSystem::Instance()->setBufferData(gQuadVBO, vertices.data(), sizeof(vertices[0]) * vertices.size());
 
-        RenderSystem::Instance()->addBufferToVertexArray(gQuadVAO, gQuadVBO, 0, 2, sizeof(float) * 4, (const void*)0);
-        RenderSystem::Instance()->addBufferToVertexArray(gQuadVAO, gQuadVBO, 1, 2, sizeof(float) * 4, (const void*)(sizeof(float) * 2));
+        RenderSystem::Instance()->addBufferToVertexArray(gQuadVAO, gQuadVBO, 0, 3, sizeof(float) * 5, (const void*)0);
+        RenderSystem::Instance()->addBufferToVertexArray(gQuadVAO, gQuadVBO, 1, 2, sizeof(float) * 5, (const void*)(sizeof(float) * 3));
         
         RenderSystem::Instance()->unbindVertexArray();
     }
