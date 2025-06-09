@@ -8,144 +8,6 @@
 
 namespace Crash
 {
-    namespace
-    {
-        enum class _CommandType : unsigned int
-        {
-            FrameBegin = 0,
-            FrameEnd,
-            Clear,
-            SetClearColor,
-            SetViewport, 
-            SetCullFaceEnable,
-
-            SetDepthEnable,
-            SetClearDepth,
-            SetDetphFunc,
-
-            SetStencilEnable,
-            SetStencilFunc,
-            SetStencilOp,
-            SetStencilMask,
-
-            CreateShaderProgram,
-            DestroyShaderProgram,
-            BindShaderProgram,
-            UnbindShaderProgram,
-            SetUniform1i,
-            SetUniform4f,
-            SetUniformMatrix4fv,
-
-            CreateVertexArray,
-            DestroyVertexArray,
-            BindVertexArray,
-            UnbindVertexArray,
-            AddVBToVertexArray,
-            AddIBToVertexArray,
-
-            CreateVertexBuffer,
-            DestroyVertexBuffer,
-            SetVertexBufferData,
-
-            CreateIndexBuffer,
-            DestroyIndexBuffer,
-            SetIndexBufferData,
-
-            CreateTexture,
-            DestroyTexture,
-            BindTexture,
-            UnBindTexture,
-            SetTextureData,
-            SetCubeMapTextureData,
-            SetTextureWarpMode,
-            SetTextureFilterMode,
-            ActivateTextureUnit,
-
-            CreateFrameBuffer,
-            DestroyFrameBuffer,
-            BindFrameBuffer,
-            UnbindFrameBuffer,
-
-            DrawArray,
-            DrawElements,
-        };
-
-        template<typename T>
-        struct SetUniformInfo
-        {
-            const ShaderProgram*    program;
-            std::string             name;
-            T                       value;
-        };
-
-        struct AddVBToVAOInfo
-        {
-            VertexArrayObject*  vao;
-            VertexBuffer*       buffer;
-            unsigned int        index;
-            unsigned int        size;
-            unsigned int        stride;
-            const void*         pointer;
-        };
-
-        struct AddIBToVAOInfo
-        {
-            VertexArrayObject* vao;
-            IndexBuffer*       buffer;
-        };
-
-        template<typename T>
-        struct SetBufferDataInfo
-        {
-            T*                  buffer;
-            void*               data;
-            unsigned int        size;   
-        };
-
-        struct DrawArrayInfo
-        {
-            RenderProtocol::DrawMode        mode;
-            unsigned int                    first;
-            unsigned int                    count;
-        };
-
-        struct DrawElementsInfo
-        {
-            RenderProtocol::DrawMode        mode;
-            unsigned int                    count;
-            RenderProtocol::DrawElementType type;
-            const void*                     indices;
-        };
-
-        template<typename T>
-        struct SetTexDataInfo
-        {
-            Texture*                        texture;
-            int                             level;
-            RenderProtocol::TexFormat       internalFormat;
-            int                             width;
-            int                             height;
-            RenderProtocol::TexFormat       format;
-            RenderProtocol::TexDataType     dataType;
-            T                               data;
-            bool                            generateMipmap;
-        };
-
-        struct SetTexWarpModeInfo
-        {
-            Texture*                        texture;
-            RenderProtocol::TexWrap         wrap;
-            RenderProtocol::TexSurround     surround;
-        };
-
-        struct SetTexFilterModeInfo
-        {
-            Texture*                        texture;
-            RenderProtocol::TexFilter       filter;
-            RenderProtocol::TexFilterType   filterType;
-        };
-    }
-
     RenderSystem::RenderSystem(void* procAddress, bool asyncRender)
         : mProcAddress(procAddress)
         , mAsyncRender(asyncRender)
@@ -178,226 +40,262 @@ namespace Crash
         RenderCommand::Shutdown();
     }
 
+    void RenderSystem::clear(RenderProtocol::ClearFlag flag)
+    {
+        auto command = [_flag = flag]{ RenderCommand::Clear(_flag); };
+        if(mAsyncRender)
+            mCommandQueue[0].push_back(command);
+        else
+            command();
+    }
+
     void RenderSystem::frameBegin()
     {
+        auto command = []{};
         if(mAsyncRender)
-            mCommandQueue[0].push_back({ (unsigned int)_CommandType::FrameBegin, nullptr });
+            mCommandQueue[0].push_back(command);
+        else
+            command();
     }
 
     void RenderSystem::frameEnd()
     {
+        auto command = []{};
         if(mAsyncRender)
-            mCommandQueue[0].push_back({ (unsigned int)_CommandType::FrameEnd, nullptr });
-    }
-
-    void RenderSystem::clear(RenderProtocol::ClearFlag flag)
-    {
-        if(mAsyncRender)
-            mCommandQueue[0].push_back({ (unsigned int)_CommandType::Clear, (void*)(new RenderProtocol::ClearFlag(flag)) });
+            mCommandQueue[0].push_back(command);
         else
-            RenderCommand::Clear(flag);
+            command();
     }
 
     void RenderSystem::setDepthEnable(bool enable)
     {
+        auto command = [_enable = enable]{ RenderCommand::SetDepthEnable(_enable); };
         if(mAsyncRender)
-            mCommandQueue[0].push_back({ (unsigned int)_CommandType::SetDepthEnable, (void*)(new bool(enable)) });
+            mCommandQueue[0].push_back(command);
         else
-            RenderCommand::SetDepthEnable(enable);
+            command();
     }
 
     void RenderSystem::setDepthFunc(RenderProtocol::CompareFunc func)
     {
+        auto command = [_func = func]{ RenderCommand::SetDetphFunc(_func); };
         if(mAsyncRender)
-            mCommandQueue[0].push_back({ (unsigned int)_CommandType::SetDetphFunc, (void*)(new RenderProtocol::CompareFunc(func)) });
+            mCommandQueue[0].push_back(command);
         else
-            RenderCommand::SetDetphFunc(func);
+            command();
     }
 
     void RenderSystem::setClearDepth(float depth)
     {
+        auto command = [_depth = depth]{ RenderCommand::SetClearDepth(_depth); };
         if(mAsyncRender)
-            mCommandQueue[0].push_back({ (unsigned int)_CommandType::SetClearDepth, (void*)(new float(depth)) });
+            mCommandQueue[0].push_back(command);
         else
-            RenderCommand::SetClearDepth(depth);
+            command();
     }
 
     void RenderSystem::setStencilEnable(bool enable)
     {
+        auto command = [_enable = enable]{ RenderCommand::SetStencilEnable(_enable); };
         if(mAsyncRender)
-            mCommandQueue[0].push_back({ (unsigned int)_CommandType::SetStencilEnable, (void*)(new bool(enable)) });
+            mCommandQueue[0].push_back(command);
         else
-            RenderCommand::SetStencilEnable(enable);
+            command();
     }
 
     void RenderSystem::setStencilFunc(RenderProtocol::CompareFunc func, int ref, unsigned int mask)
     {
+        auto command = [_func = func, _ref = ref, _mask = mask] {
+            RenderCommand::SetStencilFunc(_func, _ref, _mask);
+        };
         if(mAsyncRender)
-        {
-            auto* info = new std::tuple<RenderProtocol::CompareFunc, int, unsigned int>(func, ref, mask);
-            mCommandQueue[0].push_back({ (unsigned int)_CommandType::SetStencilFunc, info });
-        }
+            mCommandQueue[0].push_back(command);
         else
-            RenderCommand::SetStencilFunc(func, ref, mask);
+            command();
     }
 
     void RenderSystem::setStencilOp(RenderProtocol::OperateFunc sfail, RenderProtocol::OperateFunc dpfail, RenderProtocol::OperateFunc dppass)
     {
+        auto command = [_sfail = sfail, _dpfail = dpfail, _dppass = dppass] {
+            RenderCommand::SetStencilOp(_sfail, _dpfail, _dppass);
+        };
         if(mAsyncRender)
-        {
-            auto* info = new std::tuple<RenderProtocol::OperateFunc, RenderProtocol::OperateFunc, RenderProtocol::OperateFunc>(sfail, dpfail, dppass);
-            mCommandQueue[0].push_back({ (unsigned int)_CommandType::SetStencilOp, info });
-        }
+            mCommandQueue[0].push_back(command);
         else
-            RenderCommand::SetStencilOp(sfail, dpfail, dppass);
+            command();
     }
 
     void RenderSystem::setStencilMask(unsigned int mask)
     {
+        auto command = [_mask = mask] {
+            RenderCommand::SetStencilMask(_mask); 
+        };
         if(mAsyncRender)
-            mCommandQueue[0].push_back({ (unsigned int)_CommandType::SetStencilMask, (void*)(new unsigned int(mask)) });
+            mCommandQueue[0].push_back(command);
         else
-            RenderCommand::SetStencilMask(mask);
+            command();
     }
 
     void RenderSystem::setClearColor(const glm::vec4& color)
     {
+        auto command = [_color = color] {
+            RenderCommand::SetClearColor(_color);
+        };
         if(mAsyncRender)
-            mCommandQueue[0].push_back({ (unsigned int)_CommandType::SetClearColor, new glm::vec4(color) });
+            mCommandQueue[0].push_back(command);
         else
-            RenderCommand::SetClearColor(color);
+            command();
     }
 
     void RenderSystem::setCullFaceEnable(bool enable)
     {
+        auto command = [_enable = enable] {
+            RenderCommand::SetCullFaceEnable(_enable);
+        };
         if(mAsyncRender)
-            mCommandQueue[0].push_back({ (unsigned int)_CommandType::SetCullFaceEnable, (void*)(new bool(enable)) });
+            mCommandQueue[0].push_back(command);
         else
-            RenderCommand::SetCullFaceEnable(enable);
+            command();
     }
 
     void RenderSystem::setViewport(const glm::ivec4& viewport)
     {
+        auto command = [_viewport = viewport] {
+            RenderCommand::SetViewport(_viewport);
+        };
         if(mAsyncRender)
-            mCommandQueue[0].push_back({ (unsigned int)_CommandType::SetViewport, new glm::ivec4(viewport) });
+            mCommandQueue[0].push_back(command);
         else
-            RenderCommand::SetViewport(viewport);
+            command();
     }
 
     ShaderProgram* RenderSystem::createShaderProgram(const std::string& name, const std::string& vs, const std::string& fs)
     {
         ShaderProgram* program = new ShaderProgram(name, vs, fs);
+
+        auto command = [_program = program] {
+            _program->createHandle();
+        };
         if(mAsyncRender)
-            mCommandQueue[0].push_back({ (unsigned int)_CommandType::CreateShaderProgram, program });
+            mCommandQueue[0].push_back(command);
         else
-            program->createHandle();
+            command();
+
         return program;
     }
 
     void RenderSystem::destroyShaderProgram(ShaderProgram* program)
     {
+        auto command = [_program = program] {
+            delete _program;
+        };
         if(mAsyncRender)
-            mCommandQueue[0].push_back({ (unsigned int)_CommandType::Clear, (void*)program });
+            mCommandQueue[0].push_back(command);
         else
-            delete program;
+            command();
     }
 
     void RenderSystem::bindShaderProgram(ShaderProgram* program)
     {
+        auto command = [_program = program] {
+            _program->bind();
+        };
         if(mAsyncRender)
-            mCommandQueue[0].push_back({ (unsigned int)_CommandType::BindShaderProgram, program });
+            mCommandQueue[0].push_back(command);
         else
-            program->bind();
+            command();
     }
 
     void RenderSystem::unbindShaderProgram()
     {
-        if(mAsyncRender)
-            mCommandQueue[0].push_back({ (unsigned int)_CommandType::UnbindShaderProgram, nullptr });
-        else
+        auto command = [] {
             RenderCommand::UnbindShaderProgram();
+        };
+        if(mAsyncRender)
+            mCommandQueue[0].push_back(command);
+        else
+            command();
     }
 
     void RenderSystem::setUniform1i(const ShaderProgram* program, const std::string& name, int value)
     {
+        auto command = [_program = program, _name = name, _value = value] {
+            _program->setUniform1i(_name, _value);
+        };
         if(mAsyncRender)
-        {
-            SetUniformInfo<int>* info = new SetUniformInfo<int>();
-            info->program = program;
-            info->name    = name;
-            info->value   = value;
-            mCommandQueue[0].push_back({ (unsigned int)_CommandType::SetUniform1i, info });
-        }
+            mCommandQueue[0].push_back(command);
         else
-        {
-           program->setUniform1i(name, value);
-        }
+            command();
     }
 
     void RenderSystem::setUniform4f(const ShaderProgram* program, const std::string& name, const glm::vec4& value)
     {
+        auto command = [_program = program, _name = name, _value = value] {
+            _program->setUniform4f(_name, _value);
+        };
         if(mAsyncRender)
-        {
-            SetUniformInfo<glm::vec4>* info = new SetUniformInfo<glm::vec4>();
-            info->program = program;
-            info->name    = name;
-            info->value   = value;
-            mCommandQueue[0].push_back({ (unsigned int)_CommandType::SetUniform4f, info });
-        }
+            mCommandQueue[0].push_back(command);
         else
-        {
-           program->setUniform4f(name, value);
-        }
+            command();
     }
 
     void RenderSystem::setUniformMatrix4fv(const ShaderProgram* program, const std::string& name, const glm::mat4& value)
     {
+        auto command = [_program = program, _name = name, _value = value] {
+            _program->setUniformMatrix4fv(_name, _value);
+        };
         if(mAsyncRender)
-        {
-            SetUniformInfo<glm::mat4>* info = new SetUniformInfo<glm::mat4>();
-            info->program = program;
-            info->name    = name;
-            info->value   = value;
-            mCommandQueue[0].push_back({ (unsigned int)_CommandType::SetUniformMatrix4fv, info });
-        }
+            mCommandQueue[0].push_back(command);
         else
-        {
-           program->setUniformMatrix4fv(name, value);
-        }
+            command();
     }
 
     FrameBuffer* RenderSystem::createFrameBuffer(const std::string& name, unsigned int width, unsigned int height, bool useRBO)
     {
         FrameBuffer* framebuffer = new FrameBuffer(name, width, height, useRBO);
+        auto command = [_framebuffer = framebuffer] {
+            _framebuffer->createHandle();
+        };
+
         if(mAsyncRender)
-            mCommandQueue[0].push_back({ (unsigned int)_CommandType::CreateFrameBuffer, framebuffer });
+            mCommandQueue[0].push_back(command);
         else
-            framebuffer->createHandle();
+            command();
+
         return framebuffer;
     }
 
     void RenderSystem::destroyFrameBuffer(FrameBuffer* framebuffer)
     {
+        auto command = [_framebuffer = framebuffer] {
+            delete _framebuffer;
+        };
         if(mAsyncRender)
-            mCommandQueue[0].push_back({ (unsigned int)_CommandType::DestroyFrameBuffer, framebuffer });
+            mCommandQueue[0].push_back(command);
         else
-            delete framebuffer;
+            command();
     }
 
     void RenderSystem::bindFrameBuffer(FrameBuffer* framebuffer)
     {
+        auto command = [_framebuffer = framebuffer] {
+            _framebuffer->bind();
+        };
         if(mAsyncRender)
-            mCommandQueue[0].push_back({ (unsigned int)_CommandType::BindFrameBuffer, framebuffer });
+            mCommandQueue[0].push_back(command);
         else
-            framebuffer->bind();
+            command();
     }
 
     void RenderSystem::unbindFrameBuffer()
     {
-        if(mAsyncRender)
-            mCommandQueue[0].push_back({ (unsigned int)_CommandType::UnbindFrameBuffer, nullptr });
-        else
+        auto command = [] {
             RenderCommand::UnbindFrameBuffer();
+        };
+        if(mAsyncRender)
+            mCommandQueue[0].push_back(command);
+        else
+            command();
     }
 
     const std::shared_ptr<Texture>& RenderSystem::getFrameBufferColorAttachment(FrameBuffer* framebuffer)const
@@ -413,308 +311,294 @@ namespace Crash
     VertexArrayObject* RenderSystem::createVertexArray()
     {
         VertexArrayObject* vao = new VertexArrayObject();
+
+        auto command = [_vao = vao] {
+            _vao->createHandle();
+        };
         if(mAsyncRender)
-            mCommandQueue[0].push_back({ (unsigned int)_CommandType::CreateVertexArray, vao });
+            mCommandQueue[0].push_back(command);
         else
-            vao->createHandle();
+            command();
+
         return vao;
     }
 
     void RenderSystem::destroyVertexArray(VertexArrayObject* vao)
     {
+        auto command = [_vao = vao] {
+            delete _vao;
+        };
         if(mAsyncRender)
-            mCommandQueue[0].push_back({ (unsigned int)_CommandType::DestroyVertexArray, vao });
+            mCommandQueue[0].push_back(command);
         else
-            delete vao;
+            command();
     }
 
     void RenderSystem::bindVertexArray(VertexArrayObject* vao)
     {
+        auto command = [_vao = vao] {
+            _vao->bind();
+        };
         if(mAsyncRender)
-            mCommandQueue[0].push_back({ (unsigned int)_CommandType::BindVertexArray, vao });
+            mCommandQueue[0].push_back(command);
         else
-            vao->bind();
+            command();
     }
 
     void RenderSystem::unbindVertexArray()
     {
-        if(mAsyncRender)
-            mCommandQueue[0].push_back({ (unsigned int)_CommandType::UnbindVertexArray, nullptr });
-        else
+        auto command = [] {
             RenderCommand::UnbindVertexArray();
+        };
+        if(mAsyncRender)
+            mCommandQueue[0].push_back(command);
+        else
+            command();
     }
 
     void RenderSystem::addBufferToVertexArray(VertexArrayObject* vao, VertexBuffer* buffer, unsigned int index, unsigned int size, unsigned int stride, const void* pointer)
     {
+        auto command = [_vao = vao, _buffer = buffer, _index = index, _size = size, _stride = stride, _pointer = pointer] {
+            _vao->addBuffer(_buffer, _index, _size, _stride, _pointer);
+        };
         if(mAsyncRender)
-        {
-            AddVBToVAOInfo* info = new AddVBToVAOInfo();
-            info->vao       = vao;
-            info->buffer    = buffer;
-            info->index     = index;
-            info->size      = size;
-            info->stride    = stride;
-            info->pointer   = pointer;
-            mCommandQueue[0].push_back({ (unsigned int)_CommandType::AddVBToVertexArray, info });
-        }
+            mCommandQueue[0].push_back(command);
         else
-        {
-            vao->addBuffer(buffer, index, size, stride, pointer);
-        }
+            command();
     }
 
     void RenderSystem::addBufferToVertexArray(VertexArrayObject* vao, IndexBuffer* buffer)
     {
+        auto command = [_vao = vao, _buffer = buffer] {
+            _vao->addBuffer(_buffer);
+        };
         if(mAsyncRender)
-        {
-            AddIBToVAOInfo* info = new AddIBToVAOInfo();
-            info->vao       = vao;
-            info->buffer    = buffer;
-            mCommandQueue[0].push_back({ (unsigned int)_CommandType::AddIBToVertexArray, info });
-        }
+            mCommandQueue[0].push_back(command);
         else
-        {
-            vao->addBuffer(buffer);
-        }
+            command();
     }
 
     VertexBuffer* RenderSystem::createBuffer()
     {
         VertexBuffer* buffer = new VertexBuffer(RenderProtocol::BufferUsage::StaticDraw);
+
+        auto command = [_buffer = buffer] {
+            _buffer->createHandle();
+        };
         if(mAsyncRender)
-            mCommandQueue[0].push_back({ (unsigned int)_CommandType::CreateVertexBuffer, buffer });
+            mCommandQueue[0].push_back(command);
         else
-            buffer->createHandle();
+            command();
+
         return buffer;
     }
 
     void RenderSystem::destroyBuffer(VertexBuffer* buffer)
     {
+        auto command = [_buffer = buffer] {
+            delete _buffer;
+        };
         if(mAsyncRender)
-            mCommandQueue[0].push_back({ (unsigned int)_CommandType::DestroyVertexBuffer, buffer });
+            mCommandQueue[0].push_back(command);
         else
-            delete buffer;
+            command();
     }
 
     void RenderSystem::setBufferData(VertexBuffer* buffer, const void* data, unsigned int size)
     {
-        if(mAsyncRender)
-        {
-            void* safeData = std::malloc(size);
-            std::memcpy(safeData, data, size);
+        void* safeData = std::malloc(size);
+        std::memcpy(safeData, data, size);
 
-            SetBufferDataInfo<VertexBuffer>* info = new SetBufferDataInfo<VertexBuffer>();
-            info->buffer = buffer;
-            info->data   = safeData;
-            info->size   = size;
-            mCommandQueue[0].push_back({ (unsigned int)_CommandType::SetVertexBufferData, info });
-        }
+        auto command = [_buffer = buffer, _data = safeData, _size = size] {
+            _buffer->setBufferData(_data, _size);
+            std::free(_data); 
+        };  
+        if(mAsyncRender)
+            mCommandQueue[0].push_back(command);
         else
-        {
-            buffer->setBufferData(data, size);
-        }
+            command();
     }
 
     IndexBuffer* RenderSystem::createIndexBuffer()
     {
         IndexBuffer* buffer = new IndexBuffer(RenderProtocol::BufferUsage::StaticDraw);
+        auto command = [_buffer = buffer] {
+            _buffer->createHandle();
+        };
         if(mAsyncRender)
-            mCommandQueue[0].push_back({ (unsigned int)_CommandType::CreateIndexBuffer, buffer });
+            mCommandQueue[0].push_back(command);
         else
-            buffer->createHandle();
+            command();
         return buffer;
     }
 
     void RenderSystem::destroyIndexBuffer(IndexBuffer* buffer)
     {
+        auto command = [_buffer = buffer] {
+            delete _buffer;
+        };
         if(mAsyncRender)
-            mCommandQueue[0].push_back({ (unsigned int)_CommandType::DestroyIndexBuffer, buffer });
+            mCommandQueue[0].push_back(command);
         else
-            delete buffer;
+            command();
     }
 
     void RenderSystem::setIndexBufferData(IndexBuffer* buffer, const void* data, unsigned int size)
     {
+        void* safeData = std::malloc(size);
+        std::memcpy(safeData, data, size);
+        auto command = [_buffer = buffer, _data = safeData, _size = size] {
+            _buffer->setBufferData(_data, _size);
+            std::free(_data); 
+        };
         if(mAsyncRender)
-        {
-            void* safeData = std::malloc(size);
-            std::memcpy(safeData, data, size);
-
-            SetBufferDataInfo<IndexBuffer>* info = new SetBufferDataInfo<IndexBuffer>();
-            info->buffer = buffer;
-            info->data   = safeData;
-            info->size   = size;
-            mCommandQueue[0].push_back({ (unsigned int)_CommandType::SetIndexBufferData, info });
-        }
+            mCommandQueue[0].push_back(command);
         else
-        {
-            buffer->setBufferData(data, size);
-        }
+            command();
     }
 
     Texture* RenderSystem::createTexture(const std::string& name,RenderProtocol::TexType type)
     {
         Texture* texture = new Texture(name, type);
+        auto command = [_texture = texture] {
+            _texture->createHandle();
+        };
         if(mAsyncRender)
-            mCommandQueue[0].push_back({ (unsigned int)_CommandType::CreateTexture, texture });
+            mCommandQueue[0].push_back(command);
         else
-            texture->createHandle();
+            command();
         return texture;
     }
 
     void RenderSystem::destroyTexture(Texture* texture)
     {
+        auto command = [_texture = texture] {
+            delete _texture;
+        };
         if(mAsyncRender)
-            mCommandQueue[0].push_back({ (unsigned int)_CommandType::DestroyTexture, texture });
+            mCommandQueue[0].push_back(command);
         else
-            delete texture;
+            command();
     }
 
     void RenderSystem::bindTexture(Texture* texture)
     {
+        auto command = [_texture = texture] {
+            _texture->bind();
+        };
         if(mAsyncRender)
-            mCommandQueue[0].push_back({ (unsigned int)_CommandType::BindTexture, texture });
+            mCommandQueue[0].push_back(command);
         else
-            texture->bind();
+            command();
     }
 
     void RenderSystem::unbindTexture(Texture* texture)
     {
+        auto command = [_texture = texture] {
+            _texture->unbind();
+        };
         if(mAsyncRender)
-            mCommandQueue[0].push_back({ (unsigned int)_CommandType::UnBindTexture, texture });
+            mCommandQueue[0].push_back(command);
         else
-            texture->unbind();
+            command();
     }
 
     void RenderSystem::setCubeMapTextureData(Texture* texture, RenderProtocol::TexFormat internalFormat, int width, int height, 
             RenderProtocol::TexFormat format, RenderProtocol::TexDataType dataType, std::array<const void*, 6> data, bool generateMipmap)
     {
+        std::array<void*, 6> safeData;
+        const int byteSize = width * height * RenderProtocol::GetTexFormatByteSize(format);
+        for(int i = 0; i < 6; ++i)
+        {
+            safeData[i] = malloc(byteSize);
+            memcpy(safeData[i], data.at(i), byteSize);
+        }
+
+        auto command = [_texture = texture, _internalFormat = internalFormat, _width = width, _height = height, 
+            _format = format, _dataType = dataType, _data = safeData, _generateMipmap = generateMipmap] {
+
+            std::array<const void*, 6> _data_const = { _data[0], _data[1], _data[2], _data[3], _data[4], _data[5] };
+            _texture->setCubeMapTextureData(0, _internalFormat, _width, _height, _format, _dataType, _data_const, _generateMipmap);
+            
+            for(auto& faceData : _data)
+                free(faceData); // Free each face's data after use
+        };
         if(mAsyncRender)
-        {
-            SetTexDataInfo<std::array<void*, 6>*>* info = new SetTexDataInfo<std::array<void*, 6>*>();
-            info->texture         = texture;
-            info->level           = 0; // Cube map textures typically use level 0
-            info->internalFormat  = internalFormat;
-            info->width           = width;
-            info->height          = height;
-            info->format          = format;
-
-            const int byteSize    = width * height * RenderProtocol::GetTexFormatByteSize(format);
-            info->data            = new std::array<void*, 6>(); // Allocate space for all 6 faces
-            for(int i = 0; i < 6; ++i)
-            {
-                info->data->at(i) = malloc(byteSize);
-                memcpy(info->data->at(i), data.at(i), byteSize);
-            }
-
-            info->dataType        = dataType;
-            info->generateMipmap = generateMipmap;
-
-            mCommandQueue[0].push_back({ (unsigned int)_CommandType::SetCubeMapTextureData, info });
-        }
+            mCommandQueue[0].push_back(command);
         else
-        {
-            texture->setCubeMapTextureData(0, internalFormat, width, height, format, dataType, data, generateMipmap);
-        }
+            command();
     }
 
     void RenderSystem::setTextureData(Texture* texture, int level, RenderProtocol::TexFormat internalFormat, int width, int height, 
         RenderProtocol::TexFormat format, RenderProtocol::TexDataType dataType, const void* data, bool generateMipmap)
     {
+        const int byteSize = width * height * RenderProtocol::GetTexFormatByteSize(format);
+        void* safeData = malloc(byteSize);
+        memcpy(safeData, data, byteSize);
+        auto command = [_texture = texture, _level = level, _internalFormat = internalFormat, _width = width, 
+            _height = height, _format = format, _dataType = dataType, _data = safeData, _generateMipmap = generateMipmap] {
+            _texture->setTextureData(_level, _internalFormat, _width, _height, _format, _dataType, _data, _generateMipmap);
+            std::free(_data); // Free the data after use
+        };
         if(mAsyncRender)
-        {
-            SetTexDataInfo<void*>* info = new SetTexDataInfo<void*>();
-            info->texture         = texture;
-            info->level           = level;
-            info->internalFormat  = internalFormat;
-            info->width           = width;
-            info->height          = height;
-            info->format          = format;
-
-            const int byteSize    = width * height * RenderProtocol::GetTexFormatByteSize(format);
-            info->data            = malloc(byteSize);
-            memcpy(info->data, data, byteSize);
-
-            info->dataType        = dataType;
-            info->generateMipmap = generateMipmap;
-            
-            mCommandQueue[0].push_back({ (unsigned int)_CommandType::SetTextureData, info });
-        }
+            mCommandQueue[0].push_back(command);
         else
-            texture->setTextureData(level, internalFormat, width, height, format, dataType, data, generateMipmap);
+            command();
     }
 
     void RenderSystem::setTextureWarpMode(Texture* texture, RenderProtocol::TexWrap wrap, RenderProtocol::TexSurround surround)
     {
+        auto command = [_texture = texture, _wrap = wrap, _surround = surround] {
+            _texture->setTextureWarpMode(_wrap, _surround);
+        };
         if(mAsyncRender)
-        {
-            SetTexWarpModeInfo* info = new SetTexWarpModeInfo();
-            info->texture   = texture;
-            info->wrap      = wrap;
-            info->surround  = surround;
-            mCommandQueue[0].push_back({ (unsigned int)_CommandType::SetTextureWarpMode, info });
-        }
+            mCommandQueue[0].push_back(command);
         else
-        {
-            texture->setTextureWarpMode(wrap, surround);
-        }
+            command();
     }
 
     void RenderSystem::setTextureFilterMode(Texture* texture, RenderProtocol::TexFilter filter, RenderProtocol::TexFilterType filterType)
     {
+        auto command = [_texture = texture, _filter = filter, _filterType = filterType] {
+            _texture->setTextureFilterMode(_filter, _filterType);
+        };
         if(mAsyncRender)
-        {
-            SetTexFilterModeInfo* info = new SetTexFilterModeInfo();
-            info->texture   = texture;
-            info->filter    = filter;
-            info->filterType= filterType;
-            mCommandQueue[0].push_back({ (unsigned int)_CommandType::SetTextureFilterMode, info });
-        }
+            mCommandQueue[0].push_back(command);
         else
-        {
-            texture->setTextureFilterMode(filter, filterType);
-        }
+            command();
     }
 
     void RenderSystem::activateTextureUnit(unsigned int unit)
     {
+        auto command = [_unit = unit] {
+            RenderCommand::ActivateTextureUnit(_unit);
+        };
         if(mAsyncRender)
-            mCommandQueue[0].push_back({ (unsigned int)_CommandType::ActivateTextureUnit, (void*)(new unsigned int(unit)) });
+            mCommandQueue[0].push_back(command);
         else
-            RenderCommand::ActivateTextureUnit(unit);
+            command();
     }
 
     void RenderSystem::drawArray(RenderProtocol::DrawMode mode, unsigned int first, unsigned int count)
     {
+        auto command = [_mode = mode, _first = first, _count = count] {
+            RenderCommand::DrawArray(_mode, _first, _count);
+        };
         if(mAsyncRender)
-        {
-            DrawArrayInfo* info = new DrawArrayInfo();
-            info->mode   = mode;
-            info->first  = first;
-            info->count  = count;
-            mCommandQueue[0].push_back({ (unsigned int)_CommandType::DrawArray, info });
-        }
+            mCommandQueue[0].push_back(command);
         else
-        {
-            RenderCommand::DrawArray(mode, first, count);
-        }
+            command();
     }
 
     void RenderSystem::drawElements(RenderProtocol::DrawMode mode, unsigned int count, RenderProtocol::DrawElementType type, const void* indices)
     {
+        auto command = [_mode = mode, _count = count, _type = type, _indices = indices] {
+            RenderCommand::DrawElements(_mode, _count, _type, _indices);
+        };
         if(mAsyncRender)
-        {
-            DrawElementsInfo* info = new DrawElementsInfo();
-            info->mode   = mode;
-            info->count  = count;
-            info->type   = type;
-            info->indices = indices;
-            mCommandQueue[0].push_back({ (unsigned int)_CommandType::DrawElements, info });
-        }
+            mCommandQueue[0].push_back(command);
         else
-        {
-            RenderCommand::DrawElements(mode, count, type, indices);
-        }
+            command();
     }
 
     void RenderSystem::submitCommand()
@@ -741,339 +625,10 @@ namespace Crash
             std::swap(mCommandQueue[1], mCommandQueue[2]); 
         }
 
-        for(auto &&it : mCommandQueue[2])
-        {
-            _CommandType    cmdType = (_CommandType)it.first;
-            void*           cmdData = it.second;
+        for(auto &&command : mCommandQueue[2])
+            command();
 
-            switch (cmdType)
-            {
-                case _CommandType::CreateTexture:
-                {
-                    Texture* texture = (Texture*)cmdData;
-                    texture->createHandle();
-                }
-                break;
-                case _CommandType::DestroyTexture:
-                {
-                    Texture* texture = (Texture*)cmdData;
-                    delete texture;
-                }
-                break;
-                case _CommandType::BindTexture:
-                {
-                    Texture* texture = (Texture*)cmdData;
-                    texture->bind();
-                }
-                break;
-                case _CommandType::UnBindTexture:
-                {
-                    Texture* texture = (Texture*)cmdData;
-                    texture->unbind();
-                }
-                break;
-                case _CommandType::SetTextureData:
-                {
-                    SetTexDataInfo<void*>* info = (SetTexDataInfo<void*>*)cmdData;
-                    info->texture->setTextureData(info->level, info->internalFormat, info->width, info->height, 
-                        info->format, info->dataType, info->data, info->generateMipmap);
-                    std::free(info->data);
-                    delete info;
-                }
-                break;
-                case _CommandType::SetCubeMapTextureData:
-                {
-                    SetTexDataInfo<std::array<void*, 6>*>* info = (SetTexDataInfo<std::array<void*, 6>*>*)cmdData;
-
-                    std::array<const void*, 6> tempData =
-                        { info->data->at(0), info->data->at(1), info->data->at(2), 
-                          info->data->at(3), info->data->at(4), info->data->at(5) };
-
-                    info->texture->setCubeMapTextureData(info->level, info->internalFormat, info->width, info->height, 
-                        info->format, info->dataType, tempData, info->generateMipmap);
-
-                    for(auto& faceData : *info->data)
-                        std::free(faceData);
-                    delete info->data;
-                    delete info;
-                }
-                break;
-                case _CommandType::SetTextureWarpMode:
-                {
-                    SetTexWarpModeInfo* info = (SetTexWarpModeInfo*)cmdData;
-                    info->texture->setTextureWarpMode(info->wrap, info->surround);
-                    delete info;
-                }
-                break;
-                case _CommandType::SetTextureFilterMode:
-                {
-                    SetTexFilterModeInfo* info = (SetTexFilterModeInfo*)cmdData;
-                    info->texture->setTextureFilterMode(info->filter, info->filterType);
-                    delete info;
-                }
-                break;
-                case _CommandType::ActivateTextureUnit:
-                {
-                    unsigned int* unit = (unsigned int*)cmdData;
-                    RenderCommand::ActivateTextureUnit(*unit);
-                    delete unit;
-                }
-                break;
-                case _CommandType::DrawArray:
-                {
-                    DrawArrayInfo* info = (DrawArrayInfo*)cmdData;
-                    RenderCommand::DrawArray(info->mode, info->first, info->count);
-                    delete info;
-                }
-                break;
-                case _CommandType::DrawElements:
-                {
-                    DrawElementsInfo* info = (DrawElementsInfo*)cmdData;
-                    RenderCommand::DrawElements(info->mode, info->count, info->type, info->indices);
-                    std::free((void*)info->indices);
-                    delete info;
-                }
-                break;
-                case _CommandType::CreateFrameBuffer:
-                {
-                    FrameBuffer* framebuffer = (FrameBuffer*)cmdData;
-                    framebuffer->createHandle();
-                }
-                break;
-                case _CommandType::DestroyFrameBuffer:
-                {
-                    FrameBuffer* framebuffer = (FrameBuffer*)cmdData;
-                    delete framebuffer;
-                }
-                break;
-                case _CommandType::BindFrameBuffer:
-                {
-                    FrameBuffer* framebuffer = (FrameBuffer*)cmdData;
-                    framebuffer->bind();
-                }
-                break;
-                case _CommandType::UnbindFrameBuffer:
-                {
-                    RenderCommand::UnbindFrameBuffer();
-                }
-                break;
-                case _CommandType::CreateVertexArray:
-                {
-                    VertexArrayObject* vao = (VertexArrayObject*)cmdData;
-                    vao->createHandle();
-                }
-                break;
-                case _CommandType::DestroyVertexArray:
-                {
-                    VertexArrayObject* vao = (VertexArrayObject*)cmdData;
-                    delete vao;
-                }   
-                break;
-                case _CommandType::BindVertexArray:
-                {
-                    VertexArrayObject* vao = (VertexArrayObject*)cmdData;
-                    vao->bind();
-                }
-                break;
-                case _CommandType::UnbindVertexArray:
-                {
-                    RenderCommand::UnbindVertexArray();
-                }
-                break;
-                case _CommandType::AddVBToVertexArray:
-                {
-                    AddVBToVAOInfo* info = (AddVBToVAOInfo*)cmdData;
-                    info->vao->addBuffer(info->buffer, info->index, info->size, info->stride, info->pointer);
-                    delete info;
-                }
-                break;
-                case _CommandType::AddIBToVertexArray:
-                {
-                    AddIBToVAOInfo* info = (AddIBToVAOInfo*)cmdData;
-                    info->vao->addBuffer(info->buffer);
-                    delete info;
-                }
-                break;
-
-                case _CommandType::CreateVertexBuffer:
-                {
-                    VertexBuffer* buffer = (VertexBuffer*)cmdData;
-                    buffer->createHandle();
-                }
-                break;
-                case _CommandType::DestroyVertexBuffer:
-                {
-                    VertexBuffer* buffer = (VertexBuffer*)cmdData;
-                    delete buffer;
-                }
-                break;
-                case _CommandType::SetVertexBufferData:
-                {
-                    SetBufferDataInfo<VertexBuffer>* info = (SetBufferDataInfo<VertexBuffer>*)cmdData;
-                    info->buffer->setBufferData(info->data, info->size);
-                    std::free(info->data);
-                    delete info;
-                }
-                break;
-                case _CommandType::CreateIndexBuffer:
-                {
-                    IndexBuffer* buffer = (IndexBuffer*)cmdData;
-                    buffer->createHandle();
-                }
-                break;
-                case _CommandType::DestroyIndexBuffer:
-                {
-                    IndexBuffer* buffer = (IndexBuffer*)cmdData;
-                    delete buffer;
-                }
-                break;
-                case _CommandType::SetIndexBufferData:
-                {
-                    SetBufferDataInfo<IndexBuffer>* info = (SetBufferDataInfo<IndexBuffer>*)cmdData;
-                    info->buffer->setBufferData(info->data, info->size);
-                    std::free(info->data);
-                    delete info;
-                }
-                break;
-                case _CommandType::CreateShaderProgram:
-                {
-                    ShaderProgram* program = (ShaderProgram*)cmdData;
-                    program->createHandle();
-                }
-                break;
-                case _CommandType::DestroyShaderProgram:
-                {
-                    ShaderProgram* program = (ShaderProgram*)cmdData;
-                    delete program;
-                }
-                break;
-                case _CommandType::BindShaderProgram:
-                {
-                    ShaderProgram* program = (ShaderProgram*)cmdData;
-                    program->bind();
-                }
-                break;
-                case _CommandType::UnbindShaderProgram:
-                {
-                    RenderCommand::UnbindShaderProgram();
-                }
-                break;
-                case _CommandType::SetUniform1i:
-                {
-                    SetUniformInfo<int>* info = (SetUniformInfo<int>*)cmdData;
-                    info->program->setUniform1i(info->name, info->value);
-                    delete info;
-                }
-                break;
-                case _CommandType::SetUniform4f:
-                {
-                    SetUniformInfo<glm::vec4>* info = (SetUniformInfo<glm::vec4>*)cmdData;
-                    info->program->setUniform4f(info->name, info->value);
-                    delete info;
-                }
-                break;
-                case _CommandType::SetUniformMatrix4fv:
-                {
-                    SetUniformInfo<glm::mat4>* info = (SetUniformInfo<glm::mat4>*)cmdData;
-                    info->program->setUniformMatrix4fv(info->name, info->value);
-                    delete info;
-                }
-                break;
-                case _CommandType::FrameBegin:
-                {
-
-                }
-                break;
-                case _CommandType::FrameEnd:
-                {
-
-                } 
-                break;
-                case _CommandType::Clear:
-                {
-                    RenderCommand::Clear(*(RenderProtocol::ClearFlag*)cmdData);
-                    delete (RenderProtocol::ClearFlag*)cmdData;
-                }
-                break;
-                case _CommandType::SetClearColor:
-                {
-                    glm::vec4* color = (glm::vec4*)cmdData;
-                    RenderCommand::SetClearColor(*color);
-                    delete color;
-                }
-                break;
-                case _CommandType::SetViewport:
-                {
-                    glm::ivec4* viewport = (glm::ivec4*)cmdData;
-                    RenderCommand::SetViewport(*viewport);
-                    delete viewport;
-                }
-                break;
-                case _CommandType::SetDepthEnable:
-                {
-                    bool* enable = (bool*)cmdData;
-                    RenderCommand::SetDepthEnable(*enable);
-                    delete enable;
-                }
-                break;
-                case _CommandType::SetDetphFunc:
-                {
-                    RenderProtocol::CompareFunc* func = (RenderProtocol::CompareFunc*)cmdData;
-                    RenderCommand::SetDetphFunc(*func);
-                    delete func;
-                }
-                break;
-                case _CommandType::SetClearDepth:
-                {
-                    float* depth = (float*)cmdData;
-                    RenderCommand::SetClearDepth(*depth);
-                    delete depth;
-                }
-                break;
-                case _CommandType::SetStencilEnable:
-                {
-                    bool* enable = (bool*)cmdData;
-                    RenderCommand::SetStencilEnable(*enable);
-                    delete enable;
-                }
-                break;
-                case _CommandType::SetStencilFunc:
-                {
-                    auto* info = (std::tuple<RenderProtocol::CompareFunc, int, unsigned int>*)cmdData;
-                    RenderCommand::SetStencilFunc(std::get<0>(*info), std::get<1>(*info), std::get<2>(*info));
-                    delete info;
-                }
-                break;
-                case _CommandType::SetStencilOp:
-                {
-                    auto* info = (std::tuple<RenderProtocol::OperateFunc, RenderProtocol::OperateFunc, RenderProtocol::OperateFunc>*)cmdData;
-                    RenderCommand::SetStencilOp(std::get<0>(*info), std::get<1>(*info), std::get<2>(*info));
-                    delete info;
-                }
-                break;
-                case _CommandType::SetStencilMask:
-                {
-                    unsigned int* mask = (unsigned int*)cmdData;
-                    RenderCommand::SetStencilMask(*mask);
-                    delete mask;
-                }
-                break;
-                case _CommandType::SetCullFaceEnable:
-                {
-                    bool* enable = (bool*)cmdData;
-                    RenderCommand::SetCullFaceEnable(*enable);
-                    delete enable;
-                }
-                break;
-                default:
-                {
-                    LogManager::Instance()->log("RenderSystem::executeCommand unknown command");
-                    assert(false && "RenderSystem::executeCommand unknown command");
-                }
-            }
-        }
-
-         mCommandQueue[2].clear();
+        mCommandQueue[2].clear();
         return true;
     }
 }

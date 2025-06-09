@@ -113,6 +113,6 @@ namespace Crash
         bool    mReverseZ       = false;
 
         std::mutex mQueueMutex;
-        std::vector<std::pair<unsigned int, void*>> mCommandQueue[3];
+        std::vector<std::function<void()>> mCommandQueue[3];
     };
 }
