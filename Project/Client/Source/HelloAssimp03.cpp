@@ -3,10 +3,8 @@
 
 #include "CrashEngine.h"
 #include "CrashRenderSystem.h"
-#include "CrashCamera.h"
 #include "CrashModel.h"
 #include "CrashFileSystem.h"
-#include "CrashLight.h"
 
 using namespace Crash;
 
@@ -14,10 +12,7 @@ Model*              gModel              = nullptr;
 ShaderProgram*      gModelShader        = nullptr;
 ShaderProgram*      gModelOuterShader   = nullptr;
 ShaderProgram*      gLightProgram       = nullptr;
-Camera              gCamera;
 
-DirLight            gDirLight;
-SpotLight           gSpotLight;
 std::array<PointLight, 4> gPointLight;
 
 VertexArrayObject*  gVertexArrayObject  = nullptr;
@@ -73,11 +68,6 @@ HelloAssimp03::HelloAssimp03() : Scene("HelloAssimp03")
     
 }
 
-void HelloAssimp03::update(float deltaTime)
-{
-    gSpotLight.setPosition(gCamera.getPosition());
-    gSpotLight.setDirection(gCamera.getFront());
-}
 
 void HelloAssimp03::renderScene()
  {
@@ -88,13 +78,13 @@ void HelloAssimp03::renderScene()
         RenderSystem::Instance()->bindVertexArray(gVertexArrayObject);
         RenderSystem::Instance()->bindShaderProgram(gLightProgram);
 
-        glm::mat4 view = gCamera.getViewMat();
+        glm::mat4 view = mCamera.getViewMat();
         RenderSystem::Instance()->setUniformMatrix4fv(gLightProgram, "uView", view);
         
-        glm::mat4 projection = gCamera.getProjectionMat(Engine::Instance()->getAspect());
+        glm::mat4 projection = mCamera.getProjectionMat(Engine::Instance()->getAspect());
         RenderSystem::Instance()->setUniformMatrix4fv(gLightProgram, "uProjection", projection);
         
-        RenderSystem::Instance()->setUniform4f(gLightProgram, "uCameraWorldPos", glm::vec4(gCamera.getPosition(), 1.0f));
+        RenderSystem::Instance()->setUniform4f(gLightProgram, "uCameraWorldPos", glm::vec4(mCamera.getPosition(), 1.0f));
         
         for(auto &&pointLight : gPointLight)
         {
@@ -118,19 +108,19 @@ void HelloAssimp03::renderScene()
         RenderSystem::Instance()->bindVertexArray(gVertexArrayObject);
         RenderSystem::Instance()->bindShaderProgram(gLightProgram);
 
-        glm::mat4 model = glm::translate(glm::mat4(1.f), -50.f * glm::vec3(gDirLight.getDirection()));
+        glm::mat4 model = glm::translate(glm::mat4(1.f), -50.f * glm::vec3(mDirLight.getDirection()));
         model = glm::scale(model, glm::vec3(4.f)); 
         RenderSystem::Instance()->setUniformMatrix4fv(gLightProgram, "uModel", model);
 
-        glm::mat4 view = gCamera.getViewMat();
+        glm::mat4 view = mCamera.getViewMat();
         RenderSystem::Instance()->setUniformMatrix4fv(gLightProgram, "uView", view);
     
-        glm::mat4 projection = gCamera.getProjectionMat(Engine::Instance()->getAspect());
+        glm::mat4 projection = mCamera.getProjectionMat(Engine::Instance()->getAspect());
         RenderSystem::Instance()->setUniformMatrix4fv(gLightProgram, "uProjection", projection);
 
-        RenderSystem::Instance()->setUniform4f(gLightProgram, "uCameraWorldPos", glm::vec4(gCamera.getPosition(), 1.0f));
+        RenderSystem::Instance()->setUniform4f(gLightProgram, "uCameraWorldPos", glm::vec4(mCamera.getPosition(), 1.0f));
 
-        gDirLight.apply(gLightProgram);
+        mDirLight.apply(gLightProgram);
 
         int indexCount = sizeof(cubeIndices) / sizeof(unsigned int);
         RenderSystem::Instance()->drawElements(RenderProtocol::DrawMode::Triangles, 
@@ -154,19 +144,19 @@ void HelloAssimp03::renderScene()
         glm::mat4 model = glm::mat4(1.f);
         RenderSystem::Instance()->setUniformMatrix4fv(gModelShader, "uModel", model);
 
-        glm::mat4 view = gCamera.getViewMat();
+        glm::mat4 view = mCamera.getViewMat();
         RenderSystem::Instance()->setUniformMatrix4fv(gModelShader, "uView", view);
     
-        glm::mat4 projection = gCamera.getProjectionMat(Engine::Instance()->getAspect());
+        glm::mat4 projection = mCamera.getProjectionMat(Engine::Instance()->getAspect());
         RenderSystem::Instance()->setUniformMatrix4fv(gModelShader, "uProjection", projection);
 
-        RenderSystem::Instance()->setUniform4f(gModelShader, "uCameraWorldPos", glm::vec4(gCamera.getPosition(), 1.0f));
+        RenderSystem::Instance()->setUniform4f(gModelShader, "uCameraWorldPos", glm::vec4(mCamera.getPosition(), 1.0f));
 
         for(int i = 0; i < 4; ++i)
             gPointLight[i].apply(gModelShader, i);
         
-        gDirLight.apply(gModelShader);
-        gSpotLight.apply(gModelShader);
+        mDirLight.apply(gModelShader);
+        mSpotLight.apply(gModelShader);
 
         gModel->draw(gModelShader);
 
@@ -189,10 +179,10 @@ void HelloAssimp03::renderScene()
         model = glm::scale(model, glm::vec3(1.01f));
         RenderSystem::Instance()->setUniformMatrix4fv(gModelOuterShader, "uModel", model);
 
-        glm::mat4 view = gCamera.getViewMat();
+        glm::mat4 view = mCamera.getViewMat();
         RenderSystem::Instance()->setUniformMatrix4fv(gModelOuterShader, "uView", view);
     
-        glm::mat4 projection = gCamera.getProjectionMat(Engine::Instance()->getAspect());
+        glm::mat4 projection = mCamera.getProjectionMat(Engine::Instance()->getAspect());
         RenderSystem::Instance()->setUniformMatrix4fv(gModelOuterShader, "uProjection", projection);
 
         gModel->draw(gModelOuterShader);
@@ -208,7 +198,8 @@ void HelloAssimp03::renderScene()
 
 void HelloAssimp03::initialize()       
 {
-    Engine::Instance()->setControl(&gCamera);
+    Scene::initialize();
+
     RenderSystem::Instance()->setClearColor({0.1f, 0.1f, 0.1f, 1.0f});
 
     gModel = new Model("backpack/backpack.obj");
@@ -244,23 +235,6 @@ void HelloAssimp03::initialize()
             gPointLight[i].setDiffuse({0.5f, 0.5f, 0.5f});
             gPointLight[i].setSpecular({1.0f, 1.0f, 1.0f});
         }
-
-        //  Init Dir Light
-        {
-            gDirLight.setDirection({-0.2f, -1.0f, -0.3f});
-            gDirLight.setAmbient({0.2f, 0.2f, 0.2f});
-            gDirLight.setDiffuse({0.5f, 0.5f, 0.5f});
-            gDirLight.setSpecular({1.0f, 1.0f, 1.0f});
-        }
-
-        //  Init Spot Light
-        {
-            gSpotLight.setPosition(gCamera.getPosition());
-            gSpotLight.setDirection(gCamera.getFront());
-            gSpotLight.setAmbient({0.2f, 0.2f, 0.2f});
-            gSpotLight.setDiffuse({0.5f, 0.5f, 0.5f});
-            gSpotLight.setSpecular({1.0f, 1.0f, 1.0f});
-        }
     }
 
     {
@@ -283,7 +257,7 @@ void HelloAssimp03::initialize()
 
 void HelloAssimp03::shutdown()               
 {
-    Engine::Instance()->setControl(nullptr);
+    Scene::shutdown();
 
     delete gModel;
     gModel = nullptr;

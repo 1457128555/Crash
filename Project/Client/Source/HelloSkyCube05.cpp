@@ -56,8 +56,6 @@ namespace
         -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
     };
 
-    Camera              gCamera;
-
     ShaderProgram*      gSkyCubeShader    = nullptr;
     ShaderProgram*      gMirrorCubeShader = nullptr;
 
@@ -69,7 +67,7 @@ namespace
 
 void HelloSkyCube05::initialize()       
 {
-    Engine::Instance()->setControl(&gCamera);
+    Scene::initialize();
     RenderSystem::Instance()->setClearColor({0.1f, 0.1f, 0.1f, 1.0f});
 
     std::array<std::string, 6> skyboxFaces = {
@@ -108,7 +106,7 @@ void HelloSkyCube05::initialize()
 
 void HelloSkyCube05::shutdown()               
 {
-    Engine::Instance()->setControl(nullptr);
+    Scene::shutdown();
 
     gSkyTexture.reset();
 
@@ -136,10 +134,10 @@ void HelloSkyCube05::renderScene()
 
         glm::mat4 model = glm::mat4(1.f);
         RenderSystem::Instance()->setUniformMatrix4fv(gMirrorCubeShader, "uModel", model);
-        RenderSystem::Instance()->setUniformMatrix4fv(gMirrorCubeShader, "uView", gCamera.getViewMat());
-        RenderSystem::Instance()->setUniformMatrix4fv(gMirrorCubeShader, "uProjection", gCamera.getProjectionMat(Engine::Instance()->getAspect()));
+        RenderSystem::Instance()->setUniformMatrix4fv(gMirrorCubeShader, "uView", mCamera.getViewMat());
+        RenderSystem::Instance()->setUniformMatrix4fv(gMirrorCubeShader, "uProjection", mCamera.getProjectionMat(Engine::Instance()->getAspect()));
 
-        RenderSystem::Instance()->setUniform4f(gMirrorCubeShader, "uCameraWorldPos", glm::vec4(gCamera.getPosition(), 1.0f));
+        RenderSystem::Instance()->setUniform4f(gMirrorCubeShader, "uCameraWorldPos", glm::vec4(mCamera.getPosition(), 1.0f));
 
         RenderSystem::Instance()->drawArray(RenderProtocol::DrawMode::Triangles, 0, 36);
     }
@@ -153,10 +151,10 @@ void HelloSkyCube05::renderScene()
         RenderSystem::Instance()->bindTexture(gSkyTexture.get());
 
         glm::mat4 model = glm::mat4(1.f);
-        model = glm::translate(model, gCamera.getPosition());
+        model = glm::translate(model, mCamera.getPosition());
         RenderSystem::Instance()->setUniformMatrix4fv(gSkyCubeShader, "uModel", model);
-        RenderSystem::Instance()->setUniformMatrix4fv(gSkyCubeShader, "uView", gCamera.getViewMat());
-        RenderSystem::Instance()->setUniformMatrix4fv(gSkyCubeShader, "uProjection", gCamera.getProjectionMat(Engine::Instance()->getAspect()));
+        RenderSystem::Instance()->setUniformMatrix4fv(gSkyCubeShader, "uView", mCamera.getViewMat());
+        RenderSystem::Instance()->setUniformMatrix4fv(gSkyCubeShader, "uProjection", mCamera.getProjectionMat(Engine::Instance()->getAspect()));
 
         RenderSystem::Instance()->drawArray(RenderProtocol::DrawMode::Triangles, 0, 36);
     }

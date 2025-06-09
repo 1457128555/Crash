@@ -83,9 +83,6 @@ namespace Crash
     {
         if (mScene)
             mScene->update(deltaTime);
-    
-        if(mControlCamera)
-            mControlCamera->update(deltaTime);  
 
         InputMgr::Instance()->update();
     }

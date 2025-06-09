@@ -40,8 +40,6 @@ namespace Crash
         void setScene(Scene* scene);
         Scene* getScene() const { return mScene; }
 
-        void setControl(Camera* camera){ mControlCamera = camera; };
-
         void setExecuteTime(double time) { mExecutetime = time; }
         double getExecuteTime() const { return mExecutetime; }
 
@@ -61,7 +59,6 @@ namespace Crash
         
         bool    mClose = false;
         Scene*  mScene = nullptr;
-        Camera* mControlCamera = nullptr;
 
         double  mExecutetime = 0.0f;
 

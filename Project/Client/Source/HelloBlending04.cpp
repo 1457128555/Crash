@@ -3,7 +3,6 @@
 
 #include "CrashEngine.h"
 #include "CrashRenderSystem.h"
-#include "CrashCamera.h"
 #include "CrashFileSystem.h"
 #include "CrashTexMgr.h"
 
@@ -19,8 +18,6 @@ namespace
     std::shared_ptr<Texture> gPlaneTex;
     std::shared_ptr<Texture> gVegTex;
     std::shared_ptr<Texture> gWinTex;
-
-    Camera              gCamera;
 
     VertexArrayObject*  gPlaneVAO       = nullptr;
     VertexBuffer*       gPlaneVBO       = nullptr;
@@ -72,8 +69,10 @@ HelloBlending04::HelloBlending04() : Scene("HelloBlending04")
 
 void HelloBlending04::update(float deltaTime)
 {
-    std::sort(window.begin(), window.end(), [](const glm::vec3& a, const glm::vec3& b) {
-        glm::vec3 camPos = gCamera.getPosition();
+    Scene::update(deltaTime);
+    
+    std::sort(window.begin(), window.end(), [&](const glm::vec3& a, const glm::vec3& b) {
+        glm::vec3 camPos = mCamera.getPosition();
         return glm::length(camPos - a) > glm::length(camPos - b); // Sort by z-coordinate
     });
 }
@@ -97,8 +96,8 @@ void HelloBlending04::renderScene()
         model = glm::scale(model, glm::vec3(50.0f)); 
 
         RenderSystem::Instance()->setUniformMatrix4fv(gPlaneShader, "uModel", model);
-        RenderSystem::Instance()->setUniformMatrix4fv(gPlaneShader, "uView", gCamera.getViewMat());
-        RenderSystem::Instance()->setUniformMatrix4fv(gPlaneShader, "uProjection", gCamera.getProjectionMat(Engine::Instance()->getAspect()));
+        RenderSystem::Instance()->setUniformMatrix4fv(gPlaneShader, "uView", mCamera.getViewMat());
+        RenderSystem::Instance()->setUniformMatrix4fv(gPlaneShader, "uProjection", mCamera.getProjectionMat(Engine::Instance()->getAspect()));
 
         RenderSystem::Instance()->drawArray(RenderProtocol::DrawMode::Triangles, 0, 6);
     }
@@ -112,8 +111,8 @@ void HelloBlending04::renderScene()
         RenderSystem::Instance()->activateTextureUnit(0);
         RenderSystem::Instance()->bindTexture(gVegTex.get());
 
-        RenderSystem::Instance()->setUniformMatrix4fv(gPlaneShader, "uView", gCamera.getViewMat());
-        RenderSystem::Instance()->setUniformMatrix4fv(gPlaneShader, "uProjection", gCamera.getProjectionMat(Engine::Instance()->getAspect()));
+        RenderSystem::Instance()->setUniformMatrix4fv(gPlaneShader, "uView", mCamera.getViewMat());
+        RenderSystem::Instance()->setUniformMatrix4fv(gPlaneShader, "uProjection", mCamera.getProjectionMat(Engine::Instance()->getAspect()));
         
         for(auto &&veg : vegetation)
         {
@@ -134,8 +133,8 @@ void HelloBlending04::renderScene()
         RenderSystem::Instance()->activateTextureUnit(0);
         RenderSystem::Instance()->bindTexture(gWinTex.get());
 
-        RenderSystem::Instance()->setUniformMatrix4fv(gPlaneShader, "uView", gCamera.getViewMat());
-        RenderSystem::Instance()->setUniformMatrix4fv(gPlaneShader, "uProjection", gCamera.getProjectionMat(Engine::Instance()->getAspect()));
+        RenderSystem::Instance()->setUniformMatrix4fv(gPlaneShader, "uView", mCamera.getViewMat());
+        RenderSystem::Instance()->setUniformMatrix4fv(gPlaneShader, "uProjection", mCamera.getProjectionMat(Engine::Instance()->getAspect()));
        
         for(auto &&win : window)
         {
@@ -169,8 +168,8 @@ void HelloBlending04::renderScene()
 
 void HelloBlending04::initialize()       
 {
+    Scene::initialize();
 
-    Engine::Instance()->setControl(&gCamera);
     RenderSystem::Instance()->setClearColor({0.1f, 0.1f, 0.1f, 1.0f});
 
     gPlaneTex = TexMgr::Instance()->createTexture("marble.jpg", RenderProtocol::TexType::Texture2D);
@@ -223,7 +222,7 @@ void HelloBlending04::initialize()
 
 void HelloBlending04::shutdown()               
 {
-    Engine::Instance()->setControl(nullptr);
+    Scene::shutdown();
 
     gPlaneTex.reset();
     gVegTex.reset();

@@ -1,6 +1,8 @@
 #pragma once
 
 #include "CrashEngineDefines.hpp"
+#include "CrashCamera.h"
+#include "CrashLight.h"
 
 #include <string>
 
@@ -9,18 +11,26 @@ namespace Crash
     class CRASH_ENGINE_API Scene
     {
     public:
-        explicit Scene(const std::string& name): mName(name){};
+        explicit Scene(const std::string& name);
+        virtual ~Scene() ;
 
-        virtual ~Scene()                        = default;
+        virtual void initialize();
+        virtual void shutdown();
 
-        virtual void initialize()               = 0;
-        virtual void update(float deltaTime)    = 0;
+        virtual void update(float deltaTime);
+        virtual void renderScene();
 
-        virtual void renderScene()              = 0;
-        
-        virtual void shutdown()                 = 0;
+        Camera&    getCamera()                  { return mCamera; }
+        DirLight&  getDirLight()                { return mDirLight; }
+        SpotLight& getSpotLight()               { return mSpotLight; }
 
     protected:
-        const std::string mName;
+        const std::string   mName;
+
+        Camera              mCamera;
+        DirLight            mDirLight;
+        bool                mRenderDirLight = true; 
+        
+        SpotLight           mSpotLight;
     };
 }
