@@ -1,5 +1,6 @@
 #include "CrashPCH.h"
 #include "CrashBasicGeometry.h"
+#include "CrashRenderSystem.h"
 
 namespace Crash
 {
@@ -12,6 +13,58 @@ namespace Crash
             glm::vec2 texCoord;
             glm::vec3 tangent;
         };
+
+        int _GetBufferStride(BasicGeometry::DataType type)
+        {
+            int stride = 0;
+
+            if (BasicGeometry::HasFlag(type,BasicGeometry::DataType::Vertex))
+            {
+                stride += sizeof(_Vertex::position);
+            }
+            if (BasicGeometry::HasFlag(type,BasicGeometry::DataType::Normal))
+            {
+                stride += sizeof(_Vertex::normal);
+            }
+            if (BasicGeometry::HasFlag(type,BasicGeometry::DataType::TexCoord))
+            {
+                stride += sizeof(_Vertex::texCoord);
+
+            }
+            if (BasicGeometry::HasFlag(type,BasicGeometry::DataType::Tangent))
+            {
+                stride += sizeof(_Vertex::tangent);
+            }
+            return stride;
+        }
+
+        void _VertexAttribPointer(BasicGeometry::DataType type, BasicGeometry::RenderPack pack)
+        {
+            //  get buffer stride
+            int stride = _GetBufferStride(type);
+            int index = 0;
+            int offset = 0;
+            if (BasicGeometry::HasFlag(type,BasicGeometry::DataType::Vertex))
+            {
+                RenderSystem::Instance()->addBufferToVertexArray(pack.vao, pack.vbo, index++, 3, stride, (const void*)(offset));
+                offset += sizeof(_Vertex::position);
+            }
+            if (BasicGeometry::HasFlag(type,BasicGeometry::DataType::Normal))
+            {
+                RenderSystem::Instance()->addBufferToVertexArray(pack.vao, pack.vbo, index++, 3, stride, (const void*)(offset));
+                offset += sizeof(_Vertex::normal);
+            }
+            if (BasicGeometry::HasFlag(type,BasicGeometry::DataType::TexCoord))
+            {
+                RenderSystem::Instance()->addBufferToVertexArray(pack.vao, pack.vbo, index++, 2, stride, (const void*)(offset));
+                offset += sizeof(_Vertex::texCoord);
+            }
+            if (BasicGeometry::HasFlag(type,BasicGeometry::DataType::Tangent))
+            {
+                RenderSystem::Instance()->addBufferToVertexArray(pack.vao, pack.vbo, index++, 3, stride, (const void*)(offset));
+                offset += sizeof(_Vertex::tangent);
+            }
+        }
     }
 
     void BasicGeometry::Triangle(DataType type, std::vector<float>& vertices)
@@ -56,6 +109,60 @@ namespace Crash
         indices.push_back(0);
         indices.push_back(1);
         indices.push_back(2);
+    }
+
+    BasicGeometry::RenderPack BasicGeometry::CreateRP(DataType type, std::vector<float>& vertices, std::vector<unsigned int>& indices)
+    {
+        RenderPack renderPack;
+
+        renderPack.vao = RenderSystem::Instance()->createVertexArray();   
+        RenderSystem::Instance()->bindVertexArray(renderPack.vao);  
+
+        renderPack.vbo = RenderSystem::Instance()->createBuffer();
+        RenderSystem::Instance()->setBufferData(renderPack.vbo, vertices.data(), sizeof(vertices[0]) * vertices.size());
+        _VertexAttribPointer(type, renderPack);
+
+        renderPack.ibo = RenderSystem::Instance()->createIndexBuffer();
+        RenderSystem::Instance()->setIndexBufferData(renderPack.ibo, indices.data(), sizeof(indices[0]) * indices.size());
+
+        RenderSystem::Instance()->unbindVertexArray();
+
+        return renderPack;
+    }
+
+    BasicGeometry::RenderPack BasicGeometry::CreateTriangleRP(DataType type)
+    {
+        std::vector<float> vertices;
+        std::vector<unsigned int> indices;
+        Triangle(type, vertices, indices);
+        return CreateRP(type, vertices, indices);
+      }
+
+    BasicGeometry::RenderPack BasicGeometry::CreateQuadRP(DataType type)
+    {
+        std::vector<float> vertices;
+        std::vector<unsigned int> indices;
+        Quad(type, vertices, indices);
+        return CreateRP(type, vertices, indices);
+    }
+
+    BasicGeometry::RenderPack BasicGeometry::CreateCubeRP(DataType type)
+    {
+        std::vector<float> vertices;
+        std::vector<unsigned int> indices;
+        Cube(type, vertices, indices);
+        return CreateRP(type, vertices, indices);
+    }
+
+    void BasicGeometry::DestoryRenderPack(RenderPack& pack)
+    {
+        RenderSystem::Instance()->destroyBuffer(pack.vbo);
+        RenderSystem::Instance()->destroyIndexBuffer(pack.ibo);
+        RenderSystem::Instance()->destroyVertexArray(pack.vao);
+
+        pack.vbo = nullptr;
+        pack.ibo = nullptr;
+        pack.vao = nullptr;
     }
 
     void BasicGeometry::Quad(DataType type, std::vector<float>& vertices)

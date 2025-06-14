@@ -15,9 +15,9 @@ using namespace Crash;
 namespace
 {
     ShaderProgram*      gShaderProgram      = nullptr;
-    VertexArrayObject*  gVertexArrayObject  = nullptr;
-    VertexBuffer*       gVertexBuffer       = nullptr;
-    IndexBuffer*        gIndexBuffer        = nullptr;
+
+    BasicGeometry::RenderPack gTriangleRP;
+
     std::shared_ptr<Texture> gWallTex;
     std::shared_ptr<Texture> gFaceTex;
 }
@@ -31,7 +31,7 @@ void HelloTriangle01::renderScene()
 {
     RenderSystem::Instance()->clear(RenderProtocol::ClearFlag::All);
 
-    RenderSystem::Instance()->bindVertexArray(gVertexArrayObject);
+    RenderSystem::Instance()->bindVertexArray(gTriangleRP.vao);
     RenderSystem::Instance()->bindShaderProgram(gShaderProgram);
 
     RenderSystem::Instance()->activateTextureUnit(0);
@@ -70,26 +70,10 @@ void HelloTriangle01::initialize()
     const std::string psCode = Crash::FileSystem::ReadShader("HelloTriangle01_PS.txt");
     gShaderProgram = RenderSystem::Instance()->createShaderProgram("HelloTriangle01", vsCode, psCode);
 
-    gVertexBuffer = RenderSystem::Instance()->createBuffer();
 
-    auto dataType = BasicGeometry::ComFlag({
+    gTriangleRP = BasicGeometry::CreateTriangleRP(BasicGeometry::ComFlag({
         BasicGeometry::DataType::Vertex, 
-        BasicGeometry::DataType::TexCoord});
-        
-    std::vector<float> vertices;
-    std::vector<unsigned int> indices;
-    BasicGeometry::Triangle(dataType, vertices, indices);
-
-    RenderSystem::Instance()->setBufferData(gVertexBuffer, vertices.data(), sizeof(vertices[0]) * vertices.size());
-
-    gIndexBuffer = RenderSystem::Instance()->createIndexBuffer();
-    RenderSystem::Instance()->setIndexBufferData(gIndexBuffer, indices.data(), sizeof(indices[0]) * indices.size());
-
-    gVertexArrayObject = RenderSystem::Instance()->createVertexArray();
-    RenderSystem::Instance()->addBufferToVertexArray(gVertexArrayObject, gVertexBuffer, 0, 3, sizeof(float) * 5, (const void*)0);
-    RenderSystem::Instance()->addBufferToVertexArray(gVertexArrayObject, gVertexBuffer, 1, 2, sizeof(float) * 5, (const void*)(sizeof(float) * 3));
-    RenderSystem::Instance()->addBufferToVertexArray(gVertexArrayObject, gIndexBuffer);
-    RenderSystem::Instance()->unbindVertexArray();
+        BasicGeometry::DataType::TexCoord}));
 }
 
 void HelloTriangle01::shutdown()               
@@ -97,13 +81,8 @@ void HelloTriangle01::shutdown()
     gWallTex.reset();
     gFaceTex.reset();
 
-    RenderSystem::Instance()->destroyBuffer(gVertexBuffer);
-    gVertexBuffer = nullptr;
-    RenderSystem::Instance()->destroyIndexBuffer(gIndexBuffer);
-    gIndexBuffer = nullptr;
-    RenderSystem::Instance()->destroyVertexArray(gVertexArrayObject);
-    gVertexArrayObject = nullptr;
+    BasicGeometry::DestoryRenderPack(gTriangleRP);
 
-   RenderSystem::Instance()->destroyShaderProgram(gShaderProgram);
-   gShaderProgram = nullptr;
+    RenderSystem::Instance()->destroyShaderProgram(gShaderProgram);
+    gShaderProgram = nullptr;
 }

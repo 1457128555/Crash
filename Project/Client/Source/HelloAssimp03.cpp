@@ -16,9 +16,7 @@ ShaderProgram*      gLightProgram       = nullptr;
 
 std::array<PointLight, 4> gPointLight;
 
-VertexArrayObject*  gVertexArrayObject  = nullptr;
-VertexBuffer*       gVertexBuffer       = nullptr;
-IndexBuffer*        gIndexBuffer        = nullptr;
+BasicGeometry::RenderPack gCubeRP;
 
 HelloAssimp03::HelloAssimp03() : Scene("HelloAssimp03")
 {
@@ -32,7 +30,7 @@ void HelloAssimp03::renderScene()
 
      //  Render Point Light
     {
-        RenderSystem::Instance()->bindVertexArray(gVertexArrayObject);
+        RenderSystem::Instance()->bindVertexArray(gCubeRP.vao);
         RenderSystem::Instance()->bindShaderProgram(gLightProgram);
 
         glm::mat4 view = mCamera.getViewMat();
@@ -61,7 +59,7 @@ void HelloAssimp03::renderScene()
 
     //  Render Dir Light
     {
-        RenderSystem::Instance()->bindVertexArray(gVertexArrayObject);
+        RenderSystem::Instance()->bindVertexArray(gCubeRP.vao);
         RenderSystem::Instance()->bindShaderProgram(gLightProgram);
 
         glm::mat4 model = glm::translate(glm::mat4(1.f), -50.f * glm::vec3(mDirLight.getDirection()));
@@ -191,32 +189,11 @@ void HelloAssimp03::initialize()
             gPointLight[i].setSpecular({1.0f, 1.0f, 1.0f});
         }
     }
-
-    {
-        auto dataType = BasicGeometry::ComFlag({
+    
+    gCubeRP = BasicGeometry::CreateCubeRP(BasicGeometry::ComFlag({
         BasicGeometry::DataType::Vertex, 
         BasicGeometry::DataType::Normal,
-        BasicGeometry::DataType::TexCoord});
-        
-        std::vector<float> vertices;
-        std::vector<unsigned int> indices;
-        BasicGeometry::Cube(dataType, vertices, indices);
-
-        gVertexBuffer = RenderSystem::Instance()->createBuffer();
-        RenderSystem::Instance()->setBufferData(gVertexBuffer, vertices.data(), sizeof(vertices[0]) * vertices.size());
-
-        gIndexBuffer = RenderSystem::Instance()->createIndexBuffer();
-        RenderSystem::Instance()->setIndexBufferData(gIndexBuffer, indices.data(), sizeof(indices[0]) * indices.size());
-
-        gVertexArrayObject = RenderSystem::Instance()->createVertexArray();
-        
-        RenderSystem::Instance()->addBufferToVertexArray(gVertexArrayObject, gVertexBuffer, 0, 3, sizeof(float) * 8, (const void*)0);
-        RenderSystem::Instance()->addBufferToVertexArray(gVertexArrayObject, gVertexBuffer, 1, 3, sizeof(float) * 8, (const void*)(sizeof(float) * 3));
-        RenderSystem::Instance()->addBufferToVertexArray(gVertexArrayObject, gVertexBuffer, 2, 2, sizeof(float) * 8, (const void*)(sizeof(float) * 6));
-        RenderSystem::Instance()->addBufferToVertexArray(gVertexArrayObject, gIndexBuffer);
-    
-        RenderSystem::Instance()->unbindVertexArray();
-    }
+        BasicGeometry::DataType::TexCoord}));
 }
 
 void HelloAssimp03::shutdown()               
@@ -235,12 +212,5 @@ void HelloAssimp03::shutdown()
     RenderSystem::Instance()->destroyShaderProgram(gLightProgram);
     gLightProgram = nullptr;
 
-    {
-        RenderSystem::Instance()->destroyBuffer(gVertexBuffer);
-        gVertexBuffer = nullptr;
-        RenderSystem::Instance()->destroyIndexBuffer(gIndexBuffer);
-        gIndexBuffer = nullptr;
-        RenderSystem::Instance()->destroyVertexArray(gVertexArrayObject);
-        gVertexArrayObject = nullptr;
-    }
+    BasicGeometry::DestoryRenderPack(gCubeRP);
 }

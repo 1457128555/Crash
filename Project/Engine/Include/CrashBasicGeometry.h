@@ -37,5 +37,19 @@ namespace Crash
 
         static void Cube(DataType type, std::vector<float>& vertices);
         static void Cube(DataType type, std::vector<float>& vertices, std::vector<unsigned int>& indices);
+
+        struct RenderPack
+        {
+            class VertexArrayObject*          vao = nullptr;
+            class VertexBuffer*               vbo = nullptr;
+            class IndexBuffer*                ibo = nullptr;
+        };
+
+        static RenderPack CreateRP(DataType type, std::vector<float>& vertices, std::vector<unsigned int>& indices);
+        static RenderPack CreateTriangleRP(DataType type);
+        static RenderPack CreateQuadRP(DataType type);
+        static RenderPack CreateCubeRP(DataType type);
+
+        static void DestoryRenderPack(RenderPack& pack);
     };
 }
