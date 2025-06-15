@@ -11,6 +11,7 @@ namespace Crash
     class ShaderProgram;
     class VertexArrayObject;
     class VertexBuffer;
+    class UniformBuffer;
     class IndexBuffer;
     class Texture;
     class FrameBuffer;
@@ -50,6 +51,7 @@ namespace Crash
         void setUniform1i(const ShaderProgram* program, const std::string& name, int value);
         void setUniform4f(const ShaderProgram* program, const std::string& name, const glm::vec4& value);
         void setUniformMatrix4fv(const ShaderProgram* program, const std::string& name, const glm::mat4& value);
+        void setUniformBlockBinding(const ShaderProgram* program, const std::string& blockName, unsigned int bindingPoint);
 
         FrameBuffer* createFrameBuffer(const std::string& name, unsigned int width, unsigned int height, bool useRBO = true);
         void destroyFrameBuffer(FrameBuffer* framebuffer);
@@ -69,7 +71,12 @@ namespace Crash
         VertexBuffer* createBuffer();
         void destroyBuffer(VertexBuffer* buffer);
         void setBufferData(VertexBuffer* buffer, const void* data, unsigned int size);
-       
+
+        UniformBuffer* createUniformBuffer();
+        void destroyUniformBuffer(UniformBuffer* buffer);
+        void setUniformBufferData(UniformBuffer* buffer, const void* data, unsigned int size);
+        void setBindBufferBase(UniformBuffer* buffer, unsigned int bindingPoint);
+
         IndexBuffer* createIndexBuffer();
         void destroyIndexBuffer(IndexBuffer* buffer);
         void setIndexBufferData(IndexBuffer* buffer, const void* data, unsigned int size);

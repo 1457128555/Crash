@@ -95,4 +95,12 @@ namespace Crash
         if (location != -1)
             RenderCommand::SetUniformMatrix4fv(location, value);
     }
+
+    void ShaderProgram::setUniformBlockBinding(const std::string& blockName, unsigned int bindingPoint) const
+    {
+        bind();
+        int blockIndex = RenderCommand::GetUniformBlockIndex(mID, blockName);
+        if (blockIndex != -1)
+            RenderCommand::SetUniformBlockBinding(mID, blockIndex, bindingPoint);
+    }
 }

@@ -1,0 +1,8 @@
+//  Renderer Common Unifrom
+layout(std140) uniform CommonUBO
+{
+    vec4 uViewPos;  
+
+    mat4 uView;
+    mat4 uProjection;
+};

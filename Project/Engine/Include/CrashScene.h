@@ -20,9 +20,13 @@ namespace Crash
         virtual void update(float deltaTime);
         virtual void renderScene();
 
-        Camera&    getCamera()                  { return mCamera; }
-        DirLight&  getDirLight()                { return mDirLight; }
-        SpotLight& getSpotLight()               { return mSpotLight; }
+        const Camera&       getCamera()                  const { return mCamera; }
+        const DirLight&     getDirLight()                const { return mDirLight; }
+        const SpotLight&    getSpotLight()               const { return mSpotLight; }
+
+        Camera&             getCamera()                        { return mCamera; }
+        DirLight&           getDirLight()                      { return mDirLight; }
+        SpotLight&          getSpotLight()                     { return mSpotLight; }
 
     protected:
         const std::string   mName;

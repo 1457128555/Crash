@@ -5,6 +5,7 @@
 #include "CrashTexMgr.h"
 #include "CrashInputMgr.h"
 #include "CrashRenderSystem.h"
+#include "CrashRenderer.h"
 
 #include "CrashScene.h"
 #include "CrashCamera.h"
@@ -27,13 +28,13 @@ namespace Crash
 
         new RenderSystem(config.procAddress, config.asyncRender);
         RenderSystem::Instance()->setReverseZ(mReverseZ);
-
+        
         if(mConfig.asyncRender)
         {
             mRenderThread = std::thread([config]()
             {
                 LogManager::Instance()->log("Render thread started");
-
+                
                 config.initRenderContext();
                 RenderSystem::Instance()->init();
 
@@ -53,6 +54,8 @@ namespace Crash
             config.initRenderContext();
             RenderSystem::Instance()->init();
         }
+
+        new Renderer;
     }
 
     Engine::~Engine()
@@ -75,6 +78,7 @@ namespace Crash
             
         delete TexMgr::Instance();
         delete InputMgr::Instance();
+        delete Renderer::Instance();
         delete RenderSystem::Instance();
         delete LogManager::Instance();
     }
@@ -91,6 +95,8 @@ namespace Crash
     {
         RenderSystem::Instance()->frameBegin();
         RenderSystem::Instance()->setViewport({ 0, 0, mConfig.windowWidth, mConfig.windowHeight });
+
+        Renderer::Instance()->updateCommonUniforms();
 
         if(mScene)
             mScene->renderScene();

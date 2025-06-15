@@ -23,6 +23,8 @@ namespace Crash
         void setUniform1i(const std::string& name, int value)                       const;
         void setUniform4f(const std::string& name, const glm::vec4& value)          const;
         void setUniformMatrix4fv(const std::string& name, const glm::mat4& value)   const;
+
+        void setUniformBlockBinding(const std::string& blockName, unsigned int bindingPoint) const;
     private:
         const std::string mName;
         const std::string mVS;

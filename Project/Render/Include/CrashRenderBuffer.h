@@ -18,8 +18,9 @@ namespace Crash
 
         void bind()   const;
         void unbind() const;
+        void bindBase(unsigned int bindingPoint) const;
         void setBufferData(const void* data, unsigned int size);
-        
+
     private:
         const RenderProtocol::BufferType  mType;
         const RenderProtocol::BufferUsage mUsage;
@@ -46,6 +47,14 @@ namespace Crash
     private:
         explicit IndexBuffer(RenderProtocol::BufferUsage usage);
         virtual ~IndexBuffer() override = default;
+    };
+
+    class UniformBuffer : public RenderBuffer
+    {
+        friend class RenderSystem;
+    private:
+        explicit UniformBuffer(RenderProtocol::BufferUsage usage);
+        virtual ~UniformBuffer() override = default;
     };
 
     class VertexArrayObject

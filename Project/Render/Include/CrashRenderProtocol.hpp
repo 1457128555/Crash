@@ -27,6 +27,7 @@ namespace Crash
         {
             VertexBuffer   = 0x1,
             IndexBuffer    = 0x2,
+            UniformBuffer  = 0x3,
         };
 
         enum class AttachmentType : unsigned int

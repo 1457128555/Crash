@@ -7,6 +7,8 @@
 #include "CrashTexMgr.h"
 #include "CrashBasicGeometry.h"
 
+#include "CrashRenderer.h"
+
 using namespace Crash;
 
 namespace
@@ -70,9 +72,8 @@ void HelloBlending04::renderScene()
         model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
         model = glm::scale(model, glm::vec3(50.0f));
 
+        Renderer::Instance()->bindUniformBlock(gPlaneShader);
         RenderSystem::Instance()->setUniformMatrix4fv(gPlaneShader, "uModel", model);
-        RenderSystem::Instance()->setUniformMatrix4fv(gPlaneShader, "uView", mCamera.getViewMat());
-        RenderSystem::Instance()->setUniformMatrix4fv(gPlaneShader, "uProjection", mCamera.getProjectionMat(Engine::Instance()->getAspect()));
 
         RenderSystem::Instance()->drawElements(RenderProtocol::DrawMode::Triangles,
                                                6, RenderProtocol::DrawElementType::UnsignedInt, 0);
@@ -87,8 +88,7 @@ void HelloBlending04::renderScene()
         RenderSystem::Instance()->activateTextureUnit(0);
         RenderSystem::Instance()->bindTexture(gVegTex.get());
 
-        RenderSystem::Instance()->setUniformMatrix4fv(gPlaneShader, "uView", mCamera.getViewMat());
-        RenderSystem::Instance()->setUniformMatrix4fv(gPlaneShader, "uProjection", mCamera.getProjectionMat(Engine::Instance()->getAspect()));
+        Renderer::Instance()->bindUniformBlock(gPlaneShader);
 
         for (auto &&veg : vegetation)
         {
@@ -109,8 +109,7 @@ void HelloBlending04::renderScene()
         RenderSystem::Instance()->activateTextureUnit(0);
         RenderSystem::Instance()->bindTexture(gWinTex.get());
 
-        RenderSystem::Instance()->setUniformMatrix4fv(gPlaneShader, "uView", mCamera.getViewMat());
-        RenderSystem::Instance()->setUniformMatrix4fv(gPlaneShader, "uProjection", mCamera.getProjectionMat(Engine::Instance()->getAspect()));
+        Renderer::Instance()->bindUniformBlock(gPlaneShader);
 
         for (auto &&win : window)
         {

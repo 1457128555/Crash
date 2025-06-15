@@ -48,10 +48,14 @@ namespace Crash
         static void UnbindShaderProgram();
 
         static int GetUniformLocation(unsigned int shaderProgram, const std::string& name);
+        static int GetUniformBlockIndex(unsigned int shaderProgram, const std::string& blockName);
        
         static void SetUniform1i(unsigned int locaID, int value);
         static void SetUniform4f(unsigned int locaID, const glm::vec4& value);
         static void SetUniformMatrix4fv(unsigned int locaID, const glm::mat4& value);
+
+        static void SetUniformBlockBinding(unsigned int shaderProgram, unsigned int blockID, unsigned int bindingPoint);
+        static void SetBindBufferBase(RenderProtocol::BufferType type, unsigned int bindingPoint, unsigned int bufferID);
 
         static unsigned int CreateRenderBufferObject();
         static void DestroyRenderBufferObject(unsigned int id);

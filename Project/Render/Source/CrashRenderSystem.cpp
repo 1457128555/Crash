@@ -250,6 +250,17 @@ namespace Crash
             command();
     }
 
+    void RenderSystem::setUniformBlockBinding(const ShaderProgram* program, const std::string& blockName, unsigned int bindingPoint)
+    {
+        auto command = [_program = program, _blockName = blockName, _bindingPoint = bindingPoint] {
+            _program->setUniformBlockBinding(_blockName, _bindingPoint);
+        };
+        if(mAsyncRender)
+            mCommandQueue[0].push_back(command);
+        else
+            command();
+    }
+
     FrameBuffer* RenderSystem::createFrameBuffer(const std::string& name, unsigned int width, unsigned int height, bool useRBO)
     {
         FrameBuffer* framebuffer = new FrameBuffer(name, width, height, useRBO);
@@ -371,6 +382,58 @@ namespace Crash
     {
         auto command = [_vao = vao, _buffer = buffer] {
             _vao->addBuffer(_buffer);
+        };
+        if(mAsyncRender)
+            mCommandQueue[0].push_back(command);
+        else
+            command();
+    }
+
+    UniformBuffer* RenderSystem::createUniformBuffer()
+    {
+        UniformBuffer* buffer = new UniformBuffer(RenderProtocol::BufferUsage::StaticDraw);
+        auto command = [_buffer = buffer] {
+            _buffer->createHandle();
+        };
+
+        if(mAsyncRender)
+            mCommandQueue[0].push_back(command);
+        else
+            command();
+                    
+        return buffer;
+    }
+
+    void RenderSystem::destroyUniformBuffer(UniformBuffer* buffer)
+    {
+        auto command = [_buffer = buffer] {
+            delete _buffer;
+        };
+        if(mAsyncRender)
+            mCommandQueue[0].push_back(command);
+        else
+            command();
+    }
+
+    void RenderSystem::setUniformBufferData(UniformBuffer* buffer, const void* data, unsigned int size)
+    {
+        void* safeData = std::malloc(size);
+        std::memcpy(safeData, data, size);
+
+        auto command = [_buffer = buffer, _data = safeData, _size = size] {
+            _buffer->setBufferData(_data, _size);
+            std::free(_data); 
+        };
+        if(mAsyncRender)
+            mCommandQueue[0].push_back(command);
+        else
+            command();
+    }
+
+    void RenderSystem::setBindBufferBase(UniformBuffer* buffer, unsigned int bindingPoint)
+    {
+        auto command = [_buffer = buffer, _bindingPoint = bindingPoint] {
+            _buffer->bindBase(_bindingPoint);
         };
         if(mAsyncRender)
             mCommandQueue[0].push_back(command);

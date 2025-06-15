@@ -42,6 +42,11 @@ namespace Crash
         RenderCommand::BufferData(mType, data, size, mUsage);
     }
 
+    void RenderBuffer::bindBase(unsigned int bindingPoint) const
+    {
+        RenderCommand::SetBindBufferBase(mType, bindingPoint, mID);
+    }
+
     VertexBuffer::VertexBuffer(RenderProtocol::BufferUsage usage)
         : RenderBuffer(RenderProtocol::BufferType::VertexBuffer, usage)
     {
@@ -50,6 +55,12 @@ namespace Crash
 
     IndexBuffer::IndexBuffer(RenderProtocol::BufferUsage usage)
         : RenderBuffer(RenderProtocol::BufferType::IndexBuffer, usage)
+    {
+
+    }
+
+    UniformBuffer::UniformBuffer(RenderProtocol::BufferUsage usage)
+        : RenderBuffer(RenderProtocol::BufferType::UniformBuffer, usage) // Uniform buffer is treated as a vertex buffer in OpenGL
     {
 
     }

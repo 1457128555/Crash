@@ -176,6 +176,7 @@ namespace Crash
             {
                 case RenderProtocol::BufferType::VertexBuffer: return GL_ARRAY_BUFFER;
                 case RenderProtocol::BufferType::IndexBuffer:  return GL_ELEMENT_ARRAY_BUFFER;
+                case RenderProtocol::BufferType::UniformBuffer: return GL_UNIFORM_BUFFER; 
                 default: assert(false && "Invalid buffer type"); return 0;
             }
             return 0;
@@ -525,6 +526,14 @@ namespace Crash
         return ret;
     }
 
+    int RenderCommand::GetUniformBlockIndex(unsigned int shaderProgram, const std::string& blockName)
+    {
+        assert(shaderProgram && "Shader Program is null!");
+        int ret = glGetUniformBlockIndex(shaderProgram, blockName.c_str());
+        CheckGLError("GetUniformBlockIndex");
+        return ret;
+    }
+
     void RenderCommand::SetUniform1i(unsigned int locaID, int value)
     {
         glUniform1i(locaID, value);
@@ -541,6 +550,20 @@ namespace Crash
     {
         glUniformMatrix4fv(locaID, 1, GL_FALSE, glm::value_ptr(value));
         CheckGLError("SetUniformMatrix4fv");
+    }
+    
+    void RenderCommand::SetUniformBlockBinding(unsigned int shaderProgram, unsigned int blockID, unsigned int bindingPoint)
+    {
+        assert(shaderProgram && "Shader Program is null!");
+        glUniformBlockBinding(shaderProgram, blockID, bindingPoint);
+        CheckGLError("SetUniformBlockBinding");
+    }
+
+    void RenderCommand::SetBindBufferBase(RenderProtocol::BufferType type, unsigned int bindingPoint, unsigned int bufferID)
+    {
+        assert(bufferID && "Buffer is null!");
+        glBindBufferBase(GetBufferType(type), bindingPoint, bufferID);
+        CheckGLError("SetBindBufferBase");
     }
 
     unsigned int RenderCommand::CreateRenderBufferObject()
