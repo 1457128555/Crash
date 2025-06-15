@@ -7,7 +7,7 @@
 
 #include "CrashRenderProtocol.hpp"
 
-#include "HelloTriangle01.h"
+#include "HelloBlending04.h"
 
 using namespace Crash;
 
@@ -97,7 +97,7 @@ int main()
     config.swapBuffer           = []() { glfwSwapBuffers(sWindow); };
 
     new Crash::Engine(config);
-    sScene = new HelloTriangle01();
+    sScene = new HelloBlending04();
     Crash::Engine::Instance()->setScene(sScene);
 
     auto start = std::chrono::steady_clock::now();
