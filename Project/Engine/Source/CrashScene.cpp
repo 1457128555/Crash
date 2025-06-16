@@ -2,6 +2,7 @@
 #include "CrashScene.h"
 
 #include "CrashEngine.h"
+#include "CrashTexMgr.h"
 
 namespace Crash
 {
@@ -27,13 +28,21 @@ namespace Crash
 
     void Scene::initialize()
     {
+        std::array<std::string, 6> skyboxFaces = {
+        "skybox/right.jpg",  
+        "skybox/left.jpg",   
+        "skybox/top.jpg",    
+        "skybox/bottom.jpg", 
+        "skybox/front.jpg",  
+        "skybox/back.jpg",   
+        };
 
-
+        mSkyCube = TexMgr::Instance()->createCubeMapTexture("skybox",skyboxFaces );
     }
 
     void Scene::shutdown()
     {
-
+        mSkyCube.reset();
     }
 
     void Scene::update(float deltaTime)

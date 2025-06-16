@@ -8,6 +8,8 @@
 
 namespace Crash
 {
+    class Texture;
+
     class CRASH_ENGINE_API Scene
     {
     public:
@@ -23,11 +25,13 @@ namespace Crash
         const Camera&       getCamera()                  const { return mCamera; }
         const DirLight&     getDirLight()                const { return mDirLight; }
         const SpotLight&    getSpotLight()               const { return mSpotLight; }
-
+        
         Camera&             getCamera()                        { return mCamera; }
         DirLight&           getDirLight()                      { return mDirLight; }
         SpotLight&          getSpotLight()                     { return mSpotLight; }
-
+        
+        const std::shared_ptr<Texture>& getSkyCube()     const      { return mSkyCube; }
+        void setSkyCube(const std::shared_ptr<Texture>& skyCube)    { mSkyCube = skyCube; }
     protected:
         const std::string   mName;
 
@@ -36,5 +40,7 @@ namespace Crash
         bool                mRenderDirLight = true; 
         
         SpotLight           mSpotLight;
+
+        std::shared_ptr<Texture> mSkyCube;
     };
 }

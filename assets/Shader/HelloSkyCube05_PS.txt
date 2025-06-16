@@ -1,6 +1,6 @@
 //  HelloSkyCube05_PS
 
-uniform samplerCube uCubeMap; 
+uniform samplerCube uSkyCube; 
 
 in vec4 oTexCoord; 
 
@@ -8,5 +8,5 @@ out vec4 FragColor;
 
 void main()
 {
-    FragColor = texture(uCubeMap, oTexCoord.xyz);
+    FragColor = texture(uSkyCube, oTexCoord.xyz);
 }

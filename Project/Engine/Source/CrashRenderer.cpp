@@ -6,6 +6,9 @@
 #include "CrashCamera.h"
 #include "CrashRenderSystem.h"
 #include "CrashRenderBuffer.h"
+#include "CrashRenderable.h"
+#include "CrashRenderOperation.h"
+#include "CrashMaterial.h"
 
 namespace Crash
 {
@@ -57,6 +60,32 @@ namespace Crash
         }
 
         RenderSystem::Instance()->setBufferSubData(mCommonUniformBuffer, 0u, &commonUBO, sizeof(_CommonUBO));
+    }
+    
+    void Renderer::renderSingleObject(Renderable* renderable)
+    {
+        assert(renderable != nullptr && "Renderable cannot be null!");
+
+        RenderOperation* renderOp = renderable->getRenderOperation();
+        renderOp->bind();
+
+        ShaderProgram* shaderProgram = renderable->getShaderProgram();
+        RenderSystem::Instance()->bindShaderProgram(shaderProgram);
+        bindUniformBlock(shaderProgram);
+
+        Material* material = renderable->getMaterial();
+        material->apply(shaderProgram);
+
+        RenderSystem::Instance()->setUniformMatrix4fv(shaderProgram, "uModel", *renderable->getWorldMatrix());
+
+        if(renderOp->getRenderType() == RenderOperation::RenderType::Array)
+            RenderSystem::Instance()->drawArray(renderOp->getDrawMode(), renderOp->getFirst(), renderOp->getCount());
+        else if(renderOp->getRenderType() == RenderOperation::RenderType::Element)
+            RenderSystem::Instance()->drawElements(renderOp->getDrawMode(), renderOp->getCount(), renderOp->getElementType(), renderOp->getIndices());
+
+        // Unbind the shader program after rendering
+        RenderSystem::Instance()->unbindShaderProgram();
+        renderOp->unbind();
     }
 } // namespace Crash
 

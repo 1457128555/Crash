@@ -2,6 +2,8 @@
 #include "CrashMaterial.h"
 
 #include "CrashRenderSystem.h"
+#include "CrashEngine.h"
+#include "CrashScene.h"
 
 namespace Crash
 {
@@ -27,6 +29,14 @@ namespace Crash
             RenderSystem::Instance()->setUniform1i(program, "uSpecularTex", 1);
             RenderSystem::Instance()->activateTextureUnit(1);
             RenderSystem::Instance()->bindTexture(mSpecularTex.get());
+        }
+
+        Scene* scene = Engine::Instance()->getScene();
+        if (scene)
+        {
+            RenderSystem::Instance()->setUniform1i(program, "uSkyCube", 2);
+            RenderSystem::Instance()->activateTextureUnit(2);
+            RenderSystem::Instance()->bindTexture(scene->getSkyCube().get());
         }
     }
 
