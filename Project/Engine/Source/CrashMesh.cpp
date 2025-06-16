@@ -2,6 +2,7 @@
 #include "CrashMesh.h"
 
 #include "CrashRenderSystem.h"
+#include "CrashRenderBuffer.h"
 
 namespace Crash
 {

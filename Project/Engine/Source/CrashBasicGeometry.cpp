@@ -1,6 +1,7 @@
 #include "CrashPCH.h"
 #include "CrashBasicGeometry.h"
 #include "CrashRenderSystem.h"
+#include "CrashRenderBuffer.h"
 
 namespace Crash
 {

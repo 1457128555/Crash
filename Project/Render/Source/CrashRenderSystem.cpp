@@ -415,21 +415,6 @@ namespace Crash
             command();
     }
 
-    void RenderSystem::setUniformBufferData(UniformBuffer* buffer, const void* data, unsigned int size)
-    {
-        void* safeData = std::malloc(size);
-        std::memcpy(safeData, data, size);
-
-        auto command = [_buffer = buffer, _data = safeData, _size = size] {
-            _buffer->setBufferData(_data, _size);
-            std::free(_data); 
-        };
-        if(mAsyncRender)
-            mCommandQueue[0].push_back(command);
-        else
-            command();
-    }
-
     void RenderSystem::setBindBufferBase(UniformBuffer* buffer, unsigned int bindingPoint)
     {
         auto command = [_buffer = buffer, _bindingPoint = bindingPoint] {
@@ -467,15 +452,35 @@ namespace Crash
             command();
     }
 
-    void RenderSystem::setBufferData(VertexBuffer* buffer, const void* data, unsigned int size)
+    void RenderSystem::setBufferData(RenderBuffer* buffer, const void* data, unsigned int size)
+    {
+        void* safeData =  nullptr;
+        if(data)
+        {
+            safeData = std::malloc(size);
+            std::memcpy(safeData, data, size);
+        }
+
+        auto command = [_buffer = buffer, _data = safeData, _size = size] {
+            _buffer->setBufferData(_data, _size);
+            if(_data)
+                std::free(_data); 
+        };  
+        if(mAsyncRender)
+            mCommandQueue[0].push_back(command);
+        else
+            command();
+    }
+
+    void RenderSystem::setBufferSubData(RenderBuffer* buffer, unsigned int offset, const void* data, unsigned int size)
     {
         void* safeData = std::malloc(size);
         std::memcpy(safeData, data, size);
 
-        auto command = [_buffer = buffer, _data = safeData, _size = size] {
-            _buffer->setBufferData(_data, _size);
-            std::free(_data); 
-        };  
+        auto command = [_buffer = buffer, _offset = offset, _data = safeData, _size = size] {
+            _buffer->setBufferSubData(_offset, _data, _size);
+            std::free(_data);
+        };
         if(mAsyncRender)
             mCommandQueue[0].push_back(command);
         else

@@ -82,6 +82,8 @@ namespace Crash
 
         static void BufferData(RenderProtocol::BufferType type, 
             const void* data, unsigned int size, RenderProtocol::BufferUsage usage);
+            
+        static void BufferSubData(RenderProtocol::BufferType type, unsigned int offset, unsigned int size, const void* data);
 
         static void VertexAttribPointer(unsigned int index, unsigned int size, unsigned int stride, const void* pointer);  
 

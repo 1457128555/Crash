@@ -28,8 +28,6 @@ target_include_directories(runtime PUBLIC ${RootPath}/Client/Include)
 # Searches for a package provided by the game activity dependency
 find_package(game-activity REQUIRED CONFIG)
 
-
-
 # Configure libraries CMake uses to link your target library.
 target_link_libraries(runtime
         # The game activity

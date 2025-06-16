@@ -6,6 +6,7 @@ namespace Crash
 {   
      class RenderBuffer
      {
+        friend class RenderSystem;
     protected:
         RenderBuffer(RenderProtocol::BufferType type, RenderProtocol::BufferUsage usage);
         virtual ~RenderBuffer();
@@ -20,6 +21,7 @@ namespace Crash
         void unbind() const;
         void bindBase(unsigned int bindingPoint) const;
         void setBufferData(const void* data, unsigned int size);
+        void setBufferSubData(unsigned int offset, const void* data, unsigned int size);
 
     private:
         const RenderProtocol::BufferType  mType;

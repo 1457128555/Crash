@@ -683,6 +683,12 @@ namespace Crash
         CheckGLError("BufferData");
     }
 
+    void RenderCommand::BufferSubData(RenderProtocol::BufferType type, unsigned int offset, unsigned int size, const void* data)
+    {
+        glBufferSubData(GetBufferType(type), offset, size, data);
+        CheckGLError("BufferSubData");
+    }
+
     void RenderCommand::VertexAttribPointer(unsigned int index, unsigned int size, unsigned int stride, const void* pointer)
     {
         glEnableVertexAttribArray(index);

@@ -55,7 +55,7 @@ namespace Crash
             RenderSystem::Instance()->init();
         }
 
-        new Renderer;
+        new Renderer();
     }
 
     Engine::~Engine()

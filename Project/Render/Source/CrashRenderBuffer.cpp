@@ -42,6 +42,12 @@ namespace Crash
         RenderCommand::BufferData(mType, data, size, mUsage);
     }
 
+    void RenderBuffer::setBufferSubData(unsigned int offset, const void* data, unsigned int size)
+    {
+        bind();
+        RenderCommand::BufferSubData(mType, offset, size, data);
+    }
+
     void RenderBuffer::bindBase(unsigned int bindingPoint) const
     {
         RenderCommand::SetBindBufferBase(mType, bindingPoint, mID);

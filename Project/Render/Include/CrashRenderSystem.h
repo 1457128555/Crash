@@ -15,6 +15,7 @@ namespace Crash
     class IndexBuffer;
     class Texture;
     class FrameBuffer;
+    class RenderBuffer;
 
     class CRASH_RENDER_API RenderSystem : public Singleton<RenderSystem>
     {
@@ -70,11 +71,12 @@ namespace Crash
 
         VertexBuffer* createBuffer();
         void destroyBuffer(VertexBuffer* buffer);
-        void setBufferData(VertexBuffer* buffer, const void* data, unsigned int size);
+        
+        void setBufferData(RenderBuffer* buffer, const void* data, unsigned int size);
+        void setBufferSubData(RenderBuffer* buffer, unsigned int offset, const void* data, unsigned int size);
 
         UniformBuffer* createUniformBuffer();
         void destroyUniformBuffer(UniformBuffer* buffer);
-        void setUniformBufferData(UniformBuffer* buffer, const void* data, unsigned int size);
         void setBindBufferBase(UniformBuffer* buffer, unsigned int bindingPoint);
 
         IndexBuffer* createIndexBuffer();

@@ -5,12 +5,25 @@
 #include "CrashScene.h"
 #include "CrashCamera.h"
 #include "CrashRenderSystem.h"
+#include "CrashRenderBuffer.h"
 
 namespace Crash
 {
+    namespace
+    {
+        struct _CommonUBO
+        {
+            glm::vec4 viewPos       =  glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+
+            glm::mat4 view          =  glm::mat4(1.0f);
+            glm::mat4 projection    =  glm::mat4(1.0f);
+        };
+    }
+
     Renderer::Renderer()
     {
         mCommonUniformBuffer = RenderSystem::Instance()->createUniformBuffer();
+        RenderSystem::Instance()->setBufferData(mCommonUniformBuffer, nullptr, sizeof(_CommonUBO));
         RenderSystem::Instance()->setBindBufferBase(mCommonUniformBuffer, 0);
     }
 
@@ -28,13 +41,7 @@ namespace Crash
 
     void Renderer::updateCommonUniforms()
     {
-        struct _CommonUBO
-        {
-            glm::vec4 viewPos       =  glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
-
-            glm::mat4 view          =  glm::mat4(1.0f);
-            glm::mat4 projection    =  glm::mat4(1.0f);
-        };
+        
         _CommonUBO commonUBO;
 
         // Update common uniforms like view, projection, etc.
@@ -49,7 +56,7 @@ namespace Crash
             commonUBO.projection = camera.getProjectionMat(Engine::Instance()->getAspect());
         }
 
-        RenderSystem::Instance()->setUniformBufferData(mCommonUniformBuffer, &commonUBO, sizeof(_CommonUBO));
+        RenderSystem::Instance()->setBufferSubData(mCommonUniformBuffer, 0u, &commonUBO, sizeof(_CommonUBO));
     }
 } // namespace Crash
 
