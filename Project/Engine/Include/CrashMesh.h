@@ -20,7 +20,7 @@ namespace Crash
 
         std::vector<Vertex>&        getVertices()   { return mVertices; }
         std::vector<unsigned int>&  getIndices()    { return mIndices; }
-        Material&                   getMaterial()   { return mMaterial; }
+        Material&                   getMaterial()   { return mMaterial; }    
 
     private:
         const std::string           mName;         
@@ -31,12 +31,14 @@ namespace Crash
 
     class CRASH_ENGINE_API Mesh
     {
+        friend class MeshMgr;
     public:
-        explicit Mesh(const std::string& name);
-        ~Mesh() = default;
-
         const std::string&    getName()     const   {return mName;};
         std::vector<SubMesh>& getSubMeshes()        { return mSubMeshes; }
+
+    private:
+        explicit Mesh(const std::string& name);
+        ~Mesh() = default;
 
     private:
         const std::string           mName; 
@@ -47,9 +49,10 @@ namespace Crash
     {
     public:
         std::shared_ptr<Mesh> createMesh(const std::string& name);
+        void destroyMeshImpl(Mesh* mesh);
 
     private:
-        std::unordered_map<std::string, std::weak_ptr<Texture>> mMeshCache;
+        std::unordered_map<std::string, std::weak_ptr<Mesh>> mMeshCache;
     };
 
     // class ShaderProgram;

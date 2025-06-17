@@ -6,6 +6,7 @@
 #include "CrashInputMgr.h"
 #include "CrashRenderSystem.h"
 #include "CrashRenderer.h"
+#include "CrashMesh.h"
 
 #include "CrashScene.h"
 #include "CrashCamera.h"
@@ -56,6 +57,7 @@ namespace Crash
         }
 
         new Renderer();
+        new MeshMgr();
     }
 
     Engine::~Engine()
@@ -76,6 +78,7 @@ namespace Crash
             mConfig.destroyRenderContext();      
         }
             
+        delete MeshMgr::Instance();
         delete TexMgr::Instance();
         delete InputMgr::Instance();
         delete Renderer::Instance();

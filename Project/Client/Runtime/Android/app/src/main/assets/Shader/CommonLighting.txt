@@ -1,0 +1,92 @@
+struct PointLight 
+{
+    vec4 position;
+    vec4 attenuation; // x: constant, y: linear, z: quadratic
+
+    vec4 ambient;
+    vec4 diffuse;
+    vec4 specular;
+};
+
+struct SpotLight 
+{
+    vec4 position;      
+    vec4 direction;     
+    vec4 attenuation;   // x: constant, y: linear, z: quadratic
+    vec4 cutOff;        // x: inner angle, y: outer angle
+
+    vec4 ambient;
+    vec4 diffuse;
+    vec4 specular;
+};
+
+vec3 calculateLighting(vec3 pos, vec3 normal,
+    vec3 diffColor, vec3 specColor, float specStrength)
+{
+    // diffuse 
+    vec3 lightDir = normalize(-uDirLightDir.xyz);
+    float diff = max(dot(normal, lightDir), 0.0);
+    vec3 diffuse = diff * uDirLightDiffuse.rgb * diffColor;
+
+    // specular
+    vec3 viewDir = normalize(uViewPos.xyz - pos);
+    vec3 reflectDir = reflect(-lightDir, normal);  
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), specStrength);
+    vec3 specular = spec * uDirLightSpecular.rgb * specColor;  
+
+    return max(diffuse + specular, vec3(0.f)); 
+}
+
+vec3 calculateLighting(PointLight light,
+    vec3 viewPos, vec3 pos, vec3 normal, 
+    vec3 diffColor, vec3 specColor, float specStrength)
+{
+    //  diffuse
+    vec3 lightDir = normalize(light.position.xyz - pos);
+    float diff = max(dot(normal, lightDir), 0.0);
+    vec3 diffuse = diff * light.diffuse.rgb * diffColor;
+
+    // specular
+    vec3 viewDir = normalize(viewPos - pos);
+    vec3 reflectDir = reflect(-lightDir, normal);  
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), specStrength);
+    vec3 specular = spec * light.specular.rgb * specColor;  
+
+    // attenuation
+    float distance = length(light.position.xyz - pos);
+    float attenuation = 1.0 / ( light.attenuation.x + 
+                                light.attenuation.y * distance + 
+                                light.attenuation.z * distance * distance);
+
+
+    return max((diffuse + specular) * attenuation, vec3(0.f));
+}
+
+vec3 calculateLighting(SpotLight light, 
+    vec3 viewPos, vec3 pos, vec3 normal, 
+    vec3 diffColor, vec3 specColor, float specStrength)
+{
+     // diffuse 
+    vec3 lightDir = normalize(light.position.xyz - pos);
+    float diff = max(dot(normal, lightDir), 0.0);
+    vec3 diffuse = diff * light.diffuse.rgb * diffColor;
+
+    // specular
+    vec3 viewDir = normalize(viewPos - pos);
+    vec3 reflectDir = reflect(-lightDir, normal);  
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), specStrength);
+    vec3 specular = spec * light.specular.rgb * specColor;  
+
+    // attenuation
+    float distance = length(light.position.xyz - pos.xyz);
+    float attenuation = 1.0 / ( light.attenuation.x + 
+                                light.attenuation.y * distance + 
+                                light.attenuation.z * distance * distance);
+    
+    // spotlight effect
+    float theta = dot(lightDir, normalize(-light.direction.xyz));
+    float epsilon = light.cutOff.x - light.cutOff.y;
+    float intensity = clamp((theta - light.cutOff.y) / epsilon, 0.0, 1.0);
+
+    return max((diffuse + specular) * intensity * attenuation, vec3(0.f));
+}

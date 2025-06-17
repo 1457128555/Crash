@@ -122,75 +122,23 @@ namespace Crash
         _LoadModel(*this);
     }
 
-
-
-
-
-
-    // Mesh::Mesh(const std::string& name)
-    //     : mName(name)
-    // {
-
-    // }
-
-    // Mesh::~Mesh()
-    // {
-    //     destroyRenderData();
-    // }
-
-    // void Mesh::setMeshData(
-    //     const std::vector<MeshVertex>& vertices, 
-    //     const std::vector<unsigned int>& indices)
-    // {
-    //     destroyRenderData();
-
-    //     mVertices   = vertices;
-    //     mIndices    = indices;
-
-    //     mVAO = RenderSystem::Instance()->createVertexArray();
-    //     mVBO = RenderSystem::Instance()->createBuffer();
-    //     mEBO = RenderSystem::Instance()->createIndexBuffer();
-
-    //     RenderSystem::Instance()->bindVertexArray(mVAO);
-    //     RenderSystem::Instance()->setBufferData(mVBO, mVertices.data(), static_cast<unsigned int>(mVertices.size() * sizeof(MeshVertex)));
-
-    //     RenderSystem::Instance()->addBufferToVertexArray(mVAO, mVBO, 0, sizeof(MeshVertex::position)  / sizeof(float), sizeof(MeshVertex), (void*)offsetof(MeshVertex, position), 0);
-    //     RenderSystem::Instance()->addBufferToVertexArray(mVAO, mVBO, 1, sizeof(MeshVertex::normal)    / sizeof(float), sizeof(MeshVertex), (void*)offsetof(MeshVertex, normal), 0);
-    //     RenderSystem::Instance()->addBufferToVertexArray(mVAO, mVBO, 2, sizeof(MeshVertex::texCoords) / sizeof(float), sizeof(MeshVertex), (void*)offsetof(MeshVertex, texCoords), 0);
-
-    //     RenderSystem::Instance()->setIndexBufferData(mEBO, mIndices.data(), static_cast<unsigned int>(mIndices.size() * sizeof(unsigned int)));
-    //     RenderSystem::Instance()->addBufferToVertexArray(mVAO, mEBO);
-
-    //     RenderSystem::Instance()->unbindVertexArray();
-    // }
-
-    // void Mesh::destroyRenderData()
-    // {
-    //     if (mVBO)   
-    //         RenderSystem::Instance()->destroyBuffer(mVBO);        
-    //     if (mEBO)
-    //         RenderSystem::Instance()->destroyIndexBuffer(mEBO);
-    //     if (mVAO)
-    //         RenderSystem::Instance()->destroyVertexArray(mVAO);
-
-    //     mVBO = nullptr;
-    //     mEBO = nullptr;
-    //     mVAO = nullptr;
-    // }
-
-    // void Mesh::draw(ShaderProgram* shader) const
-    // {
-
-    //     if (!mVAO || mVertices.empty() || mIndices.empty() || !shader)
-    //         return;
-
-    //     RenderSystem::Instance()->bindVertexArray(mVAO);
-
-    //     mMaterial.apply(shader);
-
-    //     RenderSystem::Instance()->drawElements(RenderProtocol::DrawMode::Triangles, 
-    //         static_cast<unsigned int>(mIndices.size()), RenderProtocol::DrawElementType::UnsignedInt, 0);
+    std::shared_ptr<Mesh> MeshMgr::createMesh(const std::string& name)
+    {
+        auto it = mMeshCache.find(name);
+        if(it != mMeshCache.end())
+            return it->second.lock();
         
-    //     RenderSystem::Instance()->unbindVertexArray();
-    // }
+        std::shared_ptr<Mesh> meshPtr(new Mesh(name), [](Mesh* mesh) {
+                MeshMgr::Instance()->destroyMeshImpl(mesh); });
+
+        mMeshCache[name] = meshPtr;
+
+        return meshPtr;
+    }
+
+    void MeshMgr::destroyMeshImpl(Mesh* mesh)
+    {
+        mMeshCache.erase(mesh->getName());
+        delete mesh;
+    }
 }

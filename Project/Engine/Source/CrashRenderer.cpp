@@ -16,10 +16,16 @@ namespace Crash
     {
         struct _CommonUBO
         {
-            glm::vec4 viewPos       =  glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+            glm::vec4 viewPos           =  glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 
-            glm::mat4 view          =  glm::mat4(1.0f);
-            glm::mat4 projection    =  glm::mat4(1.0f);
+            glm::mat4 view              =  glm::mat4(1.0f);
+            glm::mat4 projection        =  glm::mat4(1.0f);
+
+            //   Directional Light
+            glm::vec4 dirLightDir       =  glm::vec4(0.0f, -1.0f, 0.0f, 0.0f);
+            glm::vec4 dirLightAmbient   =  glm::vec4(0.0f,  0.0f, 0.0f, 0.0f);
+            glm::vec4 dirLightDiffuse   =  glm::vec4(0.0f,  0.0f, 0.0f, 0.0f);
+            glm::vec4 dirLightSpecular  =  glm::vec4(0.0f,  0.0f, 0.0f, 0.0f);
         };
     }
 
@@ -57,6 +63,12 @@ namespace Crash
 
             commonUBO.view = camera.getViewMat();
             commonUBO.projection = camera.getProjectionMat(Engine::Instance()->getAspect());
+
+            const DirLight& dirLight    = scene->getDirLight();
+            commonUBO.dirLightDir       = dirLight.getDirection();
+            commonUBO.dirLightAmbient   = dirLight.getAmbient();
+            commonUBO.dirLightDiffuse   = dirLight.getDiffuse();
+            commonUBO.dirLightSpecular  = dirLight.getSpecular();
         }
 
         RenderSystem::Instance()->setBufferSubData(mCommonUniformBuffer, 0u, &commonUBO, sizeof(_CommonUBO));

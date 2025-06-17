@@ -6,141 +6,47 @@
 #include "CrashMesh.h"
 #include "CrashFileSystem.h"
 #include "CrashBasicGeometry.h"
+#include "CrashEntity.h"
 
 using namespace Crash;
 
-Mesh*               gMesh               = nullptr;
-ShaderProgram*      gModelShader        = nullptr;
-ShaderProgram*      gModelOuterShader   = nullptr;
-ShaderProgram*      gLightProgram       = nullptr;
-
-std::array<PointLight, 4> gPointLight;
-
-BasicGeometry::RenderPack gCubeRP;
+Entity*                         gEntity             = nullptr;
+std::shared_ptr<ShaderProgram>  gModelShader;
+std::shared_ptr<ShaderProgram>  gModelOuterShader;
 
 void HelloAssimp03::renderScene()
  {
     RenderSystem::Instance()->clear(RenderProtocol::ClearFlag::All);
 
-     //  Render Point Light
-    // {
-    //     RenderSystem::Instance()->bindVertexArray(gCubeRP.vao);
-    //     RenderSystem::Instance()->bindShaderProgram(gLightProgram);
+    //  Set Pass State
+    {
+        RenderSystem::Instance()->setStencilEnable(true);
+        RenderSystem::Instance()->setStencilFunc(RenderProtocol::CompareFunc::Always, 1, 0xFF);
+        RenderSystem::Instance()->setStencilOp(RenderProtocol::OperateFunc::Replace, RenderProtocol::OperateFunc::Replace, RenderProtocol::OperateFunc::Replace);
+    }
 
-    //     glm::mat4 view = mCamera.getViewMat();
-    //     RenderSystem::Instance()->setUniformMatrix4fv(gLightProgram, "uView", view);
-        
-    //     glm::mat4 projection = mCamera.getProjectionMat(Engine::Instance()->getAspect());
-    //     RenderSystem::Instance()->setUniformMatrix4fv(gLightProgram, "uProjection", projection);
-        
-    //     RenderSystem::Instance()->setUniform4f(gLightProgram, "uCameraWorldPos", glm::vec4(mCamera.getPosition(), 1.0f));
-        
-    //     for(auto &&pointLight : gPointLight)
-    //     {
-    //         glm::mat4 model = glm::translate(glm::mat4(1.f), glm::vec3(pointLight.getPosition()));
-    //         model = glm::scale(model, glm::vec3(0.1f)); 
-    //         RenderSystem::Instance()->setUniformMatrix4fv(gLightProgram, "uModel", model);
+    //  Render Model
+    glm::mat4& mWorldMatrix = gEntity->getWorldMatrix();
+    mWorldMatrix = glm::mat4(1.f);
+    gEntity->setShaderProgram(gModelShader);
+    gEntity->render();
 
-    //         pointLight.apply(gLightProgram);
+    //  Set Pass State
+    {
+        RenderSystem::Instance()->setDepthEnable(false);
+        RenderSystem::Instance()->setStencilFunc(RenderProtocol::CompareFunc::NotEqual, 1, 0xFF);
+        RenderSystem::Instance()->setStencilOp(RenderProtocol::OperateFunc::Keep, RenderProtocol::OperateFunc::Keep, RenderProtocol::OperateFunc::Keep);
+    }
 
-    //         RenderSystem::Instance()->drawElements(RenderProtocol::DrawMode::Triangles, 
-    //             36, RenderProtocol::DrawElementType::UnsignedInt, 0);
-    //     }
+    //  Render Outer Model
+    mWorldMatrix = glm::scale(glm::mat4(1.f), glm::vec3(1.01f));
+    gEntity->setShaderProgram(gModelOuterShader);
+    gEntity->render();
 
-    //     RenderSystem::Instance()->unbindShaderProgram();
-    //     RenderSystem::Instance()->unbindVertexArray();
-    // }
-
-    // //  Render Dir Light
-    // {
-    //     RenderSystem::Instance()->bindVertexArray(gCubeRP.vao);
-    //     RenderSystem::Instance()->bindShaderProgram(gLightProgram);
-
-    //     glm::mat4 model = glm::translate(glm::mat4(1.f), -50.f * glm::vec3(mDirLight.getDirection()));
-    //     model = glm::scale(model, glm::vec3(4.f)); 
-    //     RenderSystem::Instance()->setUniformMatrix4fv(gLightProgram, "uModel", model);
-
-    //     glm::mat4 view = mCamera.getViewMat();
-    //     RenderSystem::Instance()->setUniformMatrix4fv(gLightProgram, "uView", view);
-    
-    //     glm::mat4 projection = mCamera.getProjectionMat(Engine::Instance()->getAspect());
-    //     RenderSystem::Instance()->setUniformMatrix4fv(gLightProgram, "uProjection", projection);
-
-    //     RenderSystem::Instance()->setUniform4f(gLightProgram, "uCameraWorldPos", glm::vec4(mCamera.getPosition(), 1.0f));
-
-    //     mDirLight.apply(gLightProgram);
-
-    //     RenderSystem::Instance()->drawElements(RenderProtocol::DrawMode::Triangles, 
-    //         36, RenderProtocol::DrawElementType::UnsignedInt, 0);
-
-    //     RenderSystem::Instance()->unbindShaderProgram();
-    //     RenderSystem::Instance()->unbindVertexArray();
-    // }
-
-    // //  Set Pass State
-    // {
-    //     RenderSystem::Instance()->setStencilEnable(true);
-    //     RenderSystem::Instance()->setStencilFunc(RenderProtocol::CompareFunc::Always, 1, 0xFF);
-    //     RenderSystem::Instance()->setStencilOp(RenderProtocol::OperateFunc::Replace, RenderProtocol::OperateFunc::Replace, RenderProtocol::OperateFunc::Replace);
-    // }
-
-    // //  Render Model
-    // {
-    //     RenderSystem::Instance()->bindShaderProgram(gModelShader);
-
-    //     glm::mat4 model = glm::mat4(1.f);
-    //     RenderSystem::Instance()->setUniformMatrix4fv(gModelShader, "uModel", model);
-
-    //     glm::mat4 view = mCamera.getViewMat();
-    //     RenderSystem::Instance()->setUniformMatrix4fv(gModelShader, "uView", view);
-    
-    //     glm::mat4 projection = mCamera.getProjectionMat(Engine::Instance()->getAspect());
-    //     RenderSystem::Instance()->setUniformMatrix4fv(gModelShader, "uProjection", projection);
-
-    //     RenderSystem::Instance()->setUniform4f(gModelShader, "uCameraWorldPos", glm::vec4(mCamera.getPosition(), 1.0f));
-
-    //     for(int i = 0; i < 4; ++i)
-    //         gPointLight[i].apply(gModelShader, i);
-        
-    //     mDirLight.apply(gModelShader);
-    //     mSpotLight.apply(gModelShader);
-
-    //     gModel->draw(gModelShader);
-
-    //     RenderSystem::Instance()->unbindShaderProgram();
-    // }
-
-    // //  Set Pass State
-    // {
-    //     RenderSystem::Instance()->setDepthEnable(false);
-    //     RenderSystem::Instance()->setStencilFunc(RenderProtocol::CompareFunc::NotEqual, 1, 0xFF);
-    //     RenderSystem::Instance()->setStencilOp(RenderProtocol::OperateFunc::Keep, RenderProtocol::OperateFunc::Keep, RenderProtocol::OperateFunc::Keep);
-    // }
-
-    
-    // //  Render Outer Model
-    // {
-    //     RenderSystem::Instance()->bindShaderProgram(gModelOuterShader);
-
-    //     glm::mat4 model = glm::mat4(1.f);
-    //     model = glm::scale(model, glm::vec3(1.01f));
-    //     RenderSystem::Instance()->setUniformMatrix4fv(gModelOuterShader, "uModel", model);
-
-    //     glm::mat4 view = mCamera.getViewMat();
-    //     RenderSystem::Instance()->setUniformMatrix4fv(gModelOuterShader, "uView", view);
-    
-    //     glm::mat4 projection = mCamera.getProjectionMat(Engine::Instance()->getAspect());
-    //     RenderSystem::Instance()->setUniformMatrix4fv(gModelOuterShader, "uProjection", projection);
-
-    //     gModel->draw(gModelOuterShader);
-
-    //     RenderSystem::Instance()->unbindShaderProgram();
-    // }
-
-    // //  Reset Pass State
-    // {
-    //     RenderSystem::Instance()->setDepthEnable(true);
-    // }
+    //  Reset Pass State
+    {
+        RenderSystem::Instance()->setDepthEnable(true);
+    }
 }
 
 void HelloAssimp03::initialize()       
@@ -149,7 +55,28 @@ void HelloAssimp03::initialize()
 
     RenderSystem::Instance()->setClearColor({0.1f, 0.1f, 0.1f, 1.0f});
 
-    gMesh = new Mesh("backpack/backpack.obj");
+    gEntity = new Entity(MeshMgr::Instance()->createMesh("backpack/backpack.obj"));
+
+    {
+        const std::string vsCode = Crash::FileSystem::ReadShader("HelloAssimp03_VS.txt");
+        const std::string psCode = Crash::FileSystem::ReadShader("HelloAssimp03_PS.txt");
+        gModelShader = std::shared_ptr<ShaderProgram>(
+            RenderSystem::Instance()->createShaderProgram("HelloAssimp03", vsCode, psCode),
+            [](ShaderProgram* program) {
+                RenderSystem::Instance()->destroyShaderProgram(program);
+            }
+        ); 
+
+        const std::string psOuterCode = Crash::FileSystem::ReadShader("HelloAssimpOuter03_PS.txt");
+        gModelOuterShader = std::shared_ptr<ShaderProgram>(
+            RenderSystem::Instance()->createShaderProgram("HelloAssimpOuter03", vsCode, psOuterCode),
+            [](ShaderProgram* program) {
+                RenderSystem::Instance()->destroyShaderProgram(program);
+            }
+        ); 
+    }
+
+
 
     // gModel = new Model("backpack/backpack.obj");
 
@@ -196,8 +123,11 @@ void HelloAssimp03::shutdown()
 {
     Scene::shutdown();
 
-    delete gMesh;
-    gMesh = nullptr;
+    delete gEntity;
+    gEntity = nullptr;
+
+    gModelShader.reset();
+    gModelOuterShader.reset();
 
     // delete gModel;
     // gModel = nullptr;

@@ -5,4 +5,9 @@ layout(std140) uniform CommonUBO
 
     mat4 uView;
     mat4 uProjection;
+
+    vec4 uDirLightDir;
+    vec4 uDirLightAmbient;
+    vec4 uDirLightDiffuse;
+    vec4 uDirLightSpecular;
 };

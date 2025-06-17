@@ -32,6 +32,7 @@ namespace Crash
     public:
         void setPosition(const glm::vec3& position)                 { mPosition = glm::vec4(position, mPosition.w); }
         const glm::vec4& getPosition()                      const   { return mPosition; }
+        const glm::vec4& getAttenuation()                   const   { return mAttenuation; }
 
         virtual void apply(const ShaderProgram* program, const int lightIndex = -1)    const   override;
 
@@ -64,6 +65,8 @@ namespace Crash
 
         const glm::vec4& getPosition()                      const   { return mPosition; }
         const glm::vec4& getDirection()                     const   { return mDirection; }
+        const glm::vec4& getAttenuation()                   const   { return mAttenuation; }
+        const glm::vec4& getCutOff()                        const   { return mCutOff; }
 
         virtual void apply(const ShaderProgram* program, int lightIndex = -1)    const   override;
 

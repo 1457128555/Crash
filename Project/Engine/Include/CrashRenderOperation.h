@@ -69,5 +69,9 @@ namespace Crash
         RenderType mRenderType = RenderType::Element;
         
         bool mCullFace = true; 
+    
+    private:
+        RenderOperation(RenderOperation&)                     = delete;
+        RenderOperation& operator=(const RenderOperation&)    = delete;
     };
 }
