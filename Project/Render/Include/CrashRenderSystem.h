@@ -45,7 +45,9 @@ namespace Crash
         void setStencilOp(RenderProtocol::OperateFunc sfail, RenderProtocol::OperateFunc dpfail, RenderProtocol::OperateFunc dppass);
         void setStencilMask(unsigned int mask);
 
-        ShaderProgram* createShaderProgram(const std::string& name, const std::string& vs, const std::string& fs);
+        ShaderProgram* createShaderProgram(const std::string& name, 
+            const std::string& vs, const std::string& fs, const std::string& gs = "");
+        
         void destroyShaderProgram(ShaderProgram* program);
         void bindShaderProgram(ShaderProgram* program);
         void unbindShaderProgram();

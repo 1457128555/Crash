@@ -9,7 +9,11 @@ namespace Crash
     {
         friend class RenderSystem;
     private:
-        ShaderProgram(const std::string& name, const std::string& vs, const std::string& fs);
+        ShaderProgram(const std::string& name, 
+            const std::string& vs, 
+            const std::string& fs, 
+            const std::string& gs);
+
         ~ShaderProgram();
 
         void createHandle();
@@ -29,6 +33,7 @@ namespace Crash
         const std::string mName;
         const std::string mVS;
         const std::string mFS;
+        const std::string mGS;
 
         unsigned int mID;
     };

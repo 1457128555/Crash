@@ -38,10 +38,14 @@ namespace Crash
         };
     }
 
-    ShaderProgram::ShaderProgram(const std::string& name, const std::string& vs, const std::string& fs)
+    ShaderProgram::ShaderProgram(const std::string& name, 
+        const std::string& vs, 
+        const std::string& fs,
+        const std::string& gs)
         : mName(name)
         , mVS(vs)
         , mFS(fs)
+        , mGS(gs)
         , mID(0)
     {
        
@@ -51,9 +55,24 @@ namespace Crash
     {
         Shader vertexShader(RenderProtocol::ShaderType::VertexShader, mVS);
         Shader fragmentShader(RenderProtocol::ShaderType::FragmentShader, mFS);
-
         std::vector<unsigned int> shaderIDs = { vertexShader.getID(), fragmentShader.getID() };
-        mID = RenderCommand::CreateShaderProgram(shaderIDs);
+
+        if(!mGS.empty())
+        {
+            Shader geometryShader(RenderProtocol::ShaderType::GeometryShader, mGS);
+            mID = RenderCommand::CreateShaderProgram({
+                vertexShader.getID(),
+                fragmentShader.getID(),
+                geometryShader.getID(),
+            });
+        }
+        else
+        {
+            mID = RenderCommand::CreateShaderProgram({
+                vertexShader.getID(),
+                fragmentShader.getID(),
+            });       
+         }
     }
 
     ShaderProgram::~ShaderProgram()

@@ -10,7 +10,7 @@
 
 #include "CrashRenderProtocol.hpp"
 
-#include "HelloAssimp03.h"
+#include "HelloGeoShader06.h"
 
 using namespace Crash;
 
@@ -102,7 +102,7 @@ int main()
     config.swapBuffer           = []() { glfwSwapBuffers(sWindow); };
 
     new Crash::Engine(config);
-    sScene = new HelloAssimp03();
+    sScene = new HelloGeoShader06();
     Crash::Engine::Instance()->setScene(sScene);
 
     // Initialize ImGui

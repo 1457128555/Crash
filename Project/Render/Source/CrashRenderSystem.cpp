@@ -169,9 +169,10 @@ namespace Crash
             command();
     }
 
-    ShaderProgram* RenderSystem::createShaderProgram(const std::string& name, const std::string& vs, const std::string& fs)
+    ShaderProgram* RenderSystem::createShaderProgram(const std::string& name, 
+        const std::string& vs, const std::string& fs, const std::string& gs)
     {
-        ShaderProgram* program = new ShaderProgram(name, vs, fs);
+        ShaderProgram* program = new ShaderProgram(name, vs, fs, gs);
 
         auto command = [_program = program] {
             _program->createHandle();

@@ -7,7 +7,7 @@
 
 #include "CrashRenderProtocol.hpp"
 
-#include "HelloSkyCube05.h"
+#include "HelloGeoShader06.h"
 
 using namespace Crash;
 
@@ -97,7 +97,7 @@ int main()
     config.swapBuffer           = []() { glfwSwapBuffers(sWindow); };
 
     new Crash::Engine(config);
-    sScene = new HelloSkyCube05();
+    sScene = new HelloGeoShader06();
     Crash::Engine::Instance()->setScene(sScene);
 
     auto start = std::chrono::steady_clock::now();
