@@ -1,0 +1,10 @@
+//  HelloInsDraw07_PS.txt
+
+out vec4 FragColor;
+
+in vec3 fColor;
+
+void main()
+{
+    FragColor = vec4(fColor.xyz, 1.0);   
+}

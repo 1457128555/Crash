@@ -39,11 +39,11 @@ namespace
                 VertexBuffer* vbo = RenderSystem::Instance()->createBuffer();
                 RenderSystem::Instance()->setBufferData(vbo, points.data(), sizeof(points[0]) * points.size());
 
-                mRenderOpt.setVBO(vbo, {
+                mRenderOpt.addVBO(vbo, {
                     { 0, 2, sizeof(float) * 5, (const void*)0 },                    
                     { 1, 3, sizeof(float) * 5, (const void*)(sizeof(float) * 2) },                    
 
-                }, true);
+                });
 
                 mRenderOpt.setCount(4);
                 mRenderOpt.setDrawMode(RenderProtocol::DrawMode::Points);

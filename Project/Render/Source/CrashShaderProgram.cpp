@@ -98,6 +98,14 @@ namespace Crash
         if (location != -1)
             RenderCommand::SetUniform1i(location, value);
     }
+
+    void ShaderProgram::setUniform2f(const std::string& name, const glm::vec2& value) const
+    {
+        bind();
+        int location = RenderCommand::GetUniformLocation(mID, name);
+        if (location != -1)
+            RenderCommand::SetUniform2f(location, value);
+    }
     
     void ShaderProgram::setUniform4f(const std::string& name, const glm::vec4& value) const
     {

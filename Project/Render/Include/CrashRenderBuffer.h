@@ -72,7 +72,8 @@ namespace Crash
         void unbind() const;
 
         void addBuffer(const IndexBuffer* buffer);
-        void addBuffer(const VertexBuffer* buffer, unsigned int index, unsigned int size, unsigned int stride, const void* pointer);
+        void addBuffer(const VertexBuffer* buffer, unsigned int index, unsigned int size, 
+            unsigned int stride, const void* pointer, unsigned int insStep);
     
     private:    
         unsigned int mID = 0u;

@@ -5,7 +5,7 @@
 
 namespace Crash
 {
-    RenderOperation::RenderOperation() : mVAO(nullptr), mVBO(nullptr), mIBO(nullptr)
+    RenderOperation::RenderOperation() : mVAO(nullptr), mIBO(nullptr)
     {
         mVAO = RenderSystem::Instance()->createVertexArray();
     }
@@ -13,10 +13,10 @@ namespace Crash
     RenderOperation::~RenderOperation()
     {
         RenderSystem::Instance()->destroyVertexArray(mVAO);
-        if (mVBO)
-            RenderSystem::Instance()->destroyBuffer(mVBO);
         if (mIBO)
             RenderSystem::Instance()->destroyIndexBuffer(mIBO);
+
+        clearVBO(true);
     }
 
     void RenderOperation::bind()     const
@@ -29,7 +29,7 @@ namespace Crash
         RenderSystem::Instance()->unbindVertexArray();
     }
 
-    void RenderOperation::setIBO(IndexBuffer* ibo, bool destoryHold)
+    void RenderOperation::addIBO(IndexBuffer* ibo, bool destoryHold)
     {
         if(destoryHold && mIBO)
             RenderSystem::Instance()->destroyIndexBuffer(mIBO);
@@ -37,29 +37,21 @@ namespace Crash
         RenderSystem::Instance()->addBufferToVertexArray(mVAO, mIBO);
     }
 
-    void RenderOperation::setVBO(VertexBuffer* vbo, const std::vector<VBO_DESC>& descVec, bool destoryHold)
+    void RenderOperation::addVBO(VertexBuffer* vbo, const std::vector<VBO_DESC>& descVec, unsigned int insStep )
     {
-        if(destoryHold && mVBO)
-            RenderSystem::Instance()->destroyBuffer(mVBO);
-        mVBO = vbo;
+        mVBOs.push_back(vbo);
         for(const auto& desc : descVec)
-            RenderSystem::Instance()->addBufferToVertexArray(mVAO, mVBO, desc.index, desc.size, desc.stride, desc.pointer);
+            RenderSystem::Instance()->addBufferToVertexArray(mVAO, vbo, desc.index, desc.size, desc.stride, desc.pointer, insStep);
     }
 
-    void RenderOperation::clear(bool destoryHold)
+    void RenderOperation::clearVBO(bool destoryHold)
     {
-        RenderSystem::Instance()->destroyVertexArray(mVAO);
-        mVAO = RenderSystem::Instance()->createVertexArray();
-
         if(destoryHold)
         {
-            if (mVBO)
-                RenderSystem::Instance()->destroyBuffer(mVBO);
-            if (mIBO)
-                RenderSystem::Instance()->destroyIndexBuffer(mIBO);
+            for(auto vbo : mVBOs)
+                RenderSystem::Instance()->destroyBuffer(vbo);
         }
 
-        mVBO = nullptr;
-        mIBO = nullptr;
+       mVBOs.clear();
     }
 }

@@ -540,6 +540,12 @@ namespace Crash
         CheckGLError("SetUniform1i");
     }
 
+    void RenderCommand::SetUniform2f(unsigned int locaID, const glm::vec2& value)
+    {
+        glUniform2f(locaID, value.x, value.y);
+        CheckGLError("SetUniform2f");
+    }
+
     void RenderCommand::SetUniform4f(unsigned int locaID, const glm::vec4& value)
     {
         glUniform4f(locaID, value.x, value.y, value.z, value.w);
@@ -689,10 +695,11 @@ namespace Crash
         CheckGLError("BufferSubData");
     }
 
-    void RenderCommand::VertexAttribPointer(unsigned int index, unsigned int size, unsigned int stride, const void* pointer)
+    void RenderCommand::VertexAttribPointer(unsigned int index, unsigned int size, unsigned int stride, const void* pointer, unsigned int insStep)
     {
         glEnableVertexAttribArray(index);
         glVertexAttribPointer(index, size, GL_FLOAT, GL_FALSE, stride, pointer);
+        glVertexAttribDivisor(index, insStep);
         CheckGLError("VertexAttribPointer");
     }  
 
@@ -706,6 +713,18 @@ namespace Crash
     {
         glDrawElements(GetDrawMode(mode), count, GetDrawElementType(type), indices);
         CheckGLError("DrawElements");
+    }
+
+    void RenderCommand::DrawArraysInstanced(RenderProtocol::DrawMode mode, unsigned int first, unsigned int count, unsigned int instanceCount)
+    {
+        glDrawArraysInstanced(GetDrawMode(mode), first, count, instanceCount);
+        CheckGLError("DrawArraysInstanced");
+    }
+
+    void RenderCommand::DrawElementsInstanced(RenderProtocol::DrawMode mode, unsigned int count, RenderProtocol::DrawElementType type, const void* indices, unsigned int instanceCount)
+    {
+        glDrawElementsInstanced(GetDrawMode(mode), count, GetDrawElementType(type), indices, instanceCount);
+        CheckGLError("DrawElementsInstanced");
     }
 
     unsigned int RenderCommand::CreateVertexArray()

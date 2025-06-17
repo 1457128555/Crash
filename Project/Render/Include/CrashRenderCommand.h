@@ -51,6 +51,7 @@ namespace Crash
         static int GetUniformBlockIndex(unsigned int shaderProgram, const std::string& blockName);
        
         static void SetUniform1i(unsigned int locaID, int value);
+        static void SetUniform2f(unsigned int locaID, const glm::vec2& value);
         static void SetUniform4f(unsigned int locaID, const glm::vec4& value);
         static void SetUniformMatrix4fv(unsigned int locaID, const glm::mat4& value);
 
@@ -85,7 +86,7 @@ namespace Crash
             
         static void BufferSubData(RenderProtocol::BufferType type, unsigned int offset, unsigned int size, const void* data);
 
-        static void VertexAttribPointer(unsigned int index, unsigned int size, unsigned int stride, const void* pointer);  
+        static void VertexAttribPointer(unsigned int index, unsigned int size, unsigned int stride, const void* pointer, unsigned int insStep);  
 
         static unsigned int CreateVertexArray();
         static void destroyVertexArray(unsigned int id);
@@ -95,6 +96,9 @@ namespace Crash
         static void DrawArray(RenderProtocol::DrawMode mode, unsigned int first, unsigned int count);
         static void DrawElements(RenderProtocol::DrawMode mode, unsigned int count, RenderProtocol::DrawElementType type, const void* indices);
     
+        static void DrawArraysInstanced(RenderProtocol::DrawMode mode, unsigned int first, unsigned int count, unsigned int instanceCount);
+        static void DrawElementsInstanced(RenderProtocol::DrawMode mode, unsigned int count, RenderProtocol::DrawElementType type, const void* indices, unsigned int instanceCount);
+
         static unsigned int CreateTexture();
         static void destroyTexture(unsigned int id);
         static void BindTexture(unsigned int id, RenderProtocol::TexType type);

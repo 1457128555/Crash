@@ -52,6 +52,7 @@ namespace Crash
         void bindShaderProgram(ShaderProgram* program);
         void unbindShaderProgram();
         void setUniform1i(const ShaderProgram* program, const std::string& name, int value);
+        void setUniform2f(const ShaderProgram* program, const std::string& name, const glm::vec2& value);
         void setUniform4f(const ShaderProgram* program, const std::string& name, const glm::vec4& value);
         void setUniformMatrix4fv(const ShaderProgram* program, const std::string& name, const glm::mat4& value);
         void setUniformBlockBinding(const ShaderProgram* program, const std::string& blockName, unsigned int bindingPoint);
@@ -68,7 +69,8 @@ namespace Crash
         void destroyVertexArray(VertexArrayObject* vao);
         void bindVertexArray(VertexArrayObject* vao);
         void unbindVertexArray();
-        void addBufferToVertexArray(VertexArrayObject* vao, VertexBuffer* buffer, unsigned int index, unsigned int size, unsigned int stride, const void* pointer);
+        void addBufferToVertexArray(VertexArrayObject* vao, VertexBuffer* buffer, unsigned int index, 
+            unsigned int size, unsigned int stride, const void* pointer, unsigned int insStep);
         void addBufferToVertexArray(VertexArrayObject* vao, IndexBuffer* buffer);
 
         VertexBuffer* createBuffer();
@@ -105,6 +107,8 @@ namespace Crash
         void drawArray(RenderProtocol::DrawMode mode, unsigned int first, unsigned int count);
         void drawElements(RenderProtocol::DrawMode mode, unsigned int count, RenderProtocol::DrawElementType type, const void* indices);
 
+        void drawArraysInstanced(RenderProtocol::DrawMode mode, unsigned int first, unsigned int count, unsigned int instanceCount);
+        void drawElementsInstanced(RenderProtocol::DrawMode mode, unsigned int count, RenderProtocol::DrawElementType type, const void* indices, unsigned int instanceCount);
 
 
 

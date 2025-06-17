@@ -96,11 +96,11 @@ namespace Crash
         RenderCommand::UnbindVertexArray();
     }
 
-    void VertexArrayObject::addBuffer(const VertexBuffer* buffer, unsigned int index, unsigned int size, unsigned int stride, const void* pointer)
+    void VertexArrayObject::addBuffer(const VertexBuffer* buffer, unsigned int index, unsigned int size, unsigned int stride, const void* pointer, unsigned int insStep)
     {
         bind();
         buffer->bind();
-        RenderCommand::VertexAttribPointer(index, size, stride, pointer);
+        RenderCommand::VertexAttribPointer(index, size, stride, pointer, insStep);
     }
 
     void VertexArrayObject::addBuffer(const IndexBuffer* buffer)

@@ -3,8 +3,7 @@
 class HelloAssimp03 : public Crash::Scene
 {
 public:
-    HelloAssimp03();
-    virtual ~HelloAssimp03()                override{};
+    HelloAssimp03() : Scene("HelloAssimp03"){};
 
     virtual void initialize()               override;
     virtual void renderScene()              override;

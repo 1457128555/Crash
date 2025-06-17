@@ -47,22 +47,22 @@ namespace Crash
             size_t offset = 0;
             if (BasicGeometry::HasFlag(type,BasicGeometry::DataType::Vertex))
             {
-                RenderSystem::Instance()->addBufferToVertexArray(pack.vao, pack.vbo, index++, 3, stride, (const void*)(offset));
+                RenderSystem::Instance()->addBufferToVertexArray(pack.vao, pack.vbo, index++, 3, stride, (const void*)(offset), 0);
                 offset += sizeof(_Vertex::position);
             }
             if (BasicGeometry::HasFlag(type,BasicGeometry::DataType::Normal))
             {
-                RenderSystem::Instance()->addBufferToVertexArray(pack.vao, pack.vbo, index++, 3, stride, (const void*)(offset));
+                RenderSystem::Instance()->addBufferToVertexArray(pack.vao, pack.vbo, index++, 3, stride, (const void*)(offset), 0);
                 offset += sizeof(_Vertex::normal);
             }
             if (BasicGeometry::HasFlag(type,BasicGeometry::DataType::TexCoord))
             {
-                RenderSystem::Instance()->addBufferToVertexArray(pack.vao, pack.vbo, index++, 2, stride, (const void*)(offset));
+                RenderSystem::Instance()->addBufferToVertexArray(pack.vao, pack.vbo, index++, 2, stride, (const void*)(offset), 0);
                 offset += sizeof(_Vertex::texCoord);
             }
             if (BasicGeometry::HasFlag(type,BasicGeometry::DataType::Tangent))
             {
-                RenderSystem::Instance()->addBufferToVertexArray(pack.vao, pack.vbo, index++, 3, stride, (const void*)(offset));
+                RenderSystem::Instance()->addBufferToVertexArray(pack.vao, pack.vbo, index++, 3, stride, (const void*)(offset), 0);
                 offset += sizeof(_Vertex::tangent);
             }
         }

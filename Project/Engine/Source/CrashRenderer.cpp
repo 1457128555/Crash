@@ -67,6 +67,8 @@ namespace Crash
         assert(renderable != nullptr && "Renderable cannot be null!");
 
         RenderOperation* renderOp = renderable->getRenderOperation();
+
+        RenderSystem::Instance()->setCullFaceEnable(renderOp->getCullFace());
         renderOp->bind();
 
         ShaderProgram* shaderProgram = renderable->getShaderProgram();
@@ -77,11 +79,16 @@ namespace Crash
         material->apply(shaderProgram);
 
         RenderSystem::Instance()->setUniformMatrix4fv(shaderProgram, "uModel", *renderable->getWorldMatrix());
+        renderable->setUniformObject();
 
         if(renderOp->getRenderType() == RenderOperation::RenderType::Array)
             RenderSystem::Instance()->drawArray(renderOp->getDrawMode(), renderOp->getFirst(), renderOp->getCount());
         else if(renderOp->getRenderType() == RenderOperation::RenderType::Element)
             RenderSystem::Instance()->drawElements(renderOp->getDrawMode(), renderOp->getCount(), renderOp->getElementType(), renderOp->getIndices());
+        else if(renderOp->getRenderType() == RenderOperation::RenderType::ArrayInstance)
+            RenderSystem::Instance()->drawArraysInstanced(renderOp->getDrawMode(), renderOp->getFirst(), renderOp->getCount(), renderOp->getInstanceCount());
+        else if(renderOp->getRenderType() == RenderOperation::RenderType::ElementInstance)
+            RenderSystem::Instance()->drawElementsInstanced(renderOp->getDrawMode(), renderOp->getCount(), renderOp->getElementType(), renderOp->getIndices(), renderOp->getInstanceCount());
 
         // Unbind the shader program after rendering
         RenderSystem::Instance()->unbindShaderProgram();

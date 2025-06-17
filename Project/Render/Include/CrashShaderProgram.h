@@ -25,6 +25,7 @@ namespace Crash
         unsigned int getID() const { return mID; }
 
         void setUniform1i(const std::string& name, int value)                       const;
+        void setUniform2f(const std::string& name, const glm::vec2& value)          const;
         void setUniform4f(const std::string& name, const glm::vec4& value)          const;
         void setUniformMatrix4fv(const std::string& name, const glm::mat4& value)   const;
 

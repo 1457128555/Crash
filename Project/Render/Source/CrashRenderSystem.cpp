@@ -229,6 +229,17 @@ namespace Crash
             command();
     }
 
+    void RenderSystem::setUniform2f(const ShaderProgram* program, const std::string& name, const glm::vec2& value)
+    {
+        auto command = [_program = program, _name = name, _value = value] {
+            _program->setUniform2f(_name, _value);
+        };
+        if(mAsyncRender)
+            mCommandQueue[0].push_back(command);
+        else
+            command();
+    }
+
     void RenderSystem::setUniform4f(const ShaderProgram* program, const std::string& name, const glm::vec4& value)
     {
         auto command = [_program = program, _name = name, _value = value] {
@@ -368,10 +379,11 @@ namespace Crash
             command();
     }
 
-    void RenderSystem::addBufferToVertexArray(VertexArrayObject* vao, VertexBuffer* buffer, unsigned int index, unsigned int size, unsigned int stride, const void* pointer)
+    void RenderSystem::addBufferToVertexArray(VertexArrayObject* vao, VertexBuffer* buffer, unsigned int index, unsigned int size, 
+        unsigned int stride, const void* pointer, unsigned int insStep)
     {
-        auto command = [_vao = vao, _buffer = buffer, _index = index, _size = size, _stride = stride, _pointer = pointer] {
-            _vao->addBuffer(_buffer, _index, _size, _stride, _pointer);
+        auto command = [_vao = vao, _buffer = buffer, _index = index, _size = size, _stride = stride, _pointer = pointer, _insStep = insStep] {
+            _vao->addBuffer(_buffer, _index, _size, _stride, _pointer, _insStep);
         };
         if(mAsyncRender)
             mCommandQueue[0].push_back(command);
@@ -663,6 +675,28 @@ namespace Crash
     {
         auto command = [_mode = mode, _count = count, _type = type, _indices = indices] {
             RenderCommand::DrawElements(_mode, _count, _type, _indices);
+        };
+        if(mAsyncRender)
+            mCommandQueue[0].push_back(command);
+        else
+            command();
+    }
+
+    void RenderSystem::drawArraysInstanced(RenderProtocol::DrawMode mode, unsigned int first, unsigned int count, unsigned int instanceCount)
+    {
+        auto command = [_mode = mode, _first = first, _count = count, _instanceCount = instanceCount] {
+            RenderCommand::DrawArraysInstanced(_mode, _first, _count, _instanceCount);
+        };
+        if(mAsyncRender)
+            mCommandQueue[0].push_back(command);
+        else
+            command();
+    }
+
+    void RenderSystem::drawElementsInstanced(RenderProtocol::DrawMode mode, unsigned int count, RenderProtocol::DrawElementType type, const void* indices, unsigned int instanceCount)
+    {
+        auto command = [_mode = mode, _count = count, _type = type, _indices = indices, _instanceCount = instanceCount] {
+            RenderCommand::DrawElementsInstanced(_mode, _count, _type, _indices, _instanceCount);
         };
         if(mAsyncRender)
             mCommandQueue[0].push_back(command);

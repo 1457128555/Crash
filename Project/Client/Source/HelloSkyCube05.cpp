@@ -41,11 +41,11 @@ namespace
                 VertexBuffer* vbo = RenderSystem::Instance()->createBuffer();
                 RenderSystem::Instance()->setBufferData(vbo, vertices.data(), sizeof(vertices[0]) * vertices.size());
 
-                mRenderOpt.setIBO(ibo, true);
-                mRenderOpt.setVBO(vbo, {
+                mRenderOpt.addIBO(ibo, true);
+                mRenderOpt.addVBO(vbo, {
                     { 0, 3, sizeof(float) * 6, (const void*)0 },                    // Vertex
                     { 1, 3, sizeof(float) * 6, (const void*)(sizeof(float) * 3) }   // Normal
-                }, true);
+                });
 
                 mRenderOpt.setCount(static_cast<unsigned int>(indices.size()));
             }
@@ -89,11 +89,11 @@ namespace
                 VertexBuffer* vbo = RenderSystem::Instance()->createBuffer();
                 RenderSystem::Instance()->setBufferData(vbo, vertices.data(), sizeof(vertices[0]) * vertices.size());
 
-                mRenderOpt.setIBO(ibo, true);
-                mRenderOpt.setVBO(vbo, {
+                mRenderOpt.addIBO(ibo, true);
+                mRenderOpt.addVBO(vbo, {
                     { 0, 3, sizeof(float) * 6, (const void*)0 },                    // Vertex
                     { 1, 3, sizeof(float) * 6, (const void*)(sizeof(float) * 3) }   // Normal
-                }, true);
+                });
 
                 mRenderOpt.setCount(static_cast<unsigned int>(indices.size()));
            }
