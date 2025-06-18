@@ -16,7 +16,9 @@ namespace
     ShaderProgram *gPlaneShader = nullptr;
     ShaderProgram *gQuadShader = nullptr;
 
-    FrameBuffer *gFrameBuffer = nullptr;
+    FrameBuffer *gMSAAFBO   = nullptr;
+    FrameBuffer *gRenderFBO = nullptr;
+
     std::shared_ptr<Texture> gPlaneTex;
     std::shared_ptr<Texture> gVegTex;
     std::shared_ptr<Texture> gWinTex;
@@ -55,7 +57,7 @@ void HelloBlending04::update(float deltaTime)
 
 void HelloBlending04::renderScene()
 {
-    RenderSystem::Instance()->bindFrameBuffer(gFrameBuffer);
+    RenderSystem::Instance()->bindFrameBuffer(gMSAAFBO);
     RenderSystem::Instance()->clear(RenderProtocol::ClearFlag::All);
     RenderSystem::Instance()->setDepthEnable(true);
 
@@ -125,12 +127,16 @@ void HelloBlending04::renderScene()
 
     RenderSystem::Instance()->setDepthEnable(false);
 
+    //  Msaa to render fbo
+    RenderSystem::Instance()->blitFrameBuffer(gMSAAFBO, gRenderFBO);
+    RenderSystem::Instance()->unbindFrameBuffer();
+
     //  Render FrameBuffer to Screen
     {
         RenderSystem::Instance()->bindShaderProgram(gQuadShader);
         RenderSystem::Instance()->setUniform1i(gQuadShader, "uDiffuseTex", 0);
         RenderSystem::Instance()->activateTextureUnit(0);
-        RenderSystem::Instance()->bindTexture(RenderSystem::Instance()->getFrameBufferColorAttachment(gFrameBuffer).get());
+        RenderSystem::Instance()->bindTexture(RenderSystem::Instance()->getFrameBufferColorAttachment(gRenderFBO).get());
 
         RenderSystem::Instance()->bindVertexArray(gQuadRP.vao);
         RenderSystem::Instance()->drawElements(RenderProtocol::DrawMode::Triangles, 
@@ -162,8 +168,11 @@ void HelloBlending04::initialize()
         gPlaneShader = RenderSystem::Instance()->createShaderProgram("HelloBlending04_Plane", vsCode, psCode);
     }
 
-    gFrameBuffer = RenderSystem::Instance()->createFrameBuffer("framebuffer",
-                                                               Engine::Instance()->getWidth(), Engine::Instance()->getHeight());
+    gMSAAFBO = RenderSystem::Instance()->createFrameBuffer("msaa_fbo",
+        Engine::Instance()->getWidth(), Engine::Instance()->getHeight(), 4, true);
+
+    gRenderFBO = RenderSystem::Instance()->createFrameBuffer("render_fbo",
+        Engine::Instance()->getWidth(), Engine::Instance()->getHeight(), 0, true); 
 
     {
         const std::string vsCode = Crash::FileSystem::ReadShader("HelloBlending04_Quad_VS.txt");
@@ -188,5 +197,6 @@ void HelloBlending04::shutdown()
     RenderSystem::Instance()->destroyShaderProgram(gPlaneShader);
     RenderSystem::Instance()->destroyShaderProgram(gQuadShader);
 
-    RenderSystem::Instance()->destroyFrameBuffer(gFrameBuffer);
+    RenderSystem::Instance()->destroyFrameBuffer(gMSAAFBO);
+    RenderSystem::Instance()->destroyFrameBuffer(gRenderFBO);
 }

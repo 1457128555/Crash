@@ -273,9 +273,9 @@ namespace Crash
             command();
     }
 
-    FrameBuffer* RenderSystem::createFrameBuffer(const std::string& name, unsigned int width, unsigned int height, bool useRBO)
+    FrameBuffer* RenderSystem::createFrameBuffer(const std::string& name, unsigned int width, unsigned int height, int multiSamples, bool useRBO)
     {
-        FrameBuffer* framebuffer = new FrameBuffer(name, width, height, useRBO);
+        FrameBuffer* framebuffer = new FrameBuffer(name, width, height, multiSamples, useRBO);
         auto command = [_framebuffer = framebuffer] {
             _framebuffer->createHandle();
         };
@@ -316,6 +316,18 @@ namespace Crash
             RenderCommand::UnbindFrameBuffer();
         };
         if(mAsyncRender)
+            mCommandQueue[0].push_back(command);
+        else
+            command();
+    }
+
+    void RenderSystem::blitFrameBuffer(FrameBuffer* r, FrameBuffer* w)
+    {
+        assert(r && w && r->getWidth() == w->getWidth() && r->getHeight() == w->getHeight());
+        auto command = [_r = r, _w = w]{
+            RenderCommand::BlitFrameBuffer(_r->getID(), _w->getID(), _r->getWidth(), _r->getHeight());
+        };
+         if(mAsyncRender)
             mCommandQueue[0].push_back(command);
         else
             command();
