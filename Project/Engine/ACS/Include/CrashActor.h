@@ -19,7 +19,12 @@ namespace Crash
         void addComp(const ActorCompSrdPtr& _ptr);
         void rmvComp(const ActorCompSrdPtr& _ptr);
         void rmvCompAll();
+        
+        const std::vector<ActorSrdPtr>&     getActors()     { return mActors; };
+        const std::vector<ActorCompSrdPtr>& getActorComps() { return mActorComps; };
 
+        const std::string& getName() { return mName; };
+        
     protected:
         std::string mName = "DefaultActor";
 

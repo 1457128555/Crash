@@ -15,7 +15,8 @@ namespace Crash
         void attachActor(Actor* _parent);
         void disattachActor();
 
-        bool isAttachActor()    const   { return mParent; };
+        bool    isAttachActor()     const   { return mParent; };
+        Actor*  getParent()         const   { return mParent; };
 
     protected:
         virtual void attachActorImpl();

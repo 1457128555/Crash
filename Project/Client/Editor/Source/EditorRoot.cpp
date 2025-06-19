@@ -1,10 +1,12 @@
 #include "CrashPCH.h"
 #include "EditorRoot.h"
 
-//  IMGUI
-#include <imgui.h>
-#include <backends/imgui_impl_glfw.h>
-#include <backends/imgui_impl_opengl3.h>
+#include "EditorDeclare.hpp"
+
+#include "CrashEngine.h"
+#include "CrashActor.h"
+
+#include "EditorActor.h"
 
 using namespace Crash;
 
@@ -58,6 +60,13 @@ void EditorRoot::render()
         ImGui::Checkbox("Show Demo Window", &show_demo_window);
         if (show_demo_window)
             ImGui::ShowDemoWindow(&show_demo_window);
+    }
+
+    //  Show ACS
+    if (ImGui::CollapsingHeader("ACS"))
+    {
+        const ActorSrdPtr& rootActor = Engine::Instance()->getRootActor();
+        EditorActor::Render(rootActor.get());
     }
 
     ImGui::End();

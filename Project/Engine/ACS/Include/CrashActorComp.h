@@ -18,6 +18,9 @@ namespace Crash
         ActorComp(ActorCompType _type, const std::string& _name = "");
         virtual ~ActorComp() override;
 
+        ActorCompType       getType()       { return mType; };
+        const std::string&  getName()       { return mName; };
+        
     protected:
         ActorCompType   mType   = ActorCompType::None;
         std::string     mName   = "DefaultActorComp";
