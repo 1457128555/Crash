@@ -4,12 +4,9 @@
 #include "CrashInputMgr.h"
 #include <GLFW/glfw3.h>
 
-#include <imgui.h>
-#include <backends/imgui_impl_glfw.h>
-#include <backends/imgui_impl_opengl3.h>
+#include "EditorRoot.h"
 
 #include "CrashRenderProtocol.hpp"
-
 #include "HelloAssimp03.h"
 
 using namespace Crash;
@@ -66,8 +63,6 @@ void processInput(GLFWwindow *window)
     }
 }
 
-void renderMainEditor();
-
 int main()
 {
     if (!glfwInit())
@@ -105,16 +100,8 @@ int main()
     sScene = new HelloAssimp03();
     Crash::Engine::Instance()->setScene(sScene);
 
-    // Initialize ImGui
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO();
-    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;   //  Docking
-    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; //  Viewports    
-    ImGui::StyleColorsDark();
-
-    ImGui_ImplGlfw_InitForOpenGL(sWindow, true);
-    ImGui_ImplOpenGL3_Init("#version 330 core");
+    //  For editor
+    new EditorRoot(sWindow, "#version 330 core");
 
     auto start = std::chrono::steady_clock::now();
     auto now = std::chrono::steady_clock::now();
@@ -133,21 +120,17 @@ int main()
         Crash::Engine::Instance()->setExecuteTime(currentTime);
         Crash::Engine::Instance()->update(deltaTime); 
 
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
+        EditorRoot::Instance()->frameBegin();
 
-        renderMainEditor();
+        EditorRoot::Instance()->render();
         Crash::Engine::Instance()->renderFrame();
 
-        ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        EditorRoot::Instance()->frameEnd();
 
-        if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+        if(EditorRoot::Instance()->checkViewportsEnable())
         {
             GLFWwindow* backup_current_context = glfwGetCurrentContext();
-            ImGui::UpdatePlatformWindows();
-            ImGui::RenderPlatformWindowsDefault();
+            EditorRoot::Instance()->updatePlatformWindows();
             glfwMakeContextCurrent(backup_current_context);
         }
 
@@ -155,9 +138,7 @@ int main()
         glfwPollEvents();
     }
 
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplGlfw_Shutdown();
-    ImGui::DestroyContext();
+    delete EditorRoot::Instance();
     
     Crash::Engine::Instance()->setScene(nullptr);
     delete sScene;
@@ -168,47 +149,4 @@ int main()
     glfwTerminate();
 
     return 0;
-}
-
-void renderMainEditor()
-{
-    ImGui::Begin("Main Client");
-
-    //  Demo window
-    {
-        static bool show_demo_window = false;
-        ImGui::Checkbox("Show Demo Window", &show_demo_window);
-        if (show_demo_window)
-            ImGui::ShowDemoWindow(&show_demo_window);
-    }
-
-    ImGui::End();
-
-    // {
-    //     static int curFace = 0;
-    //     const char* faceItems[]     = { "None", "Front", "Back", "FrontAndBack" };
-
-    //     static int curPolygon = 0;
-    //     const char* PolygonItems[]  = { "None", "Fill" , "Line" };
-        
-    //     ImGui::SetNextItemWidth(150);
-    //     if(ImGui::Combo("FaceType", &curFace, faceItems, 4) && curFace && curPolygon)
-    //     {
-    //         Crash::Render::Instance()->setPolygonMode(
-    //             (Crash::RenderProtocol::FaceMode)(curFace), 
-    //             (Crash::RenderProtocol::PolygonMode)(curPolygon)
-    //         );
-    //     }
-
-    //     ImGui::SameLine();  
-        
-    //     ImGui::SetNextItemWidth(150);
-    //     if(ImGui::Combo("PolygonType", &curPolygon, PolygonItems, 3) && curFace && curPolygon)
-    //     {
-    //         Crash::Render::Instance()->setPolygonMode(
-    //             (Crash::RenderProtocol::FaceMode)(curFace), 
-    //             (Crash::RenderProtocol::PolygonMode)(curPolygon)
-    //         );
-    //     }
-    // }
 }
