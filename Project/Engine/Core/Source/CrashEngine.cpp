@@ -10,6 +10,7 @@
 
 #include "CrashScene.h"
 #include "CrashCamera.h"
+#include "CrashActor.h"
 
 namespace Crash
 {
@@ -58,6 +59,8 @@ namespace Crash
 
         new Renderer();
         new MeshMgr();
+
+        mRootActor = std::make_shared<Actor>("Root Actor");
     }
 
     Engine::~Engine()

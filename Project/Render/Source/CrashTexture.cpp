@@ -15,6 +15,8 @@ namespace Crash
         mID = RenderCommand::CreateTexture();
 
         bind();
+        if(mType == RenderProtocol::TexType::Texture2DMultiSamples)
+            return;
         RenderCommand::SetTextureWarpMode(mType, RenderProtocol::TexWrap::S, RenderProtocol::TexSurround::Repeat);
         RenderCommand::SetTextureWarpMode(mType, RenderProtocol::TexWrap::T, RenderProtocol::TexSurround::Repeat);
         RenderCommand::SetTextureWarpMode(mType, RenderProtocol::TexWrap::R, RenderProtocol::TexSurround::Repeat);
@@ -69,6 +71,18 @@ namespace Crash
         RenderCommand::SetTextureData(mType, level, mFormat, mWidth, mHeight, format, dataType, data);
         if (mGenerateMipmap)
             RenderCommand::GenerateMipmap(mType);
+    }
+
+    void Texture::setTextureData(int multiSamples, RenderProtocol::TexFormat internalFormat, int width, int height)
+    {
+        mWidth = width;
+        mHeight = height;
+        mFormat = internalFormat;
+        mMultiSamples = multiSamples;
+        mGenerateMipmap = false;
+
+        bind();
+        RenderCommand::SetSamplesTextureData(mType, multiSamples, mFormat, mWidth, mHeight);
     }
 
     void Texture::setTextureWarpMode(RenderProtocol::TexWrap wrap, RenderProtocol::TexSurround surround)

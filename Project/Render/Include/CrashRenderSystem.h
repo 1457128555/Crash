@@ -57,10 +57,11 @@ namespace Crash
         void setUniformMatrix4fv(const ShaderProgram* program, const std::string& name, const glm::mat4& value);
         void setUniformBlockBinding(const ShaderProgram* program, const std::string& blockName, unsigned int bindingPoint);
 
-        FrameBuffer* createFrameBuffer(const std::string& name, unsigned int width, unsigned int height, bool useRBO = true);
+        FrameBuffer* createFrameBuffer(const std::string& name, unsigned int width, unsigned int height, int multiSamples, bool useRBO);
         void destroyFrameBuffer(FrameBuffer* framebuffer);
         void bindFrameBuffer(FrameBuffer* framebuffer);
         void unbindFrameBuffer();
+        void blitFrameBuffer(FrameBuffer* r, FrameBuffer* w);
 
         const std::shared_ptr<Texture>& getFrameBufferColorAttachment(FrameBuffer* framebuffer)         const;
         const std::shared_ptr<Texture>& getFrameBufferDepthStencilAttachment(FrameBuffer* framebuffer)  const;

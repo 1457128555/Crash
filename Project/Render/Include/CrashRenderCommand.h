@@ -17,6 +17,8 @@ namespace Crash
 
         static void SetClearColor(const glm::vec4& color);
 
+        static void SetMultiSamplesEnable(bool enable);
+
         static void SetDepthEnable(bool enable);
 
         static void SetBlendEnable(bool enable);
@@ -63,8 +65,9 @@ namespace Crash
         static void BindRenderBufferObject(unsigned int id);
         static void UnbindRenderBufferObject();
 
-        static void SetRenderBufferStorage(RenderProtocol::TexFormat format, int width, int height);
+        static void SetRenderBufferStorage(RenderProtocol::TexFormat format, int width, int height, int samples);
         static void SerFrameBufferRenderBuffer(unsigned int id, RenderProtocol::AttachmentType type, unsigned int rboID);
+        static void BlitFrameBuffer(unsigned int r_id, unsigned int w_id, int width, int height);
 
         static unsigned int CreateFrameBuffer();
         static void destroyFrameBuffer(unsigned int id);
@@ -73,7 +76,7 @@ namespace Crash
         static void UnbindFrameBuffer();
         static bool CheckFrameBufferComplete();
 
-        static void SetFramebufferTexture2D(unsigned int id,  RenderProtocol::AttachmentType type ,unsigned int textureID);
+        static void SetFramebufferTexture2D(unsigned int id,  RenderProtocol::AttachmentType type, RenderProtocol::TexType texType, unsigned int textureID);
 
         static unsigned int CreateBuffer();
         static void destroyBuffer(unsigned int id);
@@ -106,6 +109,9 @@ namespace Crash
 
         static void SetTextureData(RenderProtocol::TexType type, int level, RenderProtocol::TexFormat internalFormat,
             int width, int height, RenderProtocol::TexFormat format, RenderProtocol::TexDataType dataType, const void* data);
+        
+        //  Multi samples texture
+        static void SetSamplesTextureData(RenderProtocol::TexType type, int samples, RenderProtocol::TexFormat internalFormat, int width, int height);
 
         static void GenerateMipmap(RenderProtocol::TexType type);
 

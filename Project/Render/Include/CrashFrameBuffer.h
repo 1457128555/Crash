@@ -9,7 +9,7 @@ namespace Crash
     class FrameBuffer
     {
     public:
-        FrameBuffer(const std::string& name, int width, int height, bool useRBO = true);
+        FrameBuffer(const std::string& name, int width, int height, int multiSamples, bool useRBO);
         virtual ~FrameBuffer();
 
         void createHandle();
@@ -26,6 +26,9 @@ namespace Crash
             assert(!mUseRBO && "DepthStencilAttachment is not available when using RBO!");
             return mDepthStencilAttachment; }
 
+        int getWidth()  {return mWidth;};
+        int getHeight() {return mHeight;};
+
     private:
         const std::string mName = "FrameBuffer";
 
@@ -35,6 +38,7 @@ namespace Crash
        
         const bool      mUseRBO = true; 
         unsigned int    mRBO    = 0u; 
+        unsigned int    mMultiSamples = 0;
         
         std::shared_ptr<Texture> mColorAttachment;
         std::shared_ptr<Texture> mDepthStencilAttachment;

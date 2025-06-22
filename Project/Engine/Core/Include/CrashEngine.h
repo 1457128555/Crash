@@ -1,5 +1,6 @@
 #pragma once
 
+#include "CrashEngineDeclare.hpp"
 #include "CrashEngineDefines.hpp"
 #include "CrashSingleton.hpp"
 
@@ -54,6 +55,10 @@ namespace Crash
 
         int getWidth()  const { return mConfig.windowWidth; }
         int getHeight() const { return mConfig.windowHeight; }
+
+        const ActorSrdPtr& getRootActor()           { return mRootActor; };
+        void setRootActor(const ActorSrdPtr& _ptr)  { mRootActor = _ptr; };
+
     private:
         const EngineConfig mConfig;
         
@@ -65,5 +70,9 @@ namespace Crash
         std::thread mRenderThread;
 
         bool    mReverseZ = false;      // 反转深度 - 消除z-fighting问题
+
+
+        //  ASC Begin
+        ActorSrdPtr mRootActor;
     };
 }

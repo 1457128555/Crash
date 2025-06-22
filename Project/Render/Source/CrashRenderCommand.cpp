@@ -101,18 +101,19 @@ namespace Crash
         {
             switch (type)
             {
-                case RenderProtocol::TexType::Texture1D:      return GL_TEXTURE_1D;
-                case RenderProtocol::TexType::Texture2D:      return GL_TEXTURE_2D;
-                case RenderProtocol::TexType::Texture3D:      return GL_TEXTURE_3D;
-                case RenderProtocol::TexType::TextureCubeMap: return GL_TEXTURE_CUBE_MAP;
+                case RenderProtocol::TexType::Texture1D:                return GL_TEXTURE_1D;
+                case RenderProtocol::TexType::Texture2D:                return GL_TEXTURE_2D;
+                case RenderProtocol::TexType::Texture2DMultiSamples:    return GL_TEXTURE_2D_MULTISAMPLE;
+                case RenderProtocol::TexType::Texture3D:                return GL_TEXTURE_3D;
+                case RenderProtocol::TexType::TextureCubeMap:           return GL_TEXTURE_CUBE_MAP;
                 
                 // Cube map faces
-                case RenderProtocol::TexType::TextureCubeMapX:  return GL_TEXTURE_CUBE_MAP_POSITIVE_X;
-                case RenderProtocol::TexType::TextureCubeMapNX: return GL_TEXTURE_CUBE_MAP_NEGATIVE_X;
-                case RenderProtocol::TexType::TextureCubeMapY:  return GL_TEXTURE_CUBE_MAP_POSITIVE_Y;
-                case RenderProtocol::TexType::TextureCubeMapNY: return GL_TEXTURE_CUBE_MAP_NEGATIVE_Y;
-                case RenderProtocol::TexType::TextureCubeMapZ:  return GL_TEXTURE_CUBE_MAP_POSITIVE_Z;
-                case RenderProtocol::TexType::TextureCubeMapNZ: return GL_TEXTURE_CUBE_MAP_NEGATIVE_Z;
+                case RenderProtocol::TexType::TextureCubeMapX:          return GL_TEXTURE_CUBE_MAP_POSITIVE_X;
+                case RenderProtocol::TexType::TextureCubeMapNX:         return GL_TEXTURE_CUBE_MAP_NEGATIVE_X;
+                case RenderProtocol::TexType::TextureCubeMapY:          return GL_TEXTURE_CUBE_MAP_POSITIVE_Y;
+                case RenderProtocol::TexType::TextureCubeMapNY:         return GL_TEXTURE_CUBE_MAP_NEGATIVE_Y;
+                case RenderProtocol::TexType::TextureCubeMapZ:          return GL_TEXTURE_CUBE_MAP_POSITIVE_Z;
+                case RenderProtocol::TexType::TextureCubeMapNZ:         return GL_TEXTURE_CUBE_MAP_NEGATIVE_Z;
 
                 default: assert(false && "Invalid texture type"); return 0;
             }
@@ -315,6 +316,7 @@ namespace Crash
         SetBlendFunc(RenderProtocol::BlendFunc::SrcAlpha, RenderProtocol::BlendFunc::OneMinusSrcAlpha);
 
         SetDepthEnable(true);
+        SetMultiSamplesEnable(true);
         if(RenderSystem::Instance()->getReverseZ())
         {
             SetDetphFunc(RenderProtocol::CompareFunc::Greater);
@@ -365,6 +367,15 @@ namespace Crash
     {
         glClearColor(color.r, color.g, color.b, color.a);
         CheckGLError("SetClearColor");
+    }
+
+    void RenderCommand::SetMultiSamplesEnable(bool enable)
+    {
+        if(enable)
+            glEnable(GL_MULTISAMPLE);
+        else
+            glDisable(GL_MULTISAMPLE);
+        CheckGLError("SetMultiSamplesEnable");
     }
 
     void RenderCommand::SetDepthEnable(bool enable)
@@ -600,10 +611,24 @@ namespace Crash
         CheckGLError("UnbindRenderBufferObject");
     }
 
-    void RenderCommand::SetRenderBufferStorage(RenderProtocol::TexFormat format, int width, int height)
+    void RenderCommand::SetRenderBufferStorage(RenderProtocol::TexFormat format, int width, int height, int samples)
     {
-        glRenderbufferStorage(GL_RENDERBUFFER, GetTexFormat(format), width, height);
+        if(samples)
+            glRenderbufferStorageMultisample(GL_RENDERBUFFER, samples, GetTexFormat(format), width, height);
+        else
+            glRenderbufferStorage(GL_RENDERBUFFER, GetTexFormat(format), width, height);
         CheckGLError("SetRenderBufferStorage");
+    }
+
+    void RenderCommand::BlitFrameBuffer(unsigned int r_id, unsigned int w_id, int width, int height)
+    {
+        assert(r_id && w_id);
+
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, r_id);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, w_id);
+
+        glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+        CheckGLError("BlitFrameBuffer");
     }
 
     void RenderCommand::SerFrameBufferRenderBuffer(unsigned int id, RenderProtocol::AttachmentType type, unsigned int rboID)
@@ -791,9 +816,18 @@ namespace Crash
         CheckGLError("UnbindTexture");
     }
 
+    void RenderCommand::SetSamplesTextureData(RenderProtocol::TexType type, int samples, RenderProtocol::TexFormat internalFormat, int width, int height)
+    {
+        assert(type == RenderProtocol::TexType::Texture2DMultiSamples);
+        glTexImage2DMultisample(GetTexType(type), samples, GetTexFormat(internalFormat), width, height, GL_TRUE);
+        CheckGLError("SetSamplesTextureData");
+    }
+
     void RenderCommand::SetTextureData(RenderProtocol::TexType type, int level, RenderProtocol::TexFormat internalFormat,
             int width, int height, RenderProtocol::TexFormat format, RenderProtocol::TexDataType dataType, const void* data)
     {
+        assert(type != RenderProtocol::TexType::Texture2DMultiSamples);
+
         glTexImage2D(GetTexType(type), level, GetTexFormat(internalFormat), width, height,
             0, GetTexFormat(format), GetTexDataType(dataType), data);
         CheckGLError("SetTextureData");
@@ -824,10 +858,10 @@ namespace Crash
         CheckGLError("SetTextureFilterMode");
     }
 
-    void RenderCommand::SetFramebufferTexture2D(unsigned int id, RenderProtocol::AttachmentType type, unsigned int textureID)
+    void RenderCommand::SetFramebufferTexture2D(unsigned int id, RenderProtocol::AttachmentType type, RenderProtocol::TexType texType, unsigned int textureID)
     {
         assert(id && "Frame Buffer is null!");
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GetAttachmentType(type), GL_TEXTURE_2D, textureID, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GetAttachmentType(type), GetTexType(texType), textureID, 0);
         CheckGLError("SetFramebufferTexture2D");
     }
 } // namespace Crash

@@ -28,6 +28,9 @@ namespace Crash
         void setTextureData(int level, RenderProtocol::TexFormat internalFormat, int width, int height, 
             RenderProtocol::TexFormat format, RenderProtocol::TexDataType dataType, const void* data, bool generateMipmap);
 
+        //  For MSAA
+        void setTextureData(int multiSamples, RenderProtocol::TexFormat internalFormat, int width, int height);
+
         void setTextureWarpMode(RenderProtocol::TexWrap wrap, RenderProtocol::TexSurround surround);
         void setTextureFilterMode(RenderProtocol::TexFilter filter, RenderProtocol::TexFilterType filterType);
 
@@ -40,5 +43,6 @@ namespace Crash
         int                         mHeight =   0;
         RenderProtocol::TexFormat   mFormat = RenderProtocol::TexFormat::RGBA;
         bool                        mGenerateMipmap = true;
+        int                         mMultiSamples = 0;
     };
 }
