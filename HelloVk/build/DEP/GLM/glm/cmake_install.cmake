@@ -1,8 +1,8 @@
-# Install script for directory: C:/Users/14571.FAN/Desktop/HelloVk/DEP/GLM/glm
+# Install script for directory: C:/Users/14571.FAN/Desktop/Crash/HelloVk/DEP/GLM/glm
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "C:/Program Files/HelloVk")
+  set(CMAKE_INSTALL_PREFIX "C:/Program Files (x86)/HelloVk")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 

@@ -1,8 +1,8 @@
-# Install script for directory: C:/Users/14571.FAN/Desktop/HelloVk/DEP
+# Install script for directory: C:/Users/14571.FAN/Desktop/Crash/HelloVk/DEP
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "C:/Program Files/HelloVk")
+  set(CMAKE_INSTALL_PREFIX "C:/Program Files (x86)/HelloVk")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -34,8 +34,8 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("C:/Users/14571.FAN/Desktop/HelloVk/build/DEP/GLM/cmake_install.cmake")
-  include("C:/Users/14571.FAN/Desktop/HelloVk/build/DEP/GLFW/cmake_install.cmake")
+  include("C:/Users/14571.FAN/Desktop/Crash/HelloVk/build/DEP/GLM/cmake_install.cmake")
+  include("C:/Users/14571.FAN/Desktop/Crash/HelloVk/build/DEP/GLFW/cmake_install.cmake")
 
 endif()
 

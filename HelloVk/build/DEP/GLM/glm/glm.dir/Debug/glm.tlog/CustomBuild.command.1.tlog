@@ -1,6 +1,6 @@
-^C:\USERS\14571.FAN\DESKTOP\HELLOVK\DEP\GLM\GLM\CMAKELISTS.TXT
+^C:\USERS\14571.FAN\DESKTOP\CRASH\HELLOVK\DEP\GLM\GLM\CMAKELISTS.TXT
 setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/14571.FAN/Desktop/HelloVk -BC:/Users/14571.FAN/Desktop/HelloVk/build --check-stamp-file C:/Users/14571.FAN/Desktop/HelloVk/build/DEP/GLM/glm/CMakeFiles/generate.stamp
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/14571.FAN/Desktop/Crash/HelloVk -BC:/Users/14571.FAN/Desktop/Crash/HelloVk/build --check-stamp-file C:/Users/14571.FAN/Desktop/Crash/HelloVk/build/DEP/GLM/glm/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone

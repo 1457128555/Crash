@@ -22,7 +22,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{344FB327-74DD-3428-BD0E-76D5C089849F}</ProjectGuid>
+    <ProjectGuid>{65657C9F-13EF-35AB-BA41-9FA0EE2566AA}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <WindowsTargetPlatformVersion>10.0.22621.0</WindowsTargetPlatformVersion>
     <Platform>x64</Platform>
@@ -59,25 +59,25 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\14571.FAN\Desktop\HelloVk\build\Project\Debug\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\14571.FAN\Desktop\Crash\HelloVk\build\Project\Debug\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">HelloVk.dir\Debug\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">HelloVk</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.exe</TargetExt>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</GenerateManifest>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\14571.FAN\Desktop\HelloVk\build\Project\Release\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\14571.FAN\Desktop\Crash\HelloVk\build\Project\Release\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">HelloVk.dir\Release\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">HelloVk</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.exe</TargetExt>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</GenerateManifest>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\14571.FAN\Desktop\HelloVk\build\Project\MinSizeRel\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\14571.FAN\Desktop\Crash\HelloVk\build\Project\MinSizeRel\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">HelloVk.dir\MinSizeRel\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">HelloVk</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">.exe</TargetExt>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">true</GenerateManifest>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\14571.FAN\Desktop\HelloVk\build\Project\RelWithDebInfo\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\14571.FAN\Desktop\Crash\HelloVk\build\Project\RelWithDebInfo\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">HelloVk.dir\RelWithDebInfo\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">HelloVk</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">.exe</TargetExt>
@@ -86,7 +86,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\Users\14571.FAN\Desktop\HelloVk\Project\Include;D:\VulkanSDK\1.4.313.2\Include;C:\Users\14571.FAN\Desktop\HelloVk\DEP\GLFW\include;C:\Users\14571.FAN\Desktop\HelloVk\DEP\GLM;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\14571.FAN\Desktop\Crash\HelloVk\Project\Include;D:\VulkanSDK\1.4.313.2\Include;C:\Users\14571.FAN\Desktop\Crash\HelloVk\DEP\GLFW\include;C:\Users\14571.FAN\Desktop\Crash\HelloVk\DEP\GLM;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -107,10 +107,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\14571.FAN\Desktop\HelloVk\Project\Include;D:\VulkanSDK\1.4.313.2\Include;C:\Users\14571.FAN\Desktop\HelloVk\DEP\GLFW\include;C:\Users\14571.FAN\Desktop\HelloVk\DEP\GLM;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\14571.FAN\Desktop\Crash\HelloVk\Project\Include;D:\VulkanSDK\1.4.313.2\Include;C:\Users\14571.FAN\Desktop\Crash\HelloVk\DEP\GLFW\include;C:\Users\14571.FAN\Desktop\Crash\HelloVk\DEP\GLM;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>C:\Users\14571.FAN\Desktop\HelloVk\Project\Include;D:\VulkanSDK\1.4.313.2\Include;C:\Users\14571.FAN\Desktop\HelloVk\DEP\GLFW\include;C:\Users\14571.FAN\Desktop\HelloVk\DEP\GLM;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\14571.FAN\Desktop\Crash\HelloVk\Project\Include;D:\VulkanSDK\1.4.313.2\Include;C:\Users\14571.FAN\Desktop\Crash\HelloVk\DEP\GLFW\include;C:\Users\14571.FAN\Desktop\Crash\HelloVk\DEP\GLM;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -123,8 +123,8 @@
       <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <ImportLibrary>C:/Users/14571.FAN/Desktop/HelloVk/build/Project/Debug/HelloVk.lib</ImportLibrary>
-      <ProgramDataBaseFile>C:/Users/14571.FAN/Desktop/HelloVk/build/Project/Debug/HelloVk.pdb</ProgramDataBaseFile>
+      <ImportLibrary>C:/Users/14571.FAN/Desktop/Crash/HelloVk/build/Project/Debug/HelloVk.lib</ImportLibrary>
+      <ProgramDataBaseFile>C:/Users/14571.FAN/Desktop/Crash/HelloVk/build/Project/Debug/HelloVk.pdb</ProgramDataBaseFile>
       <SubSystem>Console</SubSystem>
     </Link>
     <ProjectReference>
@@ -133,7 +133,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\Users\14571.FAN\Desktop\HelloVk\Project\Include;D:\VulkanSDK\1.4.313.2\Include;C:\Users\14571.FAN\Desktop\HelloVk\DEP\GLFW\include;C:\Users\14571.FAN\Desktop\HelloVk\DEP\GLM;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\14571.FAN\Desktop\Crash\HelloVk\Project\Include;D:\VulkanSDK\1.4.313.2\Include;C:\Users\14571.FAN\Desktop\Crash\HelloVk\DEP\GLFW\include;C:\Users\14571.FAN\Desktop\Crash\HelloVk\DEP\GLM;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <ExceptionHandling>Sync</ExceptionHandling>
@@ -155,10 +155,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\14571.FAN\Desktop\HelloVk\Project\Include;D:\VulkanSDK\1.4.313.2\Include;C:\Users\14571.FAN\Desktop\HelloVk\DEP\GLFW\include;C:\Users\14571.FAN\Desktop\HelloVk\DEP\GLM;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\14571.FAN\Desktop\Crash\HelloVk\Project\Include;D:\VulkanSDK\1.4.313.2\Include;C:\Users\14571.FAN\Desktop\Crash\HelloVk\DEP\GLFW\include;C:\Users\14571.FAN\Desktop\Crash\HelloVk\DEP\GLM;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>C:\Users\14571.FAN\Desktop\HelloVk\Project\Include;D:\VulkanSDK\1.4.313.2\Include;C:\Users\14571.FAN\Desktop\HelloVk\DEP\GLFW\include;C:\Users\14571.FAN\Desktop\HelloVk\DEP\GLM;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\14571.FAN\Desktop\Crash\HelloVk\Project\Include;D:\VulkanSDK\1.4.313.2\Include;C:\Users\14571.FAN\Desktop\Crash\HelloVk\DEP\GLFW\include;C:\Users\14571.FAN\Desktop\Crash\HelloVk\DEP\GLM;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -171,8 +171,8 @@
       <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <ImportLibrary>C:/Users/14571.FAN/Desktop/HelloVk/build/Project/Release/HelloVk.lib</ImportLibrary>
-      <ProgramDataBaseFile>C:/Users/14571.FAN/Desktop/HelloVk/build/Project/Release/HelloVk.pdb</ProgramDataBaseFile>
+      <ImportLibrary>C:/Users/14571.FAN/Desktop/Crash/HelloVk/build/Project/Release/HelloVk.lib</ImportLibrary>
+      <ProgramDataBaseFile>C:/Users/14571.FAN/Desktop/Crash/HelloVk/build/Project/Release/HelloVk.pdb</ProgramDataBaseFile>
       <SubSystem>Console</SubSystem>
     </Link>
     <ProjectReference>
@@ -181,7 +181,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\Users\14571.FAN\Desktop\HelloVk\Project\Include;D:\VulkanSDK\1.4.313.2\Include;C:\Users\14571.FAN\Desktop\HelloVk\DEP\GLFW\include;C:\Users\14571.FAN\Desktop\HelloVk\DEP\GLM;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\14571.FAN\Desktop\Crash\HelloVk\Project\Include;D:\VulkanSDK\1.4.313.2\Include;C:\Users\14571.FAN\Desktop\Crash\HelloVk\DEP\GLFW\include;C:\Users\14571.FAN\Desktop\Crash\HelloVk\DEP\GLM;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <ExceptionHandling>Sync</ExceptionHandling>
@@ -203,10 +203,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR=\"MinSizeRel\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\14571.FAN\Desktop\HelloVk\Project\Include;D:\VulkanSDK\1.4.313.2\Include;C:\Users\14571.FAN\Desktop\HelloVk\DEP\GLFW\include;C:\Users\14571.FAN\Desktop\HelloVk\DEP\GLM;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\14571.FAN\Desktop\Crash\HelloVk\Project\Include;D:\VulkanSDK\1.4.313.2\Include;C:\Users\14571.FAN\Desktop\Crash\HelloVk\DEP\GLFW\include;C:\Users\14571.FAN\Desktop\Crash\HelloVk\DEP\GLM;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>C:\Users\14571.FAN\Desktop\HelloVk\Project\Include;D:\VulkanSDK\1.4.313.2\Include;C:\Users\14571.FAN\Desktop\HelloVk\DEP\GLFW\include;C:\Users\14571.FAN\Desktop\HelloVk\DEP\GLM;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\14571.FAN\Desktop\Crash\HelloVk\Project\Include;D:\VulkanSDK\1.4.313.2\Include;C:\Users\14571.FAN\Desktop\Crash\HelloVk\DEP\GLFW\include;C:\Users\14571.FAN\Desktop\Crash\HelloVk\DEP\GLM;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -219,8 +219,8 @@
       <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <ImportLibrary>C:/Users/14571.FAN/Desktop/HelloVk/build/Project/MinSizeRel/HelloVk.lib</ImportLibrary>
-      <ProgramDataBaseFile>C:/Users/14571.FAN/Desktop/HelloVk/build/Project/MinSizeRel/HelloVk.pdb</ProgramDataBaseFile>
+      <ImportLibrary>C:/Users/14571.FAN/Desktop/Crash/HelloVk/build/Project/MinSizeRel/HelloVk.lib</ImportLibrary>
+      <ProgramDataBaseFile>C:/Users/14571.FAN/Desktop/Crash/HelloVk/build/Project/MinSizeRel/HelloVk.pdb</ProgramDataBaseFile>
       <SubSystem>Console</SubSystem>
     </Link>
     <ProjectReference>
@@ -229,7 +229,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\Users\14571.FAN\Desktop\HelloVk\Project\Include;D:\VulkanSDK\1.4.313.2\Include;C:\Users\14571.FAN\Desktop\HelloVk\DEP\GLFW\include;C:\Users\14571.FAN\Desktop\HelloVk\DEP\GLM;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\14571.FAN\Desktop\Crash\HelloVk\Project\Include;D:\VulkanSDK\1.4.313.2\Include;C:\Users\14571.FAN\Desktop\Crash\HelloVk\DEP\GLFW\include;C:\Users\14571.FAN\Desktop\Crash\HelloVk\DEP\GLM;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -250,10 +250,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR=\"RelWithDebInfo\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\14571.FAN\Desktop\HelloVk\Project\Include;D:\VulkanSDK\1.4.313.2\Include;C:\Users\14571.FAN\Desktop\HelloVk\DEP\GLFW\include;C:\Users\14571.FAN\Desktop\HelloVk\DEP\GLM;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\14571.FAN\Desktop\Crash\HelloVk\Project\Include;D:\VulkanSDK\1.4.313.2\Include;C:\Users\14571.FAN\Desktop\Crash\HelloVk\DEP\GLFW\include;C:\Users\14571.FAN\Desktop\Crash\HelloVk\DEP\GLM;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>C:\Users\14571.FAN\Desktop\HelloVk\Project\Include;D:\VulkanSDK\1.4.313.2\Include;C:\Users\14571.FAN\Desktop\HelloVk\DEP\GLFW\include;C:\Users\14571.FAN\Desktop\HelloVk\DEP\GLM;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\14571.FAN\Desktop\Crash\HelloVk\Project\Include;D:\VulkanSDK\1.4.313.2\Include;C:\Users\14571.FAN\Desktop\Crash\HelloVk\DEP\GLFW\include;C:\Users\14571.FAN\Desktop\Crash\HelloVk\DEP\GLM;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -266,8 +266,8 @@
       <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <ImportLibrary>C:/Users/14571.FAN/Desktop/HelloVk/build/Project/RelWithDebInfo/HelloVk.lib</ImportLibrary>
-      <ProgramDataBaseFile>C:/Users/14571.FAN/Desktop/HelloVk/build/Project/RelWithDebInfo/HelloVk.pdb</ProgramDataBaseFile>
+      <ImportLibrary>C:/Users/14571.FAN/Desktop/Crash/HelloVk/build/Project/RelWithDebInfo/HelloVk.lib</ImportLibrary>
+      <ProgramDataBaseFile>C:/Users/14571.FAN/Desktop/Crash/HelloVk/build/Project/RelWithDebInfo/HelloVk.pdb</ProgramDataBaseFile>
       <SubSystem>Console</SubSystem>
     </Link>
     <ProjectReference>
@@ -275,11 +275,11 @@
     </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <CustomBuild Include="C:\Users\14571.FAN\Desktop\HelloVk\Project\CMakeLists.txt">
+    <CustomBuild Include="C:\Users\14571.FAN\Desktop\Crash\HelloVk\Project\CMakeLists.txt">
       <UseUtf8Encoding>Always</UseUtf8Encoding>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule C:/Users/14571.FAN/Desktop/HelloVk/Project/CMakeLists.txt</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule C:/Users/14571.FAN/Desktop/Crash/HelloVk/Project/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/14571.FAN/Desktop/HelloVk -BC:/Users/14571.FAN/Desktop/HelloVk/build --check-stamp-file C:/Users/14571.FAN/Desktop/HelloVk/build/Project/CMakeFiles/generate.stamp
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/14571.FAN/Desktop/Crash/HelloVk -BC:/Users/14571.FAN/Desktop/Crash/HelloVk/build --check-stamp-file C:/Users/14571.FAN/Desktop/Crash/HelloVk/build/Project/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -288,11 +288,11 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Program Files\CMake\share\cmake-3.30\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.30\Modules\FindPackageMessage.cmake;C:\Program Files\CMake\share\cmake-3.30\Modules\FindVulkan.cmake;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\14571.FAN\Desktop\HelloVk\build\Project\CMakeFiles\generate.stamp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\14571.FAN\Desktop\Crash\HelloVk\build\Project\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule C:/Users/14571.FAN/Desktop/HelloVk/Project/CMakeLists.txt</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule C:/Users/14571.FAN/Desktop/Crash/HelloVk/Project/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/14571.FAN/Desktop/HelloVk -BC:/Users/14571.FAN/Desktop/HelloVk/build --check-stamp-file C:/Users/14571.FAN/Desktop/HelloVk/build/Project/CMakeFiles/generate.stamp
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/14571.FAN/Desktop/Crash/HelloVk -BC:/Users/14571.FAN/Desktop/Crash/HelloVk/build --check-stamp-file C:/Users/14571.FAN/Desktop/Crash/HelloVk/build/Project/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -301,11 +301,11 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Program Files\CMake\share\cmake-3.30\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.30\Modules\FindPackageMessage.cmake;C:\Program Files\CMake\share\cmake-3.30\Modules\FindVulkan.cmake;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\14571.FAN\Desktop\HelloVk\build\Project\CMakeFiles\generate.stamp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\14571.FAN\Desktop\Crash\HelloVk\build\Project\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
-      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule C:/Users/14571.FAN/Desktop/HelloVk/Project/CMakeLists.txt</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule C:/Users/14571.FAN/Desktop/Crash/HelloVk/Project/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/14571.FAN/Desktop/HelloVk -BC:/Users/14571.FAN/Desktop/HelloVk/build --check-stamp-file C:/Users/14571.FAN/Desktop/HelloVk/build/Project/CMakeFiles/generate.stamp
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/14571.FAN/Desktop/Crash/HelloVk -BC:/Users/14571.FAN/Desktop/Crash/HelloVk/build --check-stamp-file C:/Users/14571.FAN/Desktop/Crash/HelloVk/build/Project/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -314,11 +314,11 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Program Files\CMake\share\cmake-3.30\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.30\Modules\FindPackageMessage.cmake;C:\Program Files\CMake\share\cmake-3.30\Modules\FindVulkan.cmake;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\14571.FAN\Desktop\HelloVk\build\Project\CMakeFiles\generate.stamp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\14571.FAN\Desktop\Crash\HelloVk\build\Project\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
-      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule C:/Users/14571.FAN/Desktop/HelloVk/Project/CMakeLists.txt</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule C:/Users/14571.FAN/Desktop/Crash/HelloVk/Project/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/14571.FAN/Desktop/HelloVk -BC:/Users/14571.FAN/Desktop/HelloVk/build --check-stamp-file C:/Users/14571.FAN/Desktop/HelloVk/build/Project/CMakeFiles/generate.stamp
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/14571.FAN/Desktop/Crash/HelloVk -BC:/Users/14571.FAN/Desktop/Crash/HelloVk/build --check-stamp-file C:/Users/14571.FAN/Desktop/Crash/HelloVk/build/Project/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -327,26 +327,26 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Program Files\CMake\share\cmake-3.30\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.30\Modules\FindPackageMessage.cmake;C:\Program Files\CMake\share\cmake-3.30\Modules\FindVulkan.cmake;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\14571.FAN\Desktop\HelloVk\build\Project\CMakeFiles\generate.stamp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\14571.FAN\Desktop\Crash\HelloVk\build\Project\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="C:\Users\14571.FAN\Desktop\HelloVk\Project\Source\main.cpp" />
+    <ClCompile Include="C:\Users\14571.FAN\Desktop\Crash\HelloVk\Project\Source\main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="C:\Users\14571.FAN\Desktop\HelloVk\build\ZERO_CHECK.vcxproj">
-      <Project>{20D729E8-C998-3D84-AC93-B7CF2880BDCF}</Project>
+    <ProjectReference Include="C:\Users\14571.FAN\Desktop\Crash\HelloVk\build\ZERO_CHECK.vcxproj">
+      <Project>{436AF92E-D4D1-3219-B90D-8F4DE798D1E2}</Project>
       <Name>ZERO_CHECK</Name>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </ProjectReference>
-    <ProjectReference Include="C:\Users\14571.FAN\Desktop\HelloVk\build\DEP\GLFW\src\glfw.vcxproj">
-      <Project>{035B350C-E17A-3075-8967-7D5D82B854FB}</Project>
+    <ProjectReference Include="C:\Users\14571.FAN\Desktop\Crash\HelloVk\build\DEP\GLFW\src\glfw.vcxproj">
+      <Project>{2B672C46-3B8F-348F-9557-D7C1BF87201E}</Project>
       <Name>glfw</Name>
     </ProjectReference>
-    <ProjectReference Include="C:\Users\14571.FAN\Desktop\HelloVk\build\DEP\GLM\glm\glm.vcxproj">
-      <Project>{82B9844C-1286-30EA-AE18-E74F1D10CED8}</Project>
+    <ProjectReference Include="C:\Users\14571.FAN\Desktop\Crash\HelloVk\build\DEP\GLM\glm\glm.vcxproj">
+      <Project>{12529974-A21C-3BED-BA7C-9AC9DD6DD64F}</Project>
       <Name>glm</Name>
     </ProjectReference>
   </ItemGroup>

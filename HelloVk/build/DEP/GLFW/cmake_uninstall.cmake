@@ -1,9 +1,9 @@
 
-if (NOT EXISTS "C:/Users/14571.FAN/Desktop/HelloVk/build/DEP/GLFW/install_manifest.txt")
-    message(FATAL_ERROR "Cannot find install manifest: \"C:/Users/14571.FAN/Desktop/HelloVk/build/DEP/GLFW/install_manifest.txt\"")
+if (NOT EXISTS "C:/Users/14571.FAN/Desktop/Crash/HelloVk/build/DEP/GLFW/install_manifest.txt")
+    message(FATAL_ERROR "Cannot find install manifest: \"C:/Users/14571.FAN/Desktop/Crash/HelloVk/build/DEP/GLFW/install_manifest.txt\"")
 endif()
 
-file(READ "C:/Users/14571.FAN/Desktop/HelloVk/build/DEP/GLFW/install_manifest.txt" files)
+file(READ "C:/Users/14571.FAN/Desktop/Crash/HelloVk/build/DEP/GLFW/install_manifest.txt" files)
 string(REGEX REPLACE "\n" ";" files "${files}")
 
 foreach (file ${files})

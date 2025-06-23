@@ -1,17 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <CustomBuild Include="C:\Users\14571.FAN\Desktop\HelloVk\build\CMakeFiles\d83ad0455f8b18603ce69cd47945ac9f\uninstall.rule">
+    <CustomBuild Include="C:\Users\14571.FAN\Desktop\Crash\HelloVk\build\CMakeFiles\9f719ad496881aad4b5710202e079e9a\uninstall.rule">
       <Filter>CMake Rules</Filter>
     </CustomBuild>
-    <CustomBuild Include="C:\Users\14571.FAN\Desktop\HelloVk\DEP\GLFW\CMakeLists.txt" />
+    <CustomBuild Include="C:\Users\14571.FAN\Desktop\Crash\HelloVk\DEP\GLFW\CMakeLists.txt" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="C:\Users\14571.FAN\Desktop\HelloVk\build\DEP\GLFW\CMakeFiles\uninstall" />
+    <None Include="C:\Users\14571.FAN\Desktop\Crash\HelloVk\build\DEP\GLFW\CMakeFiles\uninstall" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="CMake Rules">
-      <UniqueIdentifier>{99ABA049-0FD9-37F2-A80C-473175B6A3A7}</UniqueIdentifier>
+      <UniqueIdentifier>{AAD6A251-7975-3055-9E93-943B5DD4DA8E}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

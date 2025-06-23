@@ -8,7 +8,7 @@
 #include <stdexcept>
 #include <optional>
 #include <algorithm>
-
+#include <fstream>
 
 const uint32_t WIDTH = 800;
 const uint32_t HEIGHT = 600;
@@ -50,6 +50,22 @@ void DestroyDebugUtilsMessengerEXT(
     if (func != nullptr) {
         func(instance, debugMessenger, pAllocator);
     }
+}
+
+std::vector<char> readFile(const std::string& filename) 
+{
+    std::ifstream file(filename, std::ios::ate | std::ios::binary);
+    if (!file.is_open()) 
+        throw std::runtime_error("failed to open file:" + filename);
+
+    size_t fileSize = (size_t) file.tellg();
+    std::vector<char> buffer(fileSize);
+
+    file.seekg(0);
+    file.read(buffer.data(), fileSize);
+    file.close();
+
+    return buffer;
 }
 
 class HelloTriangleApplication
@@ -115,6 +131,7 @@ private:
         createLogicalDevice();
         createSwapChain();
         createImageViews();
+        createGraphicsPipeline();
     }
 
     void mainLoop()
@@ -127,6 +144,8 @@ private:
 
     void cleanup()
     {
+        vkDestroyPipelineLayout(device, pipelineLayout, nullptr);
+
         for (VkImageView imageView : swapChainImageViews) 
             vkDestroyImageView(device, imageView, nullptr);
             
@@ -521,6 +540,43 @@ private:
         }
     }
 
+    VkShaderModule createShaderModule(const std::vector<char>& code) 
+    {
+        VkShaderModuleCreateInfo createInfo = {
+            .sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO,
+            .codeSize = code.size(),
+            .pCode = reinterpret_cast<const uint32_t*>(code.data()),
+        };
+
+        VkShaderModule shaderModule;
+        if (vkCreateShaderModule(device, &createInfo, nullptr, &shaderModule) != VK_SUCCESS) 
+            throw std::runtime_error("failed to create shader module!");
+       
+        return shaderModule;
+    }
+
+    void createGraphicsPipeline()
+    {
+        auto vertShaderCode = readFile("assets/shader/vert.spv");
+        auto fragShaderCode = readFile("assets/shader/frag.spv");
+
+        VkShaderModule vertShaderModule = createShaderModule(vertShaderCode);
+        VkShaderModule fragShaderModule = createShaderModule(fragShaderCode);
+
+        vkDestroyShaderModule(device, fragShaderModule, nullptr);
+        vkDestroyShaderModule(device, vertShaderModule, nullptr);
+
+       VkPipelineLayoutCreateInfo pipelineLayoutInfo = {
+            .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
+            .setLayoutCount = 0, // Optional
+            .pSetLayouts = nullptr, // Optional
+            .pushConstantRangeCount = 0, // Optional
+            .pPushConstantRanges = nullptr, // Optional
+        };
+        if (vkCreatePipelineLayout(device, &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS) 
+            throw std::runtime_error("failed to create pipeline layout!");
+    }
+
 private:
     GLFWwindow*                 window = nullptr;
     VkInstance                  instance;
@@ -535,7 +591,8 @@ private:
     std::vector<VkImageView>    swapChainImageViews;
     VkFormat                    swapChainImageFormat;
     VkExtent2D                  swapChainExtent;
-    
+    VkPipelineLayout            pipelineLayout;
+
 
 
 };
