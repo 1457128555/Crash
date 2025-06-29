@@ -7,6 +7,30 @@
             "command": "cmake --build build",
             "group": "build",
             "problemMatcher": []
+        },
+        {
+            "label": "compile shaders",
+            "type": "shell",
+            "command": "cmd",
+            "args": ["/c", "compile.bat"],
+            "options": {
+                "cwd": "${workspaceFolder}/assets/shader"
+            },
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "build and compile shaders",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "build with cmake",
+                "compile shaders"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
         }
     ]
 }

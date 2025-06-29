@@ -11,7 +11,7 @@
             "cwd": "${workspaceFolder}",
             "environment": [],
             "console": "integratedTerminal",
-            "preLaunchTask": "build with cmake"
+            "preLaunchTask": "build and compile shaders"
         }
     ]
 }
