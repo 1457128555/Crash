@@ -623,6 +623,7 @@ private:
         }
 
         VkPhysicalDeviceFeatures deviceFeatures{
+            .sampleRateShading  = VK_TRUE, // Enable sample rate shading
             .samplerAnisotropy  = VK_TRUE, // Enable anisotropic filtering
         };
 
@@ -976,7 +977,8 @@ private:
         VkPipelineMultisampleStateCreateInfo multisampling = {
             .sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO,
             .rasterizationSamples = msaaSamples,
-            .sampleShadingEnable = VK_FALSE,
+            .sampleShadingEnable = VK_TRUE,
+            .minSampleShading = 0.2f,
         };
 
         VkPipelineColorBlendAttachmentState colorBlendAttachment = {
